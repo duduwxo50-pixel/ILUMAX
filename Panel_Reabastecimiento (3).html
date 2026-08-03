@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel de Reabastecimiento</title>
+<style>
+  :root{
+    --navy: #14213D;
+    --navy-2: #1E2E52;
+    --paper: #F4F5F7;
+    --panel: #FFFFFF;
+    --ink: #1F2430;
+    --muted: #737C8C;
+    --line: #E3E5EA;
+    --amber: #E8871E;
+    --amber-soft: #FCEBD4;
+    --green: #2F9E5B;
+    --green-soft: #E1F3E7;
+    --red: #D64550;
+    --red-soft: #FBE3E5;
+    --gray-soft: #ECEDF0;
+    --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+  .app{max-width:1280px;margin:0 auto;padding:20px 24px 60px;}
+
+  /* Top bar */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+    color:#fff;border-radius:14px;padding:20px 26px;margin-bottom:20px;
+    box-shadow:0 8px 24px -12px rgba(20,33,61,0.5);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dot{
+    width:10px;height:10px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(47,158,91,.6);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(47,158,91,.55);}
+    70%{box-shadow:0 0 0 8px rgba(47,158,91,0);}
+    100%{box-shadow:0 0 0 0 rgba(47,158,91,0);}
+  }
+  .brand h1{font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin:0;font-weight:700;}
+  .brand .sub{font-size:12px;color:#B9C2DA;letter-spacing:.02em;margin-top:2px;}
+  .brand-text{display:flex;flex-direction:column;}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;padding:8px 14px;text-align:center;min-width:78px;
+  }
+  .stat .num{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1;}
+  .stat .lbl{font-size:10px;color:#B9C2DA;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+  .stat.red .num{color:#FF9AA2;}
+  .stat.green .num{color:#8FE3AE;}
+  .stat.gray .num{color:#C9CFDD;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--line);}
+  .tab{
+    padding:10px 18px;font-size:13px;font-weight:600;color:var(--muted);
+    cursor:pointer;border-bottom:2px solid transparent;user-select:none;
+    letter-spacing:.01em;
+  }
+  .tab:hover{color:var(--ink);}
+  .tab.active{color:var(--navy);border-bottom-color:var(--amber);}
+
+  .panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:22px;margin-bottom:16px;
+  }
+  .panel h2{font-size:15px;margin:0 0 4px;color:var(--ink);}
+  .panel .desc{font-size:12.5px;color:var(--muted);margin:0 0 18px;}
+
+  /* Forms */
+  label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+  input, select{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+    font-size:13.5px;color:var(--ink);background:#fff;font-family:var(--sans);
+  }
+  input:focus, select:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(20,33,61,.08);}
+  .field{margin-bottom:14px;}
+  .row{display:grid;gap:14px;}
+  .row.cols-4{grid-template-columns:2fr 1fr 1fr 1fr;}
+  .row.cols-3{grid-template-columns:2fr 1fr 1fr;}
+  .btn{
+    appearance:none;border:none;border-radius:8px;padding:10px 18px;font-size:13.5px;font-weight:700;
+    cursor:pointer;font-family:var(--sans);letter-spacing:.01em;
+  }
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-2);}
+  .btn-ghost{background:var(--gray-soft);color:var(--ink);}
+  .btn-ghost:hover{background:#E1E3E8;}
+  .btn-danger-outline{background:#fff;color:var(--red);border:1px solid var(--red-soft);padding:5px 10px;font-size:12px;}
+  .btn-danger-outline:hover{background:var(--red-soft);}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  th{
+    text-align:left;padding:9px 10px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);border-bottom:2px solid var(--line);cursor:pointer;white-space:nowrap;position:sticky;top:0;background:var(--panel);
+  }
+  th:hover{color:var(--ink);}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr:hover td{background:#FAFBFC;}
+  .num-cell{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums;}
+  .table-scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px;}
+
+  .badge{
+    display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;
+    letter-spacing:.02em;white-space:nowrap;
+  }
+  .badge.pedir{background:var(--red-soft);color:var(--red);}
+  .badge.ok{background:var(--green-soft);color:var(--green);}
+  .badge.sindato{background:var(--gray-soft);color:var(--muted);}
+
+  .toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+  .toolbar input[type=text]{max-width:280px;}
+  .toolbar select{max-width:180px;}
+  .toolbar .spacer{flex:1;}
+  .hint{font-size:11.5px;color:var(--muted);}
+
+  .empty{
+    padding:40px 20px;text-align:center;color:var(--muted);font-size:13px;
+  }
+
+  .legend-row{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);}
+  .legend-dot{width:9px;height:9px;border-radius:3px;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--navy);color:#fff;padding:11px 20px;border-radius:8px;font-size:13px;
+    box-shadow:0 8px 24px -8px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+    z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#D3D6DD;border-radius:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  @media (max-width: 720px){
+    .topbar{flex-direction:column;align-items:flex-start;gap:14px;}
+    .row.cols-4, .row.cols-3{grid-template-columns:1fr;}
+  }
+
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(20,33,61,.45);
+    align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:#fff;border-radius:14px;max-width:720px;width:100%;padding:24px;
+    box-shadow:0 24px 60px -12px rgba(0,0,0,.35);
+  }
+  .modal-close{
+    float:right;background:var(--gray-soft);border:none;border-radius:8px;padding:6px 12px;
+    cursor:pointer;font-size:13px;font-weight:700;color:var(--ink);
+  }
+  .modal-close:hover{background:#E1E3E8;}
+  .row-click{cursor:pointer;}
+  .row-click:hover td{background:#EEF1FA !important;}
+  .sparkbar-wrap{display:flex;align-items:flex-end;gap:3px;height:60px;margin:10px 0;}
+  .sparkbar{flex:1;background:var(--navy);border-radius:2px 2px 0 0;min-height:2px;}
+  .kv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-bottom:16px;}
+  .kv-item .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  .kv-item .v{font-size:15px;font-weight:700;color:var(--ink);font-family:var(--mono);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div class="brand-text">
+        <h1>Panel de Reabastecimiento</h1>
+        <span class="sub" id="subLine">Cargando datos…</span>
+      </div>
+    </div>
+    <div class="stats" id="statsRow"></div>
+    <button id="settings-btn" title="Conexión a Google Sheets" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px;margin-left:8px;">⚙️</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="registrar">Registrar movimiento</div>
+    <div class="tab" data-tab="panel">Panel de productos</div>
+    <div class="tab" data-tab="alertas">Alertas</div>
+    <div class="tab" data-tab="proyeccion">Proyección</div>
+    <div class="tab" data-tab="proveedores">Proveedores</div>
+    <div class="tab" data-tab="config">Configuración</div>
+  </div>
+
+  <div id="view-dashboard"></div>
+  <div id="view-registrar" style="display:none;"></div>
+  <div id="view-panel" style="display:none;"></div>
+  <div id="view-alertas" style="display:none;"></div>
+  <div id="view-proyeccion" style="display:none;"></div>
+  <div id="view-proveedores" style="display:none;"></div>
+  <div id="view-config" style="display:none;"></div>
+
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<datalist id="productList"></datalist>
+
+<script id="products-data" type="application/json">[{"ref": "1222", "nombre": "LED BULB 20W LB E27 20000H ILUM CJ", "canal": "MULTICANAL", "m": [1180, 1090, 1000], "stock0": 54, "transito": 0}, {"ref": "1504", "nombre": "LED BULB 30W LB E27 20000H ILM CAJ", "canal": "MULTICANAL", "m": [1000, -1, -20], "stock0": 0, "transito": 0}, {"ref": "1854", "nombre": "LED BULB 30W LC E27 20000H ILM CJ", "canal": "MULTICANAL", "m": [660, 529, null], "stock0": 0, "transito": 0}, {"ref": "1811", "nombre": "LED BULB 60W LB E27 20000H ILM CJ", "canal": "MULTICANAL", "m": [null, 1167, 1006], "stock0": 678, "transito": 0}, {"ref": "2483", "nombre": "LED BULB 40W LB E27 20000H ILUM CAJ", "canal": "MULTICANAL", "m": [1820, 1808, 513], "stock0": 15699, "transito": 0}, {"ref": "2103", "nombre": "LED LUZ DE NOCHE REDONDA LC ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1262, 264], "stock0": 438, "transito": 0}, {"ref": "726849", "nombre": "MP GV LED PNL PLN 48W LB 60X60 CM SETX10", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726993", "nombre": "MP GV RFLCTOR LED NOVA II 10W LC SETX24U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726948", "nombre": "MP GV ESTACA LED SOL 0.6W SEN LF SETX 8U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "727044", "nombre": "MP GV RFLCTOR LED NOVA II 50W LC SETX12U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "00094", "nombre": "CONECTOR GU10 BOLSA X 1 UND", "canal": "Sin Canal", "m": [3960, 3840, 2508], "stock0": 70000, "transito": 0}, {"ref": "1086", "nombre": "LED BULB 36W LB E27 20000H ILUM CAJ", "canal": "MULTICANAL", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "877", "nombre": "TUBO LED 18W LB VDR 25000H ILUM CAJ", "canal": "EXCLUSIVO", "m": [-14, 1465, 384], "stock0": 2401, "transito": 0}, {"ref": "1090", "nombre": "BALA DE EMPOTRAR AJUSTABLE BLANCA ILUM C", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2300", "nombre": "LED PANEL RED SOB 12W LC DECORA NEG ILM", "canal": "EXCLUSIVO", "m": [816, 792, 588], "stock0": 371, "transito": 0}, {"ref": "926", "nombre": "SOCKET T8 BOLSA X1UND HTR ILUMAX", "canal": "EXCLUSIVO", "m": [950, 550, 800], "stock0": 900, "transito": 0}, {"ref": "2299", "nombre": "LED PANEL RED SOB 12W LB DECORA NEG ILM", "canal": "EXCLUSIVO", "m": [852, 296, 0], "stock0": 0, "transito": 0}, {"ref": "2461", "nombre": "LED FRAMELESS INCRU 24W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [null, 1768, null], "stock0": 0, "transito": 0}, {"ref": "2460", "nombre": "LED FRAMELESS INCRU 18W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [1050, 176, 20], "stock0": 10, "transito": 0}, {"ref": "984", "nombre": "LED GLOBO FIL 8W DIM LC E27 25KH ILM CAJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 2000, "transito": 0}, {"ref": "2211", "nombre": "LED LUZ DE NOCHE NUBE AZUL ILUM BL", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2182", "nombre": "LED FIL PERA 6W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [336, 313, 258], "stock0": 1019, "transito": 0}, {"ref": "1938", "nombre": "LED BULB SENS MICRO 9W LB E27 25KH IL CJ", "canal": "MULTICANAL", "m": [324, 391, -12], "stock0": 0, "transito": 0}, {"ref": "2466", "nombre": "LED BOMBILLO RECAR 20W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [29, null, 360], "stock0": 189, "transito": 0}, {"ref": "2185", "nombre": "LED FRAMELESS 18W LB INC RED 20KH ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 5844, "transito": 0}, {"ref": "1179", "nombre": "LED 1,7W LC G4 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [250, 257, -10], "stock0": 0, "transito": 0}, {"ref": "1791", "nombre": "LED REFLECTOR SMD 20W RGB 25 KH ILM CJ", "canal": "MULTICANAL", "m": [270, 168, 160], "stock0": 595, "transito": 0}, {"ref": "2184", "nombre": "LED FRAMELESS 24W LB INC RED 20KH ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 620, "transito": 0}, {"ref": "2462", "nombre": "LED FRAMELESS INCRU 36W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [null, 1618, null], "stock0": 0, "transito": 0}, {"ref": "2181", "nombre": "LED FIL GLOBO G95 4W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [140, 85, 190], "stock0": 1083, "transito": 0}, {"ref": "2310", "nombre": "UNDERCABINET 2W CCT ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 4032, "transito": 0}, {"ref": "960", "nombre": "LED GLOBO 18W LB E27 30000H ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1550, -40], "stock0": 40, "transito": 0}, {"ref": "1075", "nombre": "ESTACA LED 5W LC 25000H ILUM CJ", "canal": "EXCLUSIVO", "m": [110, 234, 360], "stock0": 277, "transito": 0}, {"ref": "2209", "nombre": "LED LUZ DE NOCHE TORTUGA ILUM BL", "canal": "EXCLUSIVO", "m": [336, 408, 153], "stock0": 0, "transito": 0}, {"ref": "2459", "nombre": "LED FRAMELESS INCRU 8W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [580, 151, null], "stock0": 0, "transito": 0}, {"ref": "862", "nombre": "LED BULB NEV 2.5W LF E14 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [186, null, null], "stock0": 0, "transito": 0}, {"ref": "1065", "nombre": "LED MR11 4W LC GU10 15000H ILUM BLR", "canal": "MULTICANAL", "m": [null, 1140, 176], "stock0": 570, "transito": 0}, {"ref": "961", "nombre": "LED GLOBO 18W LC E27 30000H ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1259, -30], "stock0": 14, "transito": 0}, {"ref": "1790", "nombre": "LED REFLECTOR SMD 10W RGB 25KH ILM CJ", "canal": "MULTICANAL", "m": [200, 205, 95], "stock0": 5, "transito": 0}, {"ref": "1405", "nombre": "LUZ DE NOCHE LC ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1299, -36], "stock0": 0, "transito": 0}, {"ref": "980", "nombre": "LED BULB FIL 6W DIM LC E27 25KH ILM BLR", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 1200, "transito": 0}, {"ref": "1827", "nombre": "COLGANTE 1XE27 CUERDA ILM CAJA", "canal": "MULTICANAL", "m": [260, 220, 110], "stock0": 1556, "transito": 0}, {"ref": "1178", "nombre": "LED 1.7W LB G4 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [153, 0, null], "stock0": 0, "transito": 0}, {"ref": "2108", "nombre": "BALA EMP MR11 BLANCA ILUM CJ", "canal": "MULTICANAL", "m": [287, -24, 25], "stock0": 0, "transito": 0}, {"ref": "2217", "nombre": "LED LUZ DE NOCHE PATO ILUM BL", "canal": "EXCLUSIVO", "m": [372, 477, 324], "stock0": 580, "transito": 0}, {"ref": "1168", "nombre": "KIT 3 BAL+LED OPT AJUS BLC 6W LC GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2294", "nombre": "LED BOMBILLO 4 ASP 45W LB 20KH E27 ILM C", "canal": "EXCLUSIVO", "m": [null, 974, 96], "stock0": 919, "transito": 0}, {"ref": "2180", "nombre": "LED SOLAR BOMBILLO 20W LB ILM CAJA", "canal": "MULTICANAL", "m": [225, 213, 144], "stock0": 4858, "transito": 0}, {"ref": "1062", "nombre": "LUMINARIA LED REGLET 12W LB 25000H ILUM", "canal": "EXCLUSIVO", "m": [150, 198, 162], "stock0": 0, "transito": 0}, {"ref": "1091", "nombre": "BALA DE EMPOTRAR AJUSTABLE SATIN ILUM CJ", "canal": "MULTICANAL", "m": [null, 325, 600], "stock0": 106, "transito": 0}, {"ref": "2468", "nombre": "LED BULB 12W CCT 25KH ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [null, 1260, 105], "stock0": 98, "transito": 0}, {"ref": "1264", "nombre": "LED PANEL PLAN 24W LB 30X30CM ILM PRM CJ", "canal": "MULTICANAL", "m": [255, 267, -1], "stock0": 0, "transito": 0}, {"ref": "2308", "nombre": "LED PANEL DIM RED SOBR 18W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [null, 984, 263], "stock0": 0, "transito": 4200}, {"ref": "1061", "nombre": "LUMINARIA LED REGLET 9W LB 25000H ILUM C", "canal": "EXCLUSIVO", "m": [186, 144, 156], "stock0": 471, "transito": 0}, {"ref": "1063", "nombre": "LUMINARIA LED REGLET 18W LB 25000H ILUM", "canal": "MULTICANAL", "m": [300, 168, 186], "stock0": 455, "transito": 0}, {"ref": "2219", "nombre": "CINTA LED 4W RGB 20KH 10M ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [210, 247, 230], "stock0": 37, "transito": 0}, {"ref": "2193", "nombre": "LED FIL GLOBO G195 6W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [100, 20, 70], "stock0": 1057, "transito": 0}, {"ref": "738", "nombre": "LED GLOBO 12W LB E27 15000H ILUM CJ", "canal": "EXCLUSIVO", "m": [null, 1140, 90], "stock0": 249, "transito": 0}, {"ref": "2186", "nombre": "LED FRAMELESS 10W LB INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 372, "transito": 0}, {"ref": "904", "nombre": "LED BALA PISO  3W LC 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [156, 234, 162], "stock0": 89, "transito": 0}, {"ref": "2467", "nombre": "LED BULB 7W CCT 25KH ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [330, 196, null], "stock0": 0, "transito": 0}, {"ref": "2183", "nombre": "LED FRAMELESS 36W LB INC RED 20KH ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1167", "nombre": "KIT 3 BAL+LED OPT AJUS BLC 6W LB GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2307", "nombre": "LED PANEL DIM RED INCRUS 12W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [null, 599, null], "stock0": 1, "transito": 0}, {"ref": "598", "nombre": "LED GLOBO 12W LC E27 15000H ILUM CJ", "canal": "EXCLUSIVO", "m": [80, 140, 120], "stock0": 270, "transito": 0}, {"ref": "466", "nombre": "LED PANEL PLANO 48W LB 60X60CM  ILUM CAJ", "canal": "MULTICANAL", "m": [270, 62, null], "stock0": 0, "transito": 0}, {"ref": "2198", "nombre": "LED FRAMELESS 18W LC INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 1143, "transito": 0}, {"ref": "902", "nombre": "LED BALA PISO  1W LC 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [234, 210, 144], "stock0": 575, "transito": 0}, {"ref": "1170", "nombre": "KIT 3 BAL+LED OPT AJUS STN 6W LC GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1980", "nombre": "LED LUM HERME 36W LB 25000H ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2212", "nombre": "LED LUZ DE NOCHE CARRO VERDE ILUM BL", "canal": "EXCLUSIVO", "m": [132, 144, 84], "stock0": 1123, "transito": 0}, {"ref": "794", "nombre": "LED PANEL PLANO 48W LB 30X120 CM ILUM CA", "canal": "MULTICANAL", "m": [46, 189, 40], "stock0": 78, "transito": 0}, {"ref": "1169", "nombre": "KIT 3 BAL+LED OPT AJUS SATN 6W LB GU10 3", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1064", "nombre": "LED MR11 4W LB GU10 15KH ILM BLR", "canal": "EXCLUSIVO", "m": [156, 192, 144], "stock0": 0, "transito": 0}, {"ref": "2216", "nombre": "LED VELITA FLAMA 2W E27 ILUM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1460", "nombre": "LED BULB SOLAR 7W LB E27 10000 ILM BL", "canal": "MULTICANAL", "m": [84, 120, 7], "stock0": 557, "transito": 0}, {"ref": "1390", "nombre": "LUMINARIA A SOLAR LED 4W LB 35K H IL CJ", "canal": "MULTICANAL", "m": [90, 108, 132], "stock0": 559, "transito": 0}, {"ref": "2223", "nombre": "LED HERMETICA 50W LB 20KH ILM CJ", "canal": "EXCLUSIVO", "m": [10, null, null], "stock0": 0, "transito": 0}, {"ref": "1343", "nombre": "D LED ESTACA SOLAR 0.06W LB ILM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1407, "transito": 0}, {"ref": "2478", "nombre": "LED PROYECTOR INFANT 1W CCT 15KH ILUM CA", "canal": "EXCLUSIVO", "m": [96, 118, 72], "stock0": 451, "transito": 0}, {"ref": "1112", "nombre": "D LED BULBO ANTIMOSQUITOS 7W 15000H E27", "canal": "Sin Canal", "m": [192, 144, 72], "stock0": 240, "transito": 0}, {"ref": "1807", "nombre": "ESTACA PARA GU10 NEGRA ILM CJ", "canal": "MULTICANAL", "m": [120, 160, 140], "stock0": 1069, "transito": 0}, {"ref": "2473", "nombre": "LED LUZ NOCH CUAD 0,6W LC 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [276, 276, 204], "stock0": 1026, "transito": 0}, {"ref": "2218", "nombre": "LED BOMBILLO FLAMA 3W E27 ILUM CJ", "canal": "EXCLUSIVO", "m": [72, 72, 36], "stock0": 19, "transito": 0}, {"ref": "2293", "nombre": "D LED PLAFON REDOND 32W LB E27 20KH ILM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "1138", "nombre": "COLGANTE VINTAGE 1XE27 NEGRO ILUM TARR", "canal": "EXCLUSIVO", "m": [99, 110, 40], "stock0": 502, "transito": 0}, {"ref": "2304", "nombre": "LED BOMBILLO VENTILADOR 30W LB ILUM CAJA", "canal": "EXCLUSIVO", "m": [48, null, -2], "stock0": 0, "transito": 0}, {"ref": "1380", "nombre": "PX2 LED ALTA POT 5W LC E27 25KH ILUM BL", "canal": "EXCLUSIVO", "m": [60, 64, null], "stock0": 0, "transito": 0}, {"ref": "932", "nombre": "PACK SOCKET T8 ANTIVIB+GANCHO SOP T8 HTR", "canal": "EXCLUSIVO", "m": [150, 200, 100], "stock0": 300, "transito": 0}, {"ref": "1139", "nombre": "COLGANTE VINTAGE 1XE27 BRONCE ILUM TARR", "canal": "EXCLUSIVO", "m": [120, 40, 148], "stock0": 87, "transito": 0}, {"ref": "2301", "nombre": "LED LINEAL 24W E27 LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, -2, null], "stock0": 1452, "transito": 0}, {"ref": "2199", "nombre": "LED FRAMELESS 10W LC INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 722, "transito": 0}, {"ref": "1388", "nombre": "LED REFLECTOR SOLAR SENSO 5W LB ILM CJ", "canal": "EXCLUSIVO", "m": [114, 114, 156], "stock0": 277, "transito": 0}, {"ref": "1963", "nombre": "D LED REFLE 50W SMART CCT RGB 25KH ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 282, "transito": 0}, {"ref": "2333", "nombre": "LED REFLECTOR SOLAR 100W LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [-4, -2, null], "stock0": 0, "transito": 0}, {"ref": "2464", "nombre": "LED BOMBILLO SOLAR 30W LB 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [132, 118, 72], "stock0": 0, "transito": 0}, {"ref": "2305", "nombre": "LED PANEL SLIM RED SATIN 12W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [48, 60, 48], "stock0": 975, "transito": 0}, {"ref": "2302", "nombre": "LED LINEAL 18W E27 LB ILUM CAJA", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 1476, "transito": 0}, {"ref": "1957", "nombre": "LUMINARIA SOLAR LED 4W LB 35KH ILM CJ", "canal": "MULTICANAL", "m": [48, 34, 72], "stock0": 941, "transito": 0}, {"ref": "1074", "nombre": "ESTACA LED 5W VERDE 25000H ILUM CJ", "canal": "EXCLUSIVO", "m": [88, 32, 32], "stock0": 483, "transito": 0}, {"ref": "1490", "nombre": "BALA PISO GU10 4  ILM CAJ", "canal": "MULTICANAL", "m": [72, 102, 78], "stock0": 660, "transito": 0}, {"ref": "1378", "nombre": "PX2 LED ALTA POT 5W LB E27 25KH ILUM BL", "canal": "MULTICANAL", "m": [72, 84, 84], "stock0": 62, "transito": 0}, {"ref": "2306", "nombre": "LED PANEL SLIM RED SATIN 12W LC ILM CAJ", "canal": "EXCLUSIVO", "m": [60, 48, 60], "stock0": 1536, "transito": 0}, {"ref": "1524", "nombre": "D LED LAMP MESA RECA FLEX BLACA 4W ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 400, "transito": 0}, {"ref": "2303", "nombre": "LED LINEAL CORTA E27 12W LC ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 630, "transito": 0}, {"ref": "2465", "nombre": "LED LINT SOLAR 40W LB 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [216, 297, 204], "stock0": 540, "transito": 0}, {"ref": "1979", "nombre": "D LED LUM HERME 18W LB 25000H ILM CJ", "canal": "Sin Canal", "m": [204, 68, null], "stock0": 0, "transito": 0}, {"ref": "2474", "nombre": "LED LUZ NOCHE RED 0,8W LC 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [36, 132, 60], "stock0": 2852, "transito": 0}, {"ref": "2273", "nombre": "D SET X2 LED BULB DIM 9W SMART RGB E27", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1921", "nombre": "LED REFLECTOR 30W VERDE 2500H ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 5, "transito": 0}, {"ref": "969", "nombre": "LED REFLECTOR 10W BAT REC 50000H ILUM CA", "canal": "EXCLUSIVO", "m": [70, 35, 130], "stock0": 145, "transito": 0}, {"ref": "2332", "nombre": "LED REFLECTOR SOLAR 300W LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [86, 88, 62], "stock0": 254, "transito": 0}, {"ref": "903", "nombre": "LED BALA PISO  3W LB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [48, 60, 48], "stock0": 1, "transito": 0}, {"ref": "2192", "nombre": "D LED FIL T30 8W LB E27 25KH ILM CJ", "canal": "Sin Canal", "m": [24, null, null], "stock0": 1324, "transito": 0}, {"ref": "905", "nombre": "LED BALA PISO 3W RGB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [54, 53, 36], "stock0": 385, "transito": 0}, {"ref": "2475", "nombre": "LED LINT RECARG 1+4W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 1139, "transito": 0}, {"ref": "1794", "nombre": "D LED REFLECTOR 10W LF 30000H ILM CAJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1096", "nombre": "LED LUMINARIA EMERGENCIA 12 W BLANCA ILM", "canal": "MULTICANAL", "m": [36, 24, 72], "stock0": 2539, "transito": 0}, {"ref": "901", "nombre": "LED BALA PISO  1W LB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [48, 48, 36], "stock0": 684, "transito": 0}, {"ref": "2476", "nombre": "LED LINT RECARG 5W LB 20KH ILUM CAJA", "canal": "EXCLUSIVO", "m": [330, 189, 140], "stock0": 1041, "transito": 0}, {"ref": "2368", "nombre": "LED PANEL SLIM RED SOBR 40W CCT ILM CAJ", "canal": "EXCLUSIVO", "m": [50, 68, 25], "stock0": 941, "transito": 0}, {"ref": "1840", "nombre": "D LED REFLECTOR ESTACA 7.5W LB 25KH ILM", "canal": "Sin Canal", "m": [36, 12, 30], "stock0": 234, "transito": 0}, {"ref": "1379", "nombre": "D PX2 LED ALTA POT 5W LF E27 25KH ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2463", "nombre": "LED PANEL SOBRE 20W CCT+RGB 25KH ILUM", "canal": "EXCLUSIVO", "m": [50, 70, 60], "stock0": 361, "transito": 0}, {"ref": "2470", "nombre": "LED APLIQUE CUAD SOLAR 1W RGB 20KH ILM C", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 270, "transito": 0}, {"ref": "2049", "nombre": "D ESTACA LED 0.6W SOLAR SENS LF ILM CJ", "canal": "Sin Canal", "m": [24, 15, 24], "stock0": 393, "transito": 0}, {"ref": "2471", "nombre": "LED APLIQUE SOLAR 1W RGB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [20, 20, 20], "stock0": 2148, "transito": 0}, {"ref": "1810", "nombre": "D LED LAMP MESA FLEX DIM 3W LB BLANCA IL", "canal": "Sin Canal", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "930", "nombre": "SOCKET T5 BOLSA X1UND HTR ILUMAX", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 345, "transito": 0}, {"ref": "2477", "nombre": "LED LINT RECARG 1+15W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [24, 60, 60], "stock0": 1332, "transito": 0}, {"ref": "1424", "nombre": "D LED LUMINARIA CAMPING 2W LB RECARGABLE", "canal": "Sin Canal", "m": [-1, null, null], "stock0": 0, "transito": 0}, {"ref": "1855", "nombre": "LED REFLECTOR SOLAR SENSOR 10W LB ILM CJ", "canal": "MULTICANAL", "m": [4, 8, 4], "stock0": 389, "transito": 0}, {"ref": "1813", "nombre": "D LED REFLEC NOVA II 10W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1809", "nombre": "D LED LAMP MESA FLEX DIM 3W LB NEGRA IL", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1385", "nombre": "D APLIQ LED PARED SOL SENS 1.5W LB ILM B", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "348", "nombre": "D CONECTOR MR16 BOLSA X 1 UND", "canal": "Sin Canal", "m": [null, null, null], "stock0": 13, "transito": 0}, {"ref": "1815", "nombre": "D LED REFLEC NOVA II 30W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1817", "nombre": "D LED REFLEC NOVA II 50W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "848", "nombre": "LED PANEL PLANO 48W LF 60X60CM ILUM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 355, "transito": 0}, {"ref": "1812", "nombre": "D LED REFLE NOVA II 10W LB 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 42, "transito": 0}, {"ref": "1188", "nombre": "D LED APLIQUE EXTERIOR RECTANGU GRIS 3.5", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1190", "nombre": "D LED APLIQUE EXTERIOR CUADRADO GRIS 3W", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1415", "nombre": "D LUMINARIA A SOLAR LED 15W LB 35KH IL C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1021", "nombre": "PX2 LED BULB 10W LB E27 30000H ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1273", "nombre": "D LUMINARIA HERMETICA LED 2x20W LB 50 KH", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2145", "nombre": "D LED KARDAN 2X12W LC 20KH ILM CAJA", "canal": "Sin Canal", "m": [6, null, null], "stock0": 0, "transito": 0}, {"ref": "849", "nombre": "D LED PANEL PLANO 48W LF 120X30CM IL PRO", "canal": "Sin Canal", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "1797", "nombre": "D LED REFLECTOR 50W LF 30000H ILUM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2144", "nombre": "D LED KARDAN 12W LC 20KH ILM CAJA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 30, "transito": 0}, {"ref": "2104", "nombre": "D ESTACA SOLAR SMRT LED 1WRGB 30KH ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 314, "transito": 0}, {"ref": "726955", "nombre": "MP GV LED APL EXT RCTG GRS 3.5W LB SETX6", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 0, "transito": 0}, {"ref": "726290", "nombre": "MP GV ESTACA LED 5W LUZ CALIDAS SETX 16U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726887", "nombre": "MP GV ESTAC SOL NGR SPR LED 10X LF SETX6", "canal": "Sin Canal", "m": [null, 1, 2], "stock0": 0, "transito": 0}, {"ref": "2106", "nombre": "D BOLARDO LED SOLAR SENSOR 5W LB 35KH IL", "canal": "Sin Canal", "m": [null, null, null], "stock0": 139, "transito": 0}, {"ref": "2458", "nombre": "LED REFLECTOR 100W CCT 30KH ILUMAX CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 855, "transito": 0}, {"ref": "726511", "nombre": "MP GV LED APL EXT CUADRAD GRIS 3W SETX12", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2163", "nombre": "D LED BALA SUMERG 24W RGB 20KH ILUMAX CA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2457", "nombre": "LED REFLECTOR 50W CCT 30KH ILUMAX CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 1181, "transito": 0}, {"ref": "727082", "nombre": "MP GV RFLCTR LED 10W MLTCLOR RGB SETX10U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726979", "nombre": "D PX12 REFLECTOR LED 50W LUZ FRESCA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726221", "nombre": "D MP GV LED BALA PISO 3W LB SETX12UJ", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 1, "transito": 0}, {"ref": "726313", "nombre": "D MP GV ESTACA LED 5W LUZ VERDE SETX16U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726368", "nombre": "D MP GV LED BALA PISO 1W LC SETX12U", "canal": "Sin Canal", "m": [-2, 1, 1], "stock0": 1, "transito": 0}, {"ref": "726597", "nombre": "MP GV LED GLBO FILMNTO 8W DIM LC SETX20U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726474", "nombre": "MP GV COLGANTE VITAGE 1XE27 NGRO SETX10U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726528", "nombre": "MP GV APL PRED LED SL SN  3,2W LBC SETX6", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2594", "nombre": "LED LAMPARA RECARGABLE 1+30W 6000k 8KH", "canal": "EXCLUSIVO", "m": [null, null, 400], "stock0": 600, "transito": 0}, {"ref": "2095", "nombre": "LED REFLECTOR 50W LC 25000H ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2530", "nombre": "LED REFLECTOR 50W VERDE 50000H ILUM CAJ", "canal": "FERRETERO", "m": [150, 9, -1], "stock0": 0, "transito": 0}, {"ref": "726665", "nombre": "D MP GV LED MR11 4W LC GU10 SETX24U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2570", "nombre": "LED APLIQUE SOLAR PARED 0.2W 1800K 30000", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 26, "transito": 0}, {"ref": "2528", "nombre": "LED SOLAR REFLECTOR 120W CCT 50KH ILM C", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "2590", "nombre": "LED APLIQUE MULTIFORMA 8W 25KH ILUMAX CJ", "canal": "EXCLUSIVO", "m": [null, null, 144], "stock0": 360, "transito": 0}, {"ref": "2529", "nombre": "LED SOLAR REFLECTOR 240W CCT 50KH ILM C", "canal": "EXCLUSIVO", "m": [-1, null, null], "stock0": 0, "transito": 0}, {"ref": "2525", "nombre": "LAMP ESCRITORIO NEGRA  E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "2567", "nombre": "LED APLIQUE SOLAR 0,37W CCT 20000H ILM C", "canal": "EXCLUSIVO", "m": [250, 230, 340], "stock0": 1529, "transito": 0}, {"ref": "2162", "nombre": "LED SOLAR REFLECTOR 800W LB 30KH ILUM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 121, "transito": 0}, {"ref": "2523", "nombre": "LED LAMP RECAR VENT 10W CCT ILM CJ", "canal": "EXCLUSIVO", "m": [-89, -55, -37], "stock0": 313, "transito": 0}, {"ref": "2336", "nombre": "LED PAR 30 IP20 10W LC E27 25000H ILM CJ", "canal": "FERRETERO", "m": [null, null, 216], "stock0": 343, "transito": 0}, {"ref": "726245", "nombre": "MP GV LED BALA PISO 3W LUZ CALIDA SETX6U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2571", "nombre": "LED APLIQUE SOLAR BOLARDO 0,2W 1800K 300", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 27, "transito": 0}, {"ref": "2526", "nombre": "LAMP ESCRITORIO BLANCA  E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2221", "nombre": "D LAMPARA LED RECARGABLE LUNA RGB ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1150, "transito": 0}, {"ref": "2568", "nombre": "LED APLIQUE SOLAR 0,44W CCT 20000H ILM C", "canal": "EXCLUSIVO", "m": [230, 180, 410], "stock0": 1599, "transito": 0}, {"ref": "2520", "nombre": "LED LAMP RECAR 12W 3 LUC ILM CJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 9, "transito": 0}, {"ref": "2522", "nombre": "LED LAMP RECAR MAGNE 10W CCT ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2592", "nombre": "LED TORTUGA CON SENSOR 12W CCT 50KH ILM", "canal": "EXCLUSIVO", "m": [null, null, 492], "stock0": 1484, "transito": 0}, {"ref": "2527", "nombre": "LAMP ESCRITORIO VERDE  E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2593", "nombre": "LED TORTUGA CON SENSOR 8W CCT 50KH ILM", "canal": "EXCLUSIVO", "m": [null, null, 492], "stock0": 1481, "transito": 0}, {"ref": "2578", "nombre": "LED PANEL INCRUSTAR BORDE NEGRO 12W CCT", "canal": "EXCLUSIVO", "m": [null, null, 336], "stock0": 3400, "transito": 0}, {"ref": "2337", "nombre": "D LED PAR 30 IP20 10W LF E27 25000H ILM", "canal": "Sin Canal", "m": [null, null, 216], "stock0": 761, "transito": 0}, {"ref": "2579", "nombre": "LED PANEL INCRUSTAR BORDE NEGRO 18W CCT", "canal": "EXCLUSIVO", "m": [null, null, 336], "stock0": 2608, "transito": 0}, {"ref": "726412", "nombre": "D MP GV LED RFLCTR 10W BATE RECA SETX 5U", "canal": "Sin Canal", "m": [null, null, 1], "stock0": 0, "transito": 0}, {"ref": "726771", "nombre": "D PX12 REFLECTOR LED 30W LUZ FRESCA", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 0, "transito": 0}, {"ref": "2569", "nombre": "LED APLIQUE SOLAR SOBREPONER0,20W 1800K", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 39, "transito": 0}, {"ref": "1959", "nombre": "LED BULB DUM 9W SMART RGB E27 20KH IILM", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2311", "nombre": "LED FRAMELESS SOBRP 18W LB ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 476, "transito": 0}, {"ref": "1387", "nombre": "D APLIQ LED PARED SOL SENS 3.2W LB ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1965", "nombre": "D LED PLAFON REDONDO 18W SMART CCT ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1793", "nombre": "D LED REFLECTOR SMD 50W RGB 25 KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}]</script>
+<script>
+(function(){
+  "use strict";
+
+  var PRODUCTS_RAW = JSON.parse(document.getElementById('products-data').textContent);
+  var BASELINE_DATE = new Date('2026-07-27T00:00:00');
+  var DEFAULT_LEAD_TIME = 120; // 4 meses — tiempo real de entrega del proveedor
+  var DEFAULT_SAFETY = 30;
+  var DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwrub1N_jokQMH1yOrsKcPBAr3IR09DrQ-ojaa2CI-TSPNWYf5KfU8v8BN_b7FA-0hd/exec';
+
+  var STORE_KEY = 'app-data-v1';
+  var state = { movimientos: [], config: {} };
+  var currentTab = 'dashboard';
+  var sortState = { col: 'diasCobertura', dir: 'asc' };
+  var searchTerm = '';
+  var alertFilter = '';
+  var dashCanalFilter = '';
+  var proySearch = '';
+
+  var STORE_URL_KEY = 'sheets-url-v1';
+  var sheetsUrl = null;
+  var connected = false;
+  var serverProductos = null;
+  var sessionLog = []; // movimientos enviados en esta sesión (solo para mostrar feedback visual)
+  var lastConnStatus = 'No conectado — trabajando en modo local (datos guardados en este navegador).';
+  var lastConnConnected = false;
+
+  function toast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._h);
+    toast._h = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  function fmtDate(d){
+    if(!d) return '—';
+    var dd = String(d.getDate()).padStart(2,'0');
+    var mm = String(d.getMonth()+1).padStart(2,'0');
+    var yy = d.getFullYear();
+    return dd+'/'+mm+'/'+yy;
+  }
+
+  function todayISO(){
+    var d = new Date();
+    var mm = String(d.getMonth()+1).padStart(2,'0');
+    var dd = String(d.getDate()).padStart(2,'0');
+    return d.getFullYear()+'-'+mm+'-'+dd;
+  }
+
+  function daysBetween(a,b){
+    return (b - a) / (1000*60*60*24);
+  }
+
+  // ---------- Storage ----------
+  async function loadState(){
+    try{
+      var res = await window.storage.get(STORE_KEY, false);
+      if(res && res.value){
+        var parsed = JSON.parse(res.value);
+        state.movimientos = parsed.movimientos || [];
+        state.config = parsed.config || {};
+      }
+    }catch(e){
+      // key doesn't exist yet — start fresh
+      state = { movimientos: [], config: {} };
+    }
+  }
+
+  var saveTimer = null;
+  function saveState(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async function(){
+      try{
+        await window.storage.set(STORE_KEY, JSON.stringify(state), false);
+      }catch(e){
+        toast('No se pudo guardar. Intenta de nuevo.');
+      }
+    }, 150);
+  }
+
+  // ---------- Computation ----------
+  function getConfig(ref){
+    var c = state.config[ref] || {};
+    return {
+      leadTime: (typeof c.leadTime === 'number') ? c.leadTime : DEFAULT_LEAD_TIME,
+      safety: (typeof c.safety === 'number') ? c.safety : DEFAULT_SAFETY,
+      transito: (typeof c.transito === 'number') ? c.transito : null
+    };
+  }
+
+  function computeProduct(p){
+    var cfg = getConfig(p.ref);
+    var transito = cfg.transito !== null ? cfg.transito : p.transito;
+
+    var entradas = 0, salidas = 0;
+    var now = new Date();
+    var last30Sum = 0, last30Count = 0;
+
+    for(var i=0;i<state.movimientos.length;i++){
+      var m = state.movimientos[i];
+      if(m.ref !== p.ref) continue;
+      var qty = Number(m.cantidad) || 0;
+      if(m.tipo === 'entrada'){ entradas += qty; }
+      else { salidas += qty;
+        var mDate = new Date(m.fecha+'T00:00:00');
+        var diff = daysBetween(mDate, now);
+        if(diff >= 0 && diff <= 30){ last30Sum += qty; last30Count++; }
+      }
+    }
+
+    var stockActual = p.stock0 + entradas - salidas;
+
+    var histVals = p.m.filter(function(v){ return typeof v === 'number'; });
+    var histAvgDaily = histVals.length ? (histVals.reduce(function(a,b){return a+b;},0)/histVals.length)/30 : 0;
+
+    var avgDaily = last30Count > 0 ? (last30Sum/30) : histAvgDaily;
+
+    var diasCobertura = avgDaily > 0 ? (stockActual + transito)/avgDaily : 0;
+    var fechaAgotado = avgDaily > 0 ? new Date(now.getTime() + diasCobertura*86400000) : null;
+    var cantidadSugerida = avgDaily > 0 ? Math.max(0, Math.round(avgDaily*(cfg.leadTime+cfg.safety) - stockActual - transito)) : 0;
+
+    // Fecha límite para colocar el pedido: si no se pide para esa fecha, se agota antes de que llegue el próximo lote
+    var diasParaPedir = diasCobertura - cfg.leadTime;
+    var fechaLimitePedido = avgDaily > 0 ? new Date(now.getTime() + diasParaPedir*86400000) : null;
+    var vencido = avgDaily > 0 && diasParaPedir <= 0;
+
+    var alerta;
+    if(avgDaily <= 0) alerta = 'SIN DATO';
+    else alerta = (diasCobertura < (cfg.leadTime + cfg.safety)) ? 'PEDIR YA' : 'OK';
+
+    return {
+      ref: p.ref, nombre: p.nombre, canal: p.canal,
+      stockActual: stockActual, transito: transito,
+      avgDaily: avgDaily, diasCobertura: diasCobertura,
+      fechaAgotado: fechaAgotado, cantidadSugerida: cantidadSugerida,
+      fechaLimitePedido: fechaLimitePedido, vencido: vencido,
+      alerta: alerta, leadTime: cfg.leadTime, safety: cfg.safety
+    };
+  }
+
+  function computeAll(){
+    if (connected && serverProductos) return serverProductos;
+    return PRODUCTS_RAW.map(computeProduct);
+  }
+
+  // ---------- Conexión a Google Sheets ----------
+  function mapServerProduct(p){
+    return {
+      ref: p.ref, nombre: p.nombre, canal: p.canal, proveedor: p.proveedor,
+      stockActual: p.stockActual, transito: p.transito,
+      avgDaily: p.avgDaily, diasCobertura: p.diasCobertura,
+      fechaAgotado: p.fechaAgotado ? new Date(p.fechaAgotado) : null,
+      cantidadSugerida: p.cantidadSugerida,
+      fechaLimitePedido: p.fechaLimitePedido ? new Date(p.fechaLimitePedido) : null,
+      vencido: !!p.vencido, alerta: p.alerta,
+      leadTime: p.leadTime, safety: p.safety
+    };
+  }
+
+  function setConnectionStatus(msg, isConnected){
+    lastConnStatus = msg; lastConnConnected = isConnected;
+    var statusEl = document.getElementById('sheets-status');
+    if (statusEl) statusEl.textContent = msg;
+    var syncBtn = document.getElementById('sheets-sync');
+    if (syncBtn) syncBtn.style.display = isConnected ? 'inline-block' : 'none';
+  }
+
+  function abrirAjustesConexion(){
+    var html =
+      '<button class="modal-close" id="modal-close-btn">Cerrar ✕</button>'+
+      '<h2 style="margin-top:0;color:var(--navy);">Conexión a Google Sheets</h2>'+
+      '<div class="field"><label>URL de tu Apps Script publicado (/exec)</label>'+
+      '<input type="text" id="sheets-url" value="'+escapeHtml(sheetsUrl||DEFAULT_SHEETS_URL)+'"></div>'+
+      '<div style="display:flex;gap:10px;margin:10px 0;">'+
+        '<button class="btn btn-primary" id="sheets-connect">Conectar</button>'+
+        '<button class="btn btn-ghost" id="sheets-sync" style="display:'+(connected?'inline-block':'none')+';">🔄 Sincronizar ahora</button>'+
+      '</div>'+
+      '<p class="hint" id="sheets-status">'+escapeHtml(lastConnStatus||'')+'</p>';
+    openModal(html);
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    document.getElementById('sheets-connect').addEventListener('click', function(){
+      conectarSheets(document.getElementById('sheets-url').value.trim(), false);
+    });
+    document.getElementById('sheets-sync').addEventListener('click', function(){ sincronizarSheets(); });
+  }
+
+  async function conectarSheets(url, silencioso){
+    if (!url){ toast('Pega la URL de tu Apps Script publicado primero.'); return; }
+    setConnectionStatus('Conectando…', false);
+    try{
+      var sep = url.indexOf('?') >= 0 ? '&' : '?';
+      var res = await fetch(url + sep + 'action=data');
+      var json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'Respuesta inválida');
+      serverProductos = json.productos.map(mapServerProduct);
+      connected = true;
+      sheetsUrl = url;
+      try{ await window.storage.set(STORE_URL_KEY, url, false); }catch(e){}
+      setConnectionStatus('Conectado a ' + (json.empresa||'Google Sheets') + ' — ' + serverProductos.length + ' productos.', true);
+      renderStats();
+      switchTab(currentTab);
+      if (!silencioso) toast('Conectado a Google Sheets correctamente.');
+    }catch(e){
+      connected = false; serverProductos = null;
+      setConnectionStatus('No se pudo conectar. Revisa que la URL sea la de "Aplicación web" (termina en /exec) y que el acceso esté en "Cualquier persona".', false);
+      renderStats();
+      if (!silencioso) toast('No se pudo conectar a Google Sheets.');
+    }
+  }
+
+  async function sincronizarSheets(){
+    if (!sheetsUrl) return;
+    await conectarSheets(sheetsUrl, true);
+    toast('Sincronizado con Google Sheets.');
+  }
+
+  async function enviarMovimientoASheets(ref, fecha, tipo, cantidad){
+    var res = await fetch(sheetsUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action:'addMovimiento', ref: ref, fecha: fecha, tipo: (tipo==='entrada'?'Entrada':'Salida'), cantidad: cantidad })
+    });
+    var json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Error al guardar en Sheets');
+    serverProductos = json.productos.map(mapServerProduct);
+  }
+
+  // ---------- Modal genérico ----------
+  function openModal(html){
+    document.getElementById('modal-box').innerHTML = html;
+    document.getElementById('modal-overlay').classList.add('show');
+  }
+  function closeModal(){
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+  document.getElementById('modal-overlay').addEventListener('click', function(e){
+    if (e.target.id === 'modal-overlay') closeModal();
+  });
+
+  // ---------- Detalle de producto + histórico ----------
+  async function abrirDetalleProducto(ref){
+    var nombreLocal = (PRODUCTS_RAW.find(function(p){return p.ref===ref;})||{}).nombre || ref;
+    openModal('<div class="empty">Cargando histórico de '+escapeHtml(nombreLocal)+'…</div>');
+
+    if (connected && sheetsUrl){
+      try{
+        var res = await fetch(sheetsUrl + '?action=historial&ref=' + encodeURIComponent(ref));
+        var json = await res.json();
+        if (!json.ok) throw new Error(json.error||'error');
+        renderDetalleModal(json.producto, json.historial.map(function(h){
+          return { fila: h.fila, fecha: h.fecha.slice(0,10), tipo: h.tipo==='Entrada'?'entrada':'salida', cantidad: h.cantidad, notas: h.notas };
+        }), true);
+      }catch(e){
+        openModal('<button class="modal-close" onclick="document.getElementById(\'modal-overlay\').classList.remove(\'show\')">Cerrar</button>'+
+          '<div class="empty">No se pudo cargar el histórico desde Google Sheets.</div>');
+      }
+    } else {
+      var p = computeAll().find(function(r){return r.ref===ref;});
+      var localMovs = state.movimientos.filter(function(m){return m.ref===ref;})
+        .sort(function(a,b){return b.fecha.localeCompare(a.fecha);});
+      renderDetalleModal(p, localMovs, false);
+    }
+  }
+
+  function renderDetalleModal(p, historial, modoConectado){
+    if (!p){
+      openModal('<button class="modal-close" id="modal-close-btn">Cerrar</button><div class="empty">No encontré datos de este producto.</div>');
+      document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+      return;
+    }
+
+    var badgeClass = p.alerta==='PEDIR YA'?'pedir':(p.alerta==='OK'?'ok':'sindato');
+
+    // Mini gráfico de barras con los últimos consumos (salidas) del histórico
+    var salidas = historial.filter(function(h){return h.tipo==='salida';}).slice(0,12).reverse();
+    var maxQty = Math.max.apply(null, salidas.map(function(h){return h.cantidad;}).concat([1]));
+    var spark = salidas.map(function(h){
+      var pct = Math.max(4, (h.cantidad/maxQty)*100);
+      return '<div class="sparkbar" style="height:'+pct+'%;" title="'+fmtDate(new Date(h.fecha+'T00:00:00'))+': '+h.cantidad+'"></div>';
+    }).join('');
+
+    var histRows = historial.slice(0,40).map(function(h){
+      var tipoLabel = h.tipo==='entrada' ? '<span class="badge ok">Entrada</span>' : '<span class="badge sindato">Consumo</span>';
+      var delKey = modoConectado ? h.fila : h.id;
+      var delBtn = delKey ? '<button class="btn-danger-outline" data-delkey="'+delKey+'">Eliminar</button>' : '';
+      return '<tr><td>'+fmtDate(new Date(h.fecha+'T00:00:00'))+'</td><td>'+tipoLabel+'</td><td class="num-cell">'+h.cantidad+'</td><td>'+delBtn+'</td></tr>';
+    }).join('');
+    if (!historial.length) histRows = '<tr><td colspan="4"><div class="empty">Sin movimientos registrados todavía para este producto.</div></td></tr>';
+
+    // ---- Sustentación: por qué (y cuánto) pedir ----
+    var sustentacion;
+    if (p.avgDaily > 0){
+      var diasNecesarios = (p.leadTime||0) + (p.safety||0);
+      var necesarioUnidades = Math.round(p.avgDaily * diasNecesarios);
+      var disponible = Math.round(p.stockActual + (p.transito||0));
+      sustentacion =
+        '<ol style="margin:0;padding-left:18px;font-size:13px;line-height:1.7;color:var(--ink);">'+
+          '<li>Consumes en promedio <strong>'+p.avgDaily.toFixed(1)+' unidades/día</strong> (calculado sobre tu historial real de movimientos).</li>'+
+          '<li>Tu proveedor'+(p.proveedor?' ('+escapeHtml(p.proveedor)+')':'')+' tarda <strong>'+(p.leadTime||0)+' días</strong> en entregar el pedido.</li>'+
+          '<li>Para protegerte de variaciones en la demanda, el sistema sugiere un colchón de seguridad de <strong>'+(p.safety||0)+' días</strong>, calculado según qué tan variable ha sido tu consumo (a más variable, más colchón).</li>'+
+          '<li>Entre lead time y colchón, necesitas tener cubiertos <strong>'+diasNecesarios+' días</strong> de consumo ≈ <strong>'+necesarioUnidades.toLocaleString('es-CO')+' unidades</strong>.</li>'+
+          '<li>Hoy tienes <strong>'+Math.round(p.stockActual).toLocaleString('es-CO')+'</strong> en stock'+((p.transito||0)>0?' + <strong>'+Math.round(p.transito).toLocaleString('es-CO')+'</strong> en tránsito':'')+' = <strong>'+disponible.toLocaleString('es-CO')+' disponibles</strong>.</li>'+
+          '<li><strong>'+necesarioUnidades.toLocaleString('es-CO')+' − '+disponible.toLocaleString('es-CO')+' = '+Math.max(0,p.cantidadSugerida).toLocaleString('es-CO')+' unidades a pedir.</strong></li>'+
+        '</ol>';
+    } else {
+      sustentacion = '<p class="hint">Todavía no hay suficiente historial de consumo para calcular una sustentación confiable. Registra movimientos para que el sistema pueda justificar la cantidad a pedir.</p>';
+    }
+
+    var editSection =
+      '<div class="row cols-4" style="margin-top:6px;">'+
+        '<div class="field"><label>Nombre</label><input id="det-nombre" value="'+escapeHtml(p.nombre)+'"></div>'+
+        '<div class="field"><label>Canal</label><input id="det-canal" value="'+escapeHtml(p.canal||'')+'"></div>'+
+        '<div class="field"><label>Proveedor</label><input id="det-proveedor" value="'+escapeHtml(p.proveedor||'')+'" placeholder="Nombre exacto del proveedor"></div>'+
+        '<div class="field"><label>Corregir stock actual</label><input id="det-stock" type="number" placeholder="'+Math.round(p.stockActual)+'"></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:10px;margin-top:6px;">'+
+        '<button class="btn btn-primary" id="det-guardar">Guardar cambios</button>'+
+        '<button class="btn-danger-outline" id="det-eliminar" style="padding:10px 16px;">🗑️ Eliminar producto</button>'+
+      '</div>';
+
+    var html =
+      '<button class="modal-close" id="modal-close-btn">Cerrar ✕</button>'+
+      '<h2 style="margin-top:0;color:var(--navy);">'+escapeHtml(p.nombre)+'</h2>'+
+      '<p class="hint" style="margin-top:-6px;">Referencia '+escapeHtml(p.ref)+' · '+escapeHtml(p.canal||'')+'</p>'+
+      '<div class="kv-grid">'+
+        '<div class="kv-item"><div class="k">Stock actual</div><div class="v">'+Math.round(p.stockActual)+'</div></div>'+
+        '<div class="kv-item"><div class="k">Consumo/día</div><div class="v">'+p.avgDaily.toFixed(1)+'</div></div>'+
+        '<div class="kv-item"><div class="k">Días de cobertura</div><div class="v">'+(p.avgDaily>0? p.diasCobertura.toFixed(0):'—')+'</div></div>'+
+        '<div class="kv-item"><div class="k">Colchón sugerido</div><div class="v">'+(p.safety||'—')+' d</div></div>'+
+        '<div class="kv-item"><div class="k">Lead time</div><div class="v">'+(p.leadTime||'—')+' d</div></div>'+
+        '<div class="kv-item"><div class="k">Alerta</div><div class="v"><span class="badge '+badgeClass+'">'+p.alerta+'</span></div></div>'+
+      '</div>'+
+      (salidas.length ? '<p class="hint" style="margin-bottom:4px;">Últimos consumos registrados:</p><div class="sparkbar-wrap">'+spark+'</div>' : '')+
+      '<h2 style="font-size:13px;margin-top:18px;">📋 Sustentación — por qué pedir esta cantidad</h2>'+
+      sustentacion+
+      '<h2 style="font-size:13px;margin-top:18px;">Histórico de movimientos</h2>'+
+      '<div class="table-scroll" style="max-height:240px;"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th></th></tr></thead><tbody>'+histRows+'</tbody></table></div>'+
+      (modoConectado ?
+        '<h2 style="font-size:13px;margin-top:18px;">✏️ Editar / eliminar producto</h2>'+editSection :
+        '<p class="hint" style="margin-top:16px;">Conéctate a Google Sheets para poder editar o eliminar este producto.</p>');
+
+    openModal(html);
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+    document.querySelectorAll('#modal-box [data-delkey]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if (!confirm('¿Eliminar este movimiento del historial?')) return;
+        if (modoConectado){
+          try{
+            var res = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify({ action:'deleteMovimiento', fila: btn.getAttribute('data-delkey') }) });
+            var json = await res.json();
+            if (!json.ok) throw new Error(json.error||'error');
+            serverProductos = json.productos.map(mapServerProduct);
+            toast('Movimiento eliminado.');
+            abrirDetalleProducto(p.ref);
+            renderStats();
+          }catch(e){ toast('No se pudo eliminar el movimiento.'); }
+        } else {
+          state.movimientos = state.movimientos.filter(function(m){ return m.id !== btn.getAttribute('data-delkey'); });
+          saveState();
+          toast('Movimiento eliminado.');
+          abrirDetalleProducto(p.ref);
+          renderStats();
+        }
+      });
+    });
+
+    if (modoConectado){
+      document.getElementById('det-guardar').addEventListener('click', async function(){
+        var btn = document.getElementById('det-guardar');
+        btn.disabled = true; btn.textContent = 'Guardando…';
+        try{
+          var body = {
+            action: 'updateProducto', ref: p.ref,
+            nombre: document.getElementById('det-nombre').value.trim(),
+            canal: document.getElementById('det-canal').value.trim(),
+            proveedor: document.getElementById('det-proveedor').value.trim(),
+            stockCorregido: document.getElementById('det-stock').value.trim()
+          };
+          var res = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify(body) });
+          var json = await res.json();
+          if (!json.ok) throw new Error(json.error||'error');
+          serverProductos = json.productos.map(mapServerProduct);
+          toast('Producto actualizado.');
+          renderStats();
+          abrirDetalleProducto(p.ref);
+        }catch(e){
+          toast('No se pudo guardar el producto.');
+          btn.disabled = false; btn.textContent = 'Guardar cambios';
+        }
+      });
+
+      document.getElementById('det-eliminar').addEventListener('click', async function(){
+        if (!confirm('¿Eliminar "'+p.nombre+'" por completo del sistema? Esta acción no se puede deshacer.')) return;
+        try{
+          var res2 = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify({ action:'deleteProducto', ref: p.ref }) });
+          var json2 = await res2.json();
+          if (!json2.ok) throw new Error(json2.error||'error');
+          serverProductos = json2.productos.map(mapServerProduct);
+          toast('Producto eliminado.');
+          renderStats();
+          closeModal();
+          switchTab(currentTab);
+        }catch(e){ toast('No se pudo eliminar el producto.'); }
+      });
+    }
+  }
+
+
+  // ---------- Render: top stats ----------
+  function renderStats(){
+    var all = computeAll();
+    var pedir = all.filter(function(r){return r.alerta==='PEDIR YA';}).length;
+    var ok = all.filter(function(r){return r.alerta==='OK';}).length;
+    var sindato = all.filter(function(r){return r.alerta==='SIN DATO';}).length;
+
+    var conexionTxt = connected ? '🟢 Conectado a Sheets' : '🔴 Modo local';
+    document.getElementById('subLine').textContent = conexionTxt + ' · ' + all.length + ' productos' + (connected ? '' : ' · ' + state.movimientos.length + ' movimientos');
+
+    var el = document.getElementById('statsRow');
+    el.innerHTML =
+      '<div class="stat red click-kpi" data-filter="PEDIR YA"><div class="num">'+pedir+'</div><div class="lbl">Pedir ya</div></div>'+
+      '<div class="stat green click-kpi" data-filter="OK"><div class="num">'+ok+'</div><div class="lbl">OK</div></div>'+
+      '<div class="stat gray click-kpi" data-filter="SIN DATO"><div class="num">'+sindato+'</div><div class="lbl">Sin dato</div></div>';
+
+    document.querySelectorAll('#statsRow .click-kpi').forEach(function(card){
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function(){
+        alertFilter = card.getAttribute('data-filter');
+        switchTab('panel');
+      });
+    });
+  }
+
+  // ---------- Tabs ----------
+  function switchTab(tab){
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.classList.toggle('active', t.getAttribute('data-tab')===tab);
+    });
+    ['dashboard','registrar','panel','alertas','proyeccion','proveedores','config'].forEach(function(v){
+      document.getElementById('view-'+v).style.display = (v===tab)?'block':'none';
+    });
+    if(tab==='dashboard') renderDashboardView();
+    if(tab==='registrar') renderRegistrarView();
+    if(tab==='panel') renderPanelView();
+    if(tab==='alertas') renderAlertasView();
+    if(tab==='proyeccion') renderProyeccionView();
+    if(tab==='proveedores') renderProveedoresView();
+    if(tab==='config') renderConfigView();
+  }
+
+  document.getElementById('tabs').addEventListener('click', function(e){
+    var t = e.target.closest('.tab');
+    if(t) switchTab(t.getAttribute('data-tab'));
+  });
+
+  // ---------- View: Registrar movimiento ----------
+  function renderRegistrarView(){
+    var el = document.getElementById('view-registrar');
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Registrar movimiento de inventario</h2>'+
+        '<p class="desc">Registra cada consumo o entrada de mercancía del día. El panel de productos se recalcula solo — nada de promedios manuales.</p>'+
+        '<div class="row cols-4">'+
+          '<div class="field"><label>Producto</label><input id="mv-ref" list="productList" placeholder="Escribe referencia o nombre…" autocomplete="off"></div>'+
+          '<div class="field"><label>Fecha</label><input id="mv-fecha" type="date"></div>'+
+          '<div class="field"><label>Tipo</label><select id="mv-tipo"><option value="salida">Consumo (salida)</option><option value="entrada">Entrada / recepción</option></select></div>'+
+          '<div class="field"><label>Cantidad</label><input id="mv-cantidad" type="number" min="0" step="1" placeholder="0"></div>'+
+        '</div>'+
+        '<button class="btn btn-primary" id="mv-save">Guardar movimiento</button>'+
+        '<div class="legend-row">'+
+          '<span class="hint">El stock y el consumo promedio se actualizan automáticamente al guardar.</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="panel">'+
+        '<h2>Últimos movimientos</h2>'+
+        '<p class="desc">Los 25 más recientes.</p>'+
+        '<div id="mv-list"></div>'+
+      '</div>';
+
+    document.getElementById('mv-fecha').value = todayISO();
+
+    document.getElementById('mv-save').addEventListener('click', async function(){
+      var refInput = document.getElementById('mv-ref').value.trim();
+      var fecha = document.getElementById('mv-fecha').value;
+      var tipo = document.getElementById('mv-tipo').value;
+      var cantidad = parseFloat(document.getElementById('mv-cantidad').value);
+
+      var product = matchProduct(refInput);
+      if(!product){ toast('No encontré ese producto. Selecciona uno de la lista.'); return; }
+      if(!fecha){ toast('Selecciona una fecha.'); return; }
+      if(!cantidad || cantidad <= 0){ toast('Ingresa una cantidad válida.'); return; }
+
+      var saveBtn = document.getElementById('mv-save');
+
+      if (connected){
+        saveBtn.disabled = true; saveBtn.textContent = 'Guardando en Sheets…';
+        try{
+          await enviarMovimientoASheets(product.ref, fecha, tipo, cantidad);
+          sessionLog.unshift({ ref: product.ref, nombre: product.nombre, fecha: fecha, tipo: tipo, cantidad: cantidad });
+          renderStats();
+          renderMovList();
+          toast('Guardado en Google Sheets: ' + (tipo==='entrada'?'entrada':'consumo') + ' de ' + cantidad + ' — ' + product.nombre);
+        }catch(e){
+          toast('No se pudo guardar en Sheets. Verifica la conexión.');
+        }
+        saveBtn.disabled = false; saveBtn.textContent = 'Guardar movimiento';
+      } else {
+        state.movimientos.push({
+          id: 'm'+Date.now()+Math.random().toString(36).slice(2,7),
+          ref: product.ref, fecha: fecha, tipo: tipo, cantidad: cantidad
+        });
+        saveState();
+        renderStats();
+        renderMovList();
+        toast('Movimiento guardado: ' + (tipo==='entrada'?'entrada':'consumo') + ' de ' + cantidad + ' — ' + product.nombre);
+      }
+
+      document.getElementById('mv-cantidad').value = '';
+      document.getElementById('mv-ref').value = '';
+    });
+
+    renderMovList();
+  }
+
+  function matchProduct(input){
+    if(!input) return null;
+    var exact = PRODUCTS_RAW.find(function(p){ return p.ref === input; });
+    if(exact) return exact;
+    var lower = input.toLowerCase();
+    return PRODUCTS_RAW.find(function(p){
+      return (p.ref + ' — ' + p.nombre).toLowerCase() === lower;
+    }) || PRODUCTS_RAW.find(function(p){
+      return p.nombre.toLowerCase() === lower;
+    });
+  }
+
+  function renderMovList(){
+    if (connected){
+      if (!sessionLog.length){
+        document.getElementById('mv-list').innerHTML = '<div class="empty">Aún no registras movimientos en esta sesión. El historial completo vive en la hoja "Movimientos" de tu Google Sheet.</div>';
+        return;
+      }
+      var rowsConn = sessionLog.slice(0,25).map(function(m){
+        var tipoLabel = m.tipo==='entrada' ? '<span class="badge ok">Entrada</span>' : '<span class="badge sindato">Consumo</span>';
+        return '<tr>'+
+          '<td>'+fmtDate(new Date(m.fecha+'T00:00:00'))+'</td>'+
+          '<td>'+escapeHtml(m.nombre)+'</td>'+
+          '<td>'+tipoLabel+'</td>'+
+          '<td class="num-cell">'+m.cantidad+'</td>'+
+          '</tr>';
+      }).join('');
+      document.getElementById('mv-list').innerHTML =
+        '<p class="hint" style="margin-bottom:8px;">Enviados a Google Sheets en esta sesión (el historial completo está en la hoja "Movimientos"):</p>'+
+        '<div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cantidad</th></tr></thead><tbody>'+rowsConn+'</tbody></table></div>';
+      return;
+    }
+
+    var list = state.movimientos.slice().sort(function(a,b){
+      return (b.fecha+b.id).localeCompare(a.fecha+a.id);
+    }).slice(0,25);
+
+    if(!list.length){
+      document.getElementById('mv-list').innerHTML = '<div class="empty">Todavía no hay movimientos registrados. Agrega el primero arriba.</div>';
+      return;
+    }
+
+    var byRef = {};
+    PRODUCTS_RAW.forEach(function(p){ byRef[p.ref]=p; });
+
+    var rows = list.map(function(m){
+      var p = byRef[m.ref];
+      var tipoLabel = m.tipo==='entrada' ? '<span class="badge ok">Entrada</span>' : '<span class="badge sindato">Consumo</span>';
+      return '<tr>'+
+        '<td>'+fmtDate(new Date(m.fecha+'T00:00:00'))+'</td>'+
+        '<td>'+ (p? escapeHtml(p.nombre) : m.ref) +'</td>'+
+        '<td>'+tipoLabel+'</td>'+
+        '<td class="num-cell">'+m.cantidad+'</td>'+
+        '<td><button class="btn-danger-outline" data-id="'+m.id+'">Eliminar</button></td>'+
+        '</tr>';
+    }).join('');
+
+    document.getElementById('mv-list').innerHTML =
+      '<div class="table-scroll"><table><thead><tr>'+
+      '<th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th></th>'+
+      '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+
+    document.querySelectorAll('#mv-list [data-id]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-id');
+        state.movimientos = state.movimientos.filter(function(m){ return m.id !== id; });
+        saveState();
+        renderStats();
+        renderMovList();
+        toast('Movimiento eliminado.');
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  // ---------- View: Panel de productos ----------
+  function renderPanelView(){
+    var el = document.getElementById('view-panel');
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Panel de productos</h2>'+
+        '<p class="desc">Estado de reabastecimiento de las 200 referencias, calculado en tiempo real.</p>'+
+        '<div class="toolbar">'+
+          '<input type="text" id="pf-search" placeholder="Buscar por referencia o nombre…">'+
+          '<select id="pf-alerta"><option value="">Todas las alertas</option><option value="PEDIR YA">Pedir ya</option><option value="VENCIDO">Plazo vencido</option><option value="OK">OK</option><option value="SIN DATO">Sin dato</option></select>'+
+          '<div class="spacer"></div>'+
+          '<span class="hint" id="pf-count"></span>'+
+        '</div>'+
+        '<div class="table-scroll" id="pf-table"></div>'+
+        '<div class="legend-row">'+
+          '<div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>Pedir ya: cobertura menor a lead time + colchón</div>'+
+          '<div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>OK: cobertura suficiente</div>'+
+          '<div class="legend-item"><span class="legend-dot" style="background:var(--muted)"></span>Sin dato: sin consumo histórico confiable</div>'+
+        '</div>'+
+      '</div>';
+
+    document.getElementById('pf-search').value = searchTerm;
+    document.getElementById('pf-alerta').value = alertFilter;
+    document.getElementById('pf-search').addEventListener('input', function(e){ searchTerm = e.target.value; renderPanelTable(); });
+    document.getElementById('pf-alerta').addEventListener('change', function(e){ alertFilter = e.target.value; renderPanelTable(); });
+
+    renderPanelTable();
+  }
+
+  var PANEL_COLS = [
+    {key:'ref', label:'Referencia'},
+    {key:'nombre', label:'Producto'},
+    {key:'canal', label:'Canal'},
+    {key:'stockActual', label:'Stock', num:true},
+    {key:'avgDaily', label:'Consumo/día', num:true},
+    {key:'diasCobertura', label:'Días cobertura', num:true},
+    {key:'fechaAgotado', label:'Agotado el'},
+    {key:'fechaLimitePedido', label:'Pedir antes de'},
+    {key:'cantidadSugerida', label:'Pedir', num:true},
+    {key:'alerta', label:'Alerta'}
+  ];
+
+  function renderPanelTable(){
+    var all = computeAll();
+
+    if(searchTerm){
+      var s = searchTerm.toLowerCase();
+      all = all.filter(function(r){ return r.ref.toLowerCase().indexOf(s)>=0 || r.nombre.toLowerCase().indexOf(s)>=0; });
+    }
+    if(alertFilter === 'VENCIDO'){
+      all = all.filter(function(r){ return r.vencido; });
+    } else if(alertFilter){
+      all = all.filter(function(r){ return r.alerta === alertFilter; });
+    }
+
+    all.sort(function(a,b){
+      var av = a[sortState.col], bv = b[sortState.col];
+      if(av instanceof Date || bv instanceof Date){
+        av = av? av.getTime(): Infinity; bv = bv? bv.getTime(): Infinity;
+      }
+      if(typeof av === 'string'){
+        var c = av.localeCompare(bv);
+        return sortState.dir==='asc'? c : -c;
+      }
+      var c2 = (av||0) - (bv||0);
+      return sortState.dir==='asc'? c2 : -c2;
+    });
+
+    document.getElementById('pf-count').textContent = all.length + ' de ' + PRODUCTS_RAW.length + ' productos';
+
+    var head = '<thead><tr>' + PANEL_COLS.map(function(c){
+      var arrow = sortState.col===c.key ? (sortState.dir==='asc'?' ▲':' ▼') : '';
+      return '<th data-col="'+c.key+'">'+c.label+arrow+'</th>';
+    }).join('') + '</tr></thead>';
+
+    var body = all.map(function(r){
+      var badgeClass = r.alerta==='PEDIR YA'?'pedir':(r.alerta==='OK'?'ok':'sindato');
+      var limiteStyle = r.vencido ? 'color:var(--red);font-weight:700;' : '';
+      var limiteText = r.avgDaily>0 ? (r.vencido? 'Vencido': fmtDate(r.fechaLimitePedido)) : '—';
+      return '<tr class="row-click" data-ref="'+escapeHtml(r.ref)+'" title="Click para ver histórico">'+
+        '<td>'+escapeHtml(r.ref)+'</td>'+
+        '<td>'+escapeHtml(r.nombre)+'</td>'+
+        '<td>'+escapeHtml(r.canal)+'</td>'+
+        '<td class="num-cell">'+Math.round(r.stockActual)+'</td>'+
+        '<td class="num-cell">'+r.avgDaily.toFixed(1)+'</td>'+
+        '<td class="num-cell">'+(r.avgDaily>0? r.diasCobertura.toFixed(0): '—')+'</td>'+
+        '<td class="num-cell">'+fmtDate(r.fechaAgotado)+'</td>'+
+        '<td class="num-cell" style="'+limiteStyle+'">'+limiteText+'</td>'+
+        '<td class="num-cell">'+r.cantidadSugerida+'</td>'+
+        '<td><span class="badge '+badgeClass+'">'+r.alerta+'</span></td>'+
+        '</tr>';
+    }).join('');
+
+    if(!all.length){
+      body = '<tr><td colspan="10"><div class="empty">Ningún producto coincide con el filtro.</div></td></tr>';
+    }
+
+    document.getElementById('pf-table').innerHTML = '<table>'+head+'<tbody>'+body+'</tbody></table>';
+
+    document.querySelectorAll('#pf-table th[data-col]').forEach(function(th){
+      th.addEventListener('click', function(){
+        var col = th.getAttribute('data-col');
+        if(sortState.col === col){ sortState.dir = sortState.dir==='asc'?'desc':'asc'; }
+        else { sortState.col = col; sortState.dir = 'asc'; }
+        renderPanelTable();
+      });
+    });
+    document.querySelectorAll('#pf-table tr[data-ref]').forEach(function(tr){
+      tr.addEventListener('click', function(){ abrirDetalleProducto(tr.getAttribute('data-ref')); });
+    });
+  }
+
+  // ---------- View: Alertas ----------
+  function renderAlertasView(){
+    var el = document.getElementById('view-alertas');
+    var all = computeAll().filter(function(r){return r.alerta==='PEDIR YA';});
+    all.sort(function(a,b){ return a.diasCobertura - b.diasCobertura; });
+
+    var rows = all.map(function(r){
+      var limiteStyle = r.vencido ? 'color:var(--red);font-weight:700;' : 'font-weight:700;';
+      var limiteText = r.vencido ? 'Vencido — pedir hoy' : fmtDate(r.fechaLimitePedido);
+      return '<tr class="row-click" data-ref="'+escapeHtml(r.ref)+'" title="Click para ver histórico">'+
+        '<td>'+escapeHtml(r.ref)+'</td>'+
+        '<td>'+escapeHtml(r.nombre)+'</td>'+
+        '<td class="num-cell">'+Math.round(r.stockActual)+'</td>'+
+        '<td class="num-cell">'+r.diasCobertura.toFixed(0)+'</td>'+
+        '<td class="num-cell">'+fmtDate(r.fechaAgotado)+'</td>'+
+        '<td class="num-cell" style="'+limiteStyle+'">'+limiteText+'</td>'+
+        '<td class="num-cell" style="font-weight:700;">'+r.cantidadSugerida+'</td>'+
+        '</tr>';
+    }).join('');
+
+    var vencidosCount = all.filter(function(r){return r.vencido;}).length;
+
+    if(!all.length){
+      rows = '<tr><td colspan="7"><div class="empty">No hay productos en estado crítico ahora mismo.</div></td></tr>';
+    }
+
+    var botonPedidos = connected
+      ? '<button class="btn btn-primary" id="btn-generar-pedidos" style="margin-bottom:14px;">📦 Generar y enviar pedidos a proveedores ahora</button>'
+      : '<p class="hint">Conéctate a Google Sheets (arriba) para poder generar y enviar los correos de pedido a tus proveedores.</p>';
+
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Alertas activas — pedir ya</h2>'+
+        '<p class="desc">'+all.length+' producto(s) por debajo del punto de reorden ('+vencidosCount+' con el plazo de pedido ya vencido), ordenados del más urgente al menos urgente. Recuerda: tu proveedor tarda 4 meses (120 días) en entregar.</p>'+
+        botonPedidos+
+        '<div class="table-scroll"><table><thead><tr>'+
+        '<th>Referencia</th><th>Producto</th><th>Stock</th><th>Días cobertura</th><th>Agotado el</th><th>Pedir antes de</th><th>Cantidad a pedir</th>'+
+        '</tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '</div>';
+
+    document.querySelectorAll('#view-alertas tr[data-ref]').forEach(function(tr){
+      tr.addEventListener('click', function(){ abrirDetalleProducto(tr.getAttribute('data-ref')); });
+    });
+
+    var btnPed = document.getElementById('btn-generar-pedidos');
+    if (btnPed){
+      btnPed.addEventListener('click', async function(){
+        if (!confirm('Esto va a enviar correos REALES de pedido a tus proveedores (agrupados por proveedor) y quedará registrado en la hoja "Pedidos". ¿Continuar?')) return;
+        btnPed.disabled = true; btnPed.textContent = 'Enviando…';
+        try{
+          var res = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify({ action:'generarPedidos' }) });
+          var json = await res.json();
+          if (!json.ok) throw new Error(json.error||'error');
+          serverProductos = json.productos.map(mapServerProduct);
+          var r = json.resumenPedidos || {};
+          toast((r.correosEnviados||0) + ' correo(s) enviado(s) a ' + (r.proveedores||0) + ' proveedor(es) — ' + (r.referencias||0) + ' referencia(s).');
+          renderStats();
+          renderAlertasView();
+        }catch(e){
+          toast('No se pudo generar el pedido. Intenta de nuevo.');
+          btnPed.disabled = false; btnPed.textContent = '📦 Generar y enviar pedidos a proveedores ahora';
+        }
+      });
+    }
+  }
+
+  // ---------- View: Configuración ----------
+  function renderConfigView(){
+    var el = document.getElementById('view-config');
+
+    if (connected){
+      el.innerHTML =
+        '<div class="panel">'+
+          '<h2>Configuración general</h2>'+
+          '<p class="desc">Se guarda directamente en tu Google Sheet (hoja Configuración). Aquí puedes gestionarlo todo desde el panel, sin abrir la hoja.</p>'+
+          '<div id="cfg-form"><div class="empty">Cargando configuración…</div></div>'+
+        '</div>';
+      cargarYRenderConfigConectada();
+      return;
+    }
+
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Configuración por producto</h2>'+
+        '<p class="desc">Ajusta el tiempo de entrega (lead time) del proveedor, el colchón de seguridad y la cantidad en tránsito de cada producto. Por defecto: 45 días de lead time y 30 días de cobertura de seguridad.</p>'+
+        '<div class="toolbar">'+
+          '<input type="text" id="cf-search" placeholder="Buscar por referencia o nombre…">'+
+        '</div>'+
+        '<div class="table-scroll" id="cf-table"></div>'+
+      '</div>';
+
+    document.getElementById('cf-search').addEventListener('input', function(e){ renderConfigTable(e.target.value); });
+    renderConfigTable('');
+  }
+
+  async function cargarYRenderConfigConectada(){
+    var box = document.getElementById('cfg-form');
+    try{
+      var res = await fetch(sheetsUrl + '?action=config');
+      var cfg = await res.json();
+      if (!cfg.ok) throw new Error(cfg.error||'error');
+
+      box.innerHTML =
+        '<div class="row cols-3">'+
+          '<div class="field"><label>Correo para alertas y pedidos</label><input id="cfg-correo" type="email" value="'+escapeHtml(cfg.correoAlertas||'')+'" placeholder="tu@ilumax.com"></div>'+
+          '<div class="field"><label>Nivel de servicio objetivo</label><select id="cfg-nivel">'+
+            ['90%','95%','98%','99%'].map(function(v){ return '<option value="'+v+'"'+(v===cfg.nivelServicio?' selected':'')+'>'+v+'</option>'; }).join('') +
+          '</select></div>'+
+          '<div class="field"><label>Lead time por defecto (días)</label><input id="cfg-leadtime" type="number" value="'+(cfg.leadTimeDefecto||120)+'"></div>'+
+        '</div>'+
+        '<div class="row cols-3">'+
+          '<div class="field"><label>Colchón mínimo (días)</label><input id="cfg-min" type="number" value="'+(cfg.colchonMinimo||15)+'"></div>'+
+          '<div class="field"><label>Colchón máximo (días)</label><input id="cfg-max" type="number" value="'+(cfg.colchonMaximo||90)+'"></div>'+
+          '<div class="field"><label>Colchón por defecto sin datos (días)</label><input id="cfg-fallback" type="number" value="'+(cfg.colchonFallback||30)+'"></div>'+
+        '</div>'+
+        '<button class="btn btn-primary" id="cfg-save">Guardar configuración</button>';
+
+      document.getElementById('cfg-save').addEventListener('click', async function(){
+        var btn = document.getElementById('cfg-save');
+        btn.disabled = true; btn.textContent = 'Guardando…';
+        try{
+          var body = {
+            action: 'updateConfig',
+            correoAlertas: document.getElementById('cfg-correo').value.trim(),
+            nivelServicio: document.getElementById('cfg-nivel').value,
+            leadTimeDefecto: parseFloat(document.getElementById('cfg-leadtime').value)||120,
+            colchonMinimo: parseFloat(document.getElementById('cfg-min').value)||15,
+            colchonMaximo: parseFloat(document.getElementById('cfg-max').value)||90,
+            colchonFallback: parseFloat(document.getElementById('cfg-fallback').value)||30
+          };
+          var res2 = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify(body) });
+          var json2 = await res2.json();
+          if (!json2.ok) throw new Error(json2.error||'error');
+          toast('Configuración guardada.');
+          await sincronizarSheets();
+        }catch(e){
+          toast('No se pudo guardar la configuración.');
+        }
+        btn.disabled = false; btn.textContent = 'Guardar configuración';
+      });
+    }catch(e){
+      box.innerHTML = '<div class="empty">No se pudo cargar la configuración desde Sheets.</div>';
+    }
+  }
+
+  function renderConfigTable(filter){
+    var list = PRODUCTS_RAW.slice();
+    if(filter){
+      var s = filter.toLowerCase();
+      list = list.filter(function(p){ return p.ref.toLowerCase().indexOf(s)>=0 || p.nombre.toLowerCase().indexOf(s)>=0; });
+    }
+
+    var rows = list.map(function(p){
+      var cfg = getConfig(p.ref);
+      var transitoVal = cfg.transito !== null ? cfg.transito : p.transito;
+      return '<tr data-ref="'+escapeHtml(p.ref)+'">'+
+        '<td>'+escapeHtml(p.ref)+'</td>'+
+        '<td>'+escapeHtml(p.nombre)+'</td>'+
+        '<td><input type="number" class="cf-leadtime" value="'+cfg.leadTime+'" min="0" style="width:80px"></td>'+
+        '<td><input type="number" class="cf-safety" value="'+cfg.safety+'" min="0" style="width:80px"></td>'+
+        '<td><input type="number" class="cf-transito" value="'+transitoVal+'" min="0" style="width:90px"></td>'+
+        '</tr>';
+    }).join('');
+
+    if(!list.length){
+      rows = '<tr><td colspan="5"><div class="empty">Ningún producto coincide con la búsqueda.</div></td></tr>';
+    }
+
+    document.getElementById('cf-table').innerHTML =
+      '<table><thead><tr><th>Referencia</th><th>Producto</th><th>Lead time (días)</th><th>Colchón seguridad (días)</th><th>En tránsito</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table>';
+
+    document.querySelectorAll('#cf-table tr[data-ref]').forEach(function(tr){
+      var ref = tr.getAttribute('data-ref');
+      function commit(){
+        var lt = parseFloat(tr.querySelector('.cf-leadtime').value);
+        var sf = parseFloat(tr.querySelector('.cf-safety').value);
+        var tr_ = parseFloat(tr.querySelector('.cf-transito').value);
+        state.config[ref] = {
+          leadTime: isNaN(lt)? DEFAULT_LEAD_TIME : lt,
+          safety: isNaN(sf)? DEFAULT_SAFETY : sf,
+          transito: isNaN(tr_)? 0 : tr_
+        };
+        saveState();
+        renderStats();
+      }
+      tr.querySelectorAll('input').forEach(function(inp){
+        inp.addEventListener('change', function(){ commit(); toast('Configuración actualizada.'); });
+      });
+    });
+  }
+
+  // ---------- View: Dashboard ----------
+  var dashAlertFilter = '';
+
+  function renderDashboardView(){
+    var el = document.getElementById('view-dashboard');
+    var all = computeAll();
+    var canales = Array.from(new Set(all.map(function(r){return r.canal;}))).sort();
+
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Dashboard inteligente</h2>'+
+        '<p class="desc">Vista ejecutiva para decidir qué pedir primero. Click en cualquier tarjeta o segmento para ver el detalle. Lead time del proveedor: <strong>120 días (4 meses)</strong>.</p>'+
+        '<div class="toolbar">'+
+          '<select id="db-canal"><option value="">Todos los canales</option>'+canales.map(function(c){return '<option value="'+escapeHtml(c)+'">'+escapeHtml(c)+'</option>';}).join('')+'</select>'+
+          '<div class="spacer"></div>'+
+        '</div>'+
+        '<div id="db-kpis"></div>'+
+        '<div class="row" style="grid-template-columns:1fr 1fr;margin-top:22px;gap:24px;">'+
+          '<div><h2 style="font-size:13px;">Distribución general</h2><div id="db-pie"></div></div>'+
+          '<div><h2 style="font-size:13px;">Estado por canal</h2><div id="db-canalchart"></div></div>'+
+        '</div>'+
+        '<div style="margin-top:22px;"><h2 style="font-size:13px;">Top 10 más urgentes (click para ver el detalle)</h2><div id="db-topchart"></div></div>'+
+      '</div>';
+
+    document.getElementById('db-canal').value = dashCanalFilter;
+    document.getElementById('db-canal').addEventListener('change', function(e){ dashCanalFilter = e.target.value; renderDashboardView(); });
+
+    var filtered = dashCanalFilter ? all.filter(function(r){return r.canal===dashCanalFilter;}) : all;
+
+    var pedir = filtered.filter(function(r){return r.alerta==='PEDIR YA';});
+    var ok = filtered.filter(function(r){return r.alerta==='OK';});
+    var sindato = filtered.filter(function(r){return r.alerta==='SIN DATO';});
+    var vencidos = filtered.filter(function(r){return r.vencido;});
+    var withData = filtered.filter(function(r){return r.avgDaily>0;});
+    var avgCobertura = withData.length ? (withData.reduce(function(a,r){return a+r.diasCobertura;},0)/withData.length) : 0;
+    var totalUnidadesAPedir = pedir.reduce(function(a,r){return a+r.cantidadSugerida;},0);
+
+    document.getElementById('db-kpis').innerHTML =
+      '<div class="stats" style="margin-top:4px;">'+
+      kpiCard(pedir.length, 'Pedir ya', 'red', 'PEDIR YA')+
+      kpiCard(vencidos.length, 'Plazo vencido', 'red', 'VENCIDO')+
+      kpiCard(ok.length, 'OK', 'green', 'OK')+
+      kpiCard(sindato.length, 'Sin dato', 'gray', 'SIN DATO')+
+      kpiCard(Math.round(avgCobertura), 'Días cobertura prom.', 'gray', null)+
+      kpiCard(totalUnidadesAPedir.toLocaleString('es-CO'), 'Unidades a pedir', 'red', 'PEDIR YA')+
+      '</div>';
+
+    document.querySelectorAll('#db-kpis .click-kpi').forEach(function(card){
+      card.addEventListener('click', function(){
+        alertFilter = card.getAttribute('data-filter');
+        switchTab('panel');
+      });
+    });
+
+    // ---- Gráfico de torta (distribución general) ----
+    var totalFiltrado = filtered.length || 1;
+    var pPedir = pedir.length/totalFiltrado*100;
+    var pOk = ok.length/totalFiltrado*100;
+    var pSin = 100 - pPedir - pOk;
+    var gradient = 'conic-gradient(var(--red) 0% '+pPedir+'%, var(--green) '+pPedir+'% '+(pPedir+pOk)+'%, #C9CFDD '+(pPedir+pOk)+'% 100%)';
+    document.getElementById('db-pie').innerHTML =
+      '<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:6px 0;">'+
+        '<div style="width:150px;height:150px;border-radius:50%;background:'+gradient+';flex-shrink:0;"></div>'+
+        '<div>'+
+          '<div class="legend-item click-kpi" data-filter="PEDIR YA" style="cursor:pointer;margin-bottom:8px;"><span class="legend-dot" style="background:var(--red)"></span> Pedir ya — '+pedir.length+' ('+pPedir.toFixed(0)+'%)</div>'+
+          '<div class="legend-item click-kpi" data-filter="OK" style="cursor:pointer;margin-bottom:8px;"><span class="legend-dot" style="background:var(--green)"></span> OK — '+ok.length+' ('+pOk.toFixed(0)+'%)</div>'+
+          '<div class="legend-item click-kpi" data-filter="SIN DATO" style="cursor:pointer;"><span class="legend-dot" style="background:#C9CFDD"></span> Sin dato — '+sindato.length+' ('+pSin.toFixed(0)+'%)</div>'+
+        '</div>'+
+      '</div>';
+    document.querySelectorAll('#db-pie .click-kpi').forEach(function(item){
+      item.addEventListener('click', function(){
+        alertFilter = item.getAttribute('data-filter');
+        switchTab('panel');
+      });
+    });
+
+    // Canal chart (stacked, clickable)
+    var canalRows = canales.map(function(c){
+      var items = filtered.filter(function(r){return r.canal===c;});
+      var p = items.filter(function(r){return r.alerta==='PEDIR YA';}).length;
+      var o = items.filter(function(r){return r.alerta==='OK';}).length;
+      var s = items.filter(function(r){return r.alerta==='SIN DATO';}).length;
+      var total = items.length || 1;
+      return '<div style="margin-bottom:12px;cursor:pointer;" class="canal-row" data-canal="'+escapeHtml(c)+'">'+
+        '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:4px;">'+
+          '<span>'+escapeHtml(c)+'</span><span>'+items.length+' SKU</span>'+
+        '</div>'+
+        '<div style="display:flex;height:14px;border-radius:6px;overflow:hidden;background:var(--gray-soft);">'+
+          (p? '<div style="width:'+(p/total*100)+'%;background:var(--red);" title="'+p+' pedir ya"></div>':'')+
+          (o? '<div style="width:'+(o/total*100)+'%;background:var(--green);" title="'+o+' ok"></div>':'')+
+          (s? '<div style="width:'+(s/total*100)+'%;background:#C9CFDD;" title="'+s+' sin dato"></div>':'')+
+        '</div>'+
+      '</div>';
+    }).join('');
+    document.getElementById('db-canalchart').innerHTML = canalRows || '<div class="empty">Sin datos.</div>';
+    document.querySelectorAll('.canal-row').forEach(function(row){
+      row.addEventListener('click', function(){
+        dashCanalFilter = row.getAttribute('data-canal');
+        renderDashboardView();
+      });
+    });
+
+    // Top 10 chart (clickable -> abre detalle del producto)
+    var top10 = pedir.slice().sort(function(a,b){return a.diasCobertura-b.diasCobertura;}).slice(0,10);
+    var maxScale = 150; // días de referencia visual
+    var topRows = top10.map(function(r){
+      var pct = Math.min(100, (r.diasCobertura/maxScale)*100);
+      return '<div style="margin-bottom:10px;cursor:pointer;" class="top-urgente-row" data-ref="'+escapeHtml(r.ref)+'">'+
+        '<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;">'+
+          '<span style="max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escapeHtml(r.nombre)+'</span>'+
+          '<span class="hint" style="font-family:var(--mono);">'+r.diasCobertura.toFixed(0)+' d</span>'+
+        '</div>'+
+        '<div style="height:10px;border-radius:5px;background:var(--gray-soft);overflow:hidden;">'+
+          '<div style="width:'+pct+'%;height:100%;background:linear-gradient(90deg, var(--red), var(--amber));"></div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+    document.getElementById('db-topchart').innerHTML = topRows || '<div class="empty">No hay productos en alerta.</div>';
+    document.querySelectorAll('.top-urgente-row').forEach(function(row){
+      row.addEventListener('click', function(){ abrirDetalleProducto(row.getAttribute('data-ref')); });
+    });
+  }
+
+  function kpiCard(num, label, cls, filterValue){
+    var extraClass = filterValue ? ' click-kpi' : '';
+    var extraAttr = filterValue ? ' data-filter="'+filterValue+'"' : '';
+    var cursorStyle = filterValue ? 'cursor:pointer;' : '';
+    return '<div class="stat '+cls+extraClass+'"'+extraAttr+' style="'+cursorStyle+'background:var(--gray-soft);border-color:var(--line);">'+
+      '<div class="num" style="color:var(--ink);">'+num+'</div>'+
+      '<div class="lbl" style="color:var(--muted);">'+label+'</div></div>';
+  }
+
+  // ---------- View: Proyección ----------
+  function renderProyeccionView(){
+    var el = document.getElementById('view-proyeccion');
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Proyección de inventario — próximos 6 meses</h2>'+
+        '<p class="desc">Proyecta el stock disponible mes a mes si no llega ningún pedido nuevo además de lo que ya está en tránsito. Útil para decidir con cuánta anticipación pedir, dado el lead time de 4 meses.</p>'+
+        '<div id="proy-riesgo"></div>'+
+        '<div class="toolbar" style="margin-top:16px;">'+
+          '<input type="text" id="proy-search" placeholder="Buscar por referencia o nombre…">'+
+        '</div>'+
+        '<div class="table-scroll" id="proy-table"></div>'+
+      '</div>';
+
+    document.getElementById('proy-search').value = proySearch;
+    document.getElementById('proy-search').addEventListener('input', function(e){ proySearch = e.target.value; renderProyeccionTable(); });
+
+    renderProyeccionRiesgo();
+    renderProyeccionTable();
+  }
+
+  function projectMonths(r){
+    var base = r.stockActual + r.transito;
+    var months = [];
+    for(var i=1;i<=6;i++){
+      if(r.avgDaily>0){
+        months.push(Math.max(0, Math.round(base - r.avgDaily*30*i)));
+      } else {
+        months.push(null);
+      }
+    }
+    return months;
+  }
+
+  function renderProyeccionRiesgo(){
+    var all = computeAll();
+    var counts = [0,0,0,0,0,0];
+    all.forEach(function(r){
+      var months = projectMonths(r);
+      months.forEach(function(v, idx){ if(v === 0) counts[idx]++; });
+    });
+    var max = Math.max.apply(null, counts.concat([1]));
+    var bars = counts.map(function(c, idx){
+      var pct = (c/max)*100;
+      return '<div style="flex:1;text-align:center;">'+
+        '<div style="height:70px;display:flex;align-items:flex-end;">'+
+          '<div style="width:100%;background:linear-gradient(180deg, var(--amber), var(--red));border-radius:4px 4px 0 0;height:'+Math.max(pct,4)+'%;"></div>'+
+        '</div>'+
+        '<div class="hint" style="margin-top:6px;font-weight:700;color:var(--ink);">'+c+'</div>'+
+        '<div class="hint">Mes +'+(idx+1)+'</div>'+
+      '</div>';
+    }).join('');
+    document.getElementById('proy-riesgo').innerHTML =
+      '<p class="desc" style="margin-bottom:8px;">SKU proyectados en cero unidades por mes (sin pedidos adicionales):</p>'+
+      '<div style="display:flex;gap:10px;align-items:flex-end;padding:10px 4px;">'+bars+'</div>';
+  }
+
+  function renderProyeccionTable(){
+    var all = computeAll();
+    if(proySearch){
+      var s = proySearch.toLowerCase();
+      all = all.filter(function(r){ return r.ref.toLowerCase().indexOf(s)>=0 || r.nombre.toLowerCase().indexOf(s)>=0; });
+    }
+    all.sort(function(a,b){ return a.diasCobertura - b.diasCobertura; });
+
+    var head = '<thead><tr><th>Referencia</th><th>Producto</th><th>Stock hoy</th>'+
+      [1,2,3,4,5,6].map(function(i){return '<th>Mes +'+i+'</th>';}).join('')+
+      '<th>Agotado el</th></tr></thead>';
+
+    var body = all.map(function(r){
+      var months = projectMonths(r);
+      var cells = months.map(function(v){
+        if(v===null) return '<td class="num-cell">—</td>';
+        var style = v===0 ? 'color:var(--red);font-weight:700;' : '';
+        return '<td class="num-cell" style="'+style+'">'+v+'</td>';
+      }).join('');
+      return '<tr><td>'+escapeHtml(r.ref)+'</td><td>'+escapeHtml(r.nombre)+'</td>'+
+        '<td class="num-cell">'+Math.round(r.stockActual)+'</td>'+cells+
+        '<td class="num-cell">'+fmtDate(r.fechaAgotado)+'</td></tr>';
+    }).join('');
+
+    if(!all.length){
+      body = '<tr><td colspan="10"><div class="empty">Ningún producto coincide con la búsqueda.</div></td></tr>';
+    }
+
+    document.getElementById('proy-table').innerHTML = '<table>'+head+'<tbody>'+body+'</tbody></table>';
+  }
+
+  // ---------- View: Proveedores ----------
+  function renderProveedoresView(){
+    var el = document.getElementById('view-proveedores');
+
+    if (!connected){
+      el.innerHTML = '<div class="panel"><h2>Proveedores</h2>'+
+        '<p class="desc">Conéctate a Google Sheets (barra de arriba) para ver y administrar tus proveedores y sus tiempos de entrega desde aquí.</p></div>';
+      return;
+    }
+
+    el.innerHTML =
+      '<div class="panel">'+
+        '<h2>Agregar / editar proveedor</h2>'+
+        '<p class="desc">Si el nombre ya existe, se actualiza; si no, se crea uno nuevo.</p>'+
+        '<div class="row cols-4">'+
+          '<div class="field"><label>Nombre del proveedor</label><input id="pv-nombre" placeholder="Ej: Proveedor China Directo"></div>'+
+          '<div class="field"><label>Lead time (días)</label><input id="pv-leadtime" type="number" value="120"></div>'+
+          '<div class="field"><label>Correo de contacto</label><input id="pv-contacto" type="email" placeholder="compras@proveedor.com"></div>'+
+          '<div class="field"><label>Notas</label><input id="pv-notas" placeholder="Opcional"></div>'+
+        '</div>'+
+        '<button class="btn btn-primary" id="pv-save">Guardar proveedor</button>'+
+      '</div>'+
+      '<div class="panel">'+
+        '<h2>Proveedores registrados</h2>'+
+        '<div class="table-scroll" id="pv-table"><div class="empty">Cargando…</div></div>'+
+      '</div>';
+
+    document.getElementById('pv-save').addEventListener('click', async function(){
+      var nombre = document.getElementById('pv-nombre').value.trim();
+      var leadTime = parseFloat(document.getElementById('pv-leadtime').value);
+      var contacto = document.getElementById('pv-contacto').value.trim();
+      var notas = document.getElementById('pv-notas').value.trim();
+      if (!nombre){ toast('Escribe el nombre del proveedor.'); return; }
+      var btn = document.getElementById('pv-save');
+      btn.disabled = true; btn.textContent = 'Guardando…';
+      try{
+        var res = await fetch(sheetsUrl, {
+          method:'POST',
+          body: JSON.stringify({ action:'addProveedor', nombre: nombre, leadTime: leadTime||120, contacto: contacto, notas: notas })
+        });
+        var json = await res.json();
+        if (!json.ok) throw new Error(json.error||'error');
+        toast('Proveedor guardado: ' + nombre);
+        document.getElementById('pv-nombre').value = '';
+        document.getElementById('pv-contacto').value = '';
+        document.getElementById('pv-notas').value = '';
+        renderTablaProveedores(json.proveedores);
+        sincronizarSheets();
+      }catch(e){
+        toast('No se pudo guardar el proveedor.');
+      }
+      btn.disabled = false; btn.textContent = 'Guardar proveedor';
+    });
+
+    cargarProveedores();
+  }
+
+  async function cargarProveedores(){
+    try{
+      var res = await fetch(sheetsUrl + '?action=proveedores');
+      var json = await res.json();
+      if (!json.ok) throw new Error(json.error||'error');
+      renderTablaProveedores(json.proveedores);
+    }catch(e){
+      document.getElementById('pv-table').innerHTML = '<div class="empty">No se pudo cargar la lista de proveedores.</div>';
+    }
+  }
+
+  function renderTablaProveedores(proveedores){
+    var box = document.getElementById('pv-table');
+    if (!box) return;
+    if (!proveedores || !proveedores.length){
+      box.innerHTML = '<div class="empty">Todavía no tienes proveedores registrados.</div>';
+      return;
+    }
+    var rows = proveedores.map(function(p){
+      return '<tr><td>'+escapeHtml(p.nombre)+'</td><td class="num-cell">'+p.leadTime+'</td>'+
+        '<td>'+escapeHtml(p.contacto||'—')+'</td><td>'+escapeHtml(p.notas||'')+'</td>'+
+        '<td style="white-space:nowrap;">'+
+          '<button class="btn-ghost" style="padding:5px 10px;font-size:12px;margin-right:6px;" data-edit-prov="'+escapeHtml(p.nombre)+'">Editar</button>'+
+          '<button class="btn-danger-outline" data-del-prov="'+escapeHtml(p.nombre)+'">Eliminar</button>'+
+        '</td></tr>';
+    }).join('');
+    box.innerHTML = '<table><thead><tr><th>Proveedor</th><th>Lead time (días)</th><th>Contacto</th><th>Notas</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+
+    document.querySelectorAll('[data-edit-prov]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var prov = proveedores.find(function(x){return x.nombre===btn.getAttribute('data-edit-prov');});
+        if (!prov) return;
+        document.getElementById('pv-nombre').value = prov.nombre;
+        document.getElementById('pv-leadtime').value = prov.leadTime;
+        document.getElementById('pv-contacto').value = prov.contacto||'';
+        document.getElementById('pv-notas').value = prov.notas||'';
+        document.getElementById('pv-nombre').scrollIntoView({behavior:'smooth', block:'center'});
+        toast('Editando "'+prov.nombre+'" — cambia los datos y guarda.');
+      });
+    });
+    document.querySelectorAll('[data-del-prov]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var nombre = btn.getAttribute('data-del-prov');
+        if (!confirm('¿Eliminar el proveedor "'+nombre+'"? Los productos que lo tengan asignado pasarán a usar el lead time por defecto.')) return;
+        try{
+          var res = await fetch(sheetsUrl, { method:'POST', body: JSON.stringify({ action:'deleteProveedor', nombre: nombre }) });
+          var json = await res.json();
+          if (!json.ok) throw new Error(json.error||'error');
+          toast('Proveedor eliminado.');
+          renderTablaProveedores(json.proveedores);
+          sincronizarSheets();
+        }catch(e){ toast('No se pudo eliminar el proveedor.'); }
+      });
+    });
+  }
+
+  // ---------- Init ----------
+  async function init(){
+    // Populate datalist once
+    var dl = document.getElementById('productList');
+    dl.innerHTML = PRODUCTS_RAW.map(function(p){
+      return '<option value="'+escapeHtml(p.ref+' — '+p.nombre)+'"></option>';
+    }).join('');
+    // adjust matchProduct to also accept "ref — nombre" format
+    var origMatch = matchProduct;
+    matchProduct = function(input){
+      if(!input) return null;
+      var dashIdx = input.indexOf(' — ');
+      if(dashIdx>0){
+        var refPart = input.slice(0,dashIdx).trim();
+        var found = PRODUCTS_RAW.find(function(p){ return p.ref === refPart; });
+        if(found) return found;
+      }
+      return origMatch(input);
+    };
+
+    await loadState();
+
+    document.getElementById('settings-btn').addEventListener('click', abrirAjustesConexion);
+
+    // Reconectar automáticamente: usa la URL guardada, o si no hay ninguna, la URL por defecto embebida
+    try{
+      var saved = await window.storage.get(STORE_URL_KEY, false);
+      var urlAUsar = (saved && saved.value) ? saved.value : DEFAULT_SHEETS_URL;
+      await conectarSheets(urlAUsar, true);
+    }catch(e){
+      await conectarSheets(DEFAULT_SHEETS_URL, true);
+    }
+
+    renderStats();
+    renderDashboardView();
+  }
+
+  init();
+})();
+
+</script>
+</body>
+</html>
