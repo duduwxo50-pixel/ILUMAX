@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Panel de Reabastecimiento</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  // Respaldo: si un bloqueador (p. ej. Brave Shields, adblock) impide el CDN principal,
+  // intentamos una segunda fuente antes de que el dashboard intente usar Chart.js.
+  window.addEventListener('DOMContentLoaded', function(){
+    if (typeof Chart === 'undefined') {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/chart.js@4.4.4/dist/chart.umd.min.js';
+      document.head.appendChild(s);
+    }
+  });
+</script>
 <style>
   :root{
     --navy: #14213D;
@@ -1168,6 +1179,26 @@
 
   function renderDashboardView(){
     var el = document.getElementById('view-dashboard');
+
+    if (typeof Chart === 'undefined') {
+      el.innerHTML =
+        '<div class="panel">'+
+          '<h2>Dashboard inteligente</h2>'+
+          '<p class="desc">Los gráficos no cargaron todavía (la librería Chart.js viene de un CDN externo). '+
+          'Si usas Brave, revisa que el ícono del escudo 🛡️ en la barra de direcciones no esté bloqueando scripts de este sitio, '+
+          'o desactiva temporalmente tu bloqueador de anuncios y recarga la página.</p>'+
+          '<button class="btn btn-primary" id="db-retry-charts">Reintentar</button>'+
+        '</div>';
+      var retryBtn = document.getElementById('db-retry-charts');
+      if (retryBtn) retryBtn.addEventListener('click', function(){ renderDashboardView(); });
+      // Reintenta solo una vez automáticamente por si el script ya está en camino
+      if (!renderDashboardView._autoRetried) {
+        renderDashboardView._autoRetried = true;
+        setTimeout(function(){ if (currentTab==='dashboard') renderDashboardView(); }, 1200);
+      }
+      return;
+    }
+
     destroyDashCharts();
     var all = computeAll();
     var canales = Array.from(new Set(all.map(function(r){return r.canal;}))).sort();
