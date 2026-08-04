@@ -245,7 +245,11 @@
 
     /* Charts */
     .chart-card{padding:10px 12px;}
-    #topchart-wrap{height:260px !important;}
+    .urgency-row{padding:9px 2px;gap:8px;}
+    .urgency-name{font-size:11.5px;}
+    .urgency-meta{font-size:9.5px;}
+    .urgency-days{flex-basis:52px;}
+    .urgency-days .ud-num{font-size:12.5px;}
 
     /* Period buttons */
     .period-bar{gap:4px;flex-wrap:wrap;}
@@ -341,6 +345,37 @@
   .rank-num.gold{background:#F59E0B;}
   .rank-num.silver{background:#9CA3AF;}
   .rank-num.bronze{background:#B45309;}
+
+  /* ─── Filtro de período — hint dentro de la barra ─── */
+  .period-bar .hint{font-size:11.5px;color:var(--muted);}
+  .period-bar .hint strong{color:var(--ink);}
+
+  /* ─── Top urgentes: lista enriquecida (reemplaza el chart vacío) ─── */
+  .urgency-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .urgency-chip{flex:1;min-width:120px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:2px;}
+  .urgency-chip .uc-num{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--ink);line-height:1;}
+  .urgency-chip .uc-lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+  .urgency-chip.red .uc-num{color:var(--red);}
+  .urgency-chip.amber .uc-num{color:var(--amber);}
+  .urgency-list{display:flex;flex-direction:column;border-top:1px solid var(--line);}
+  .urgency-row{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;}
+  .urgency-row:hover{background:#FAFBFC;}
+  .urgency-rank{flex:0 0 auto;width:24px;height:24px;border-radius:7px;background:var(--gray-soft);color:var(--muted);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .urgency-rank.sev-crit{background:var(--red);color:#fff;}
+  .urgency-rank.sev-warn{background:var(--amber);color:#fff;}
+  .urgency-main{flex:1 1 auto;min-width:0;}
+  .urgency-name{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .urgency-meta{font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .urgency-bar-wrap{flex:0 0 130px;height:7px;border-radius:5px;background:var(--gray-soft);overflow:hidden;}
+  .urgency-bar-fill{height:100%;border-radius:5px;}
+  .urgency-days{flex:0 0 72px;text-align:right;}
+  .urgency-days .ud-num{font-family:var(--mono);font-size:14px;font-weight:800;display:block;line-height:1.1;}
+  .urgency-days .ud-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .urgency-qty{flex:0 0 auto;font-size:10.5px;padding:4px 10px;border-radius:100px;background:var(--amber-soft);color:var(--amber);font-weight:700;white-space:nowrap;}
+  @media (max-width:760px){
+    .urgency-bar-wrap{display:none;}
+    .urgency-qty{display:none;}
+  }
 
   /* ─── Informe ─── */
   .report-preview{background:#F8F9FD;border:1px solid var(--line);border-radius:10px;padding:20px;font-size:13px;line-height:1.65;max-height:520px;overflow:auto;}
@@ -520,8 +555,7 @@
       if(m.tipo==='entrada') entradas+=qty; else salidas+=qty;
     }
     var stockActual=p.stock0+entradas-salidas;
-    var histVals=p.m.filter(function(v){return typeof v==='number'&&v>0;});
-    var avgDaily=histVals.length?(histVals.reduce(function(a,b){return a+b;},0)/histVals.length)/30:0;
+    var avgDaily=avgDailyPeriodo(p);
     var diasCobertura=avgDaily>0?(stockActual+transito)/avgDaily:0;
     var fechaAgotado=avgDaily>0?new Date(now.getTime()+diasCobertura*86400000):null;
     var cantidadSugerida=avgDaily>0?Math.max(0,Math.round(avgDaily*(cfg.leadTime+cfg.safety)-stockActual-transito)):0;
@@ -559,6 +593,53 @@
       return vals2.length?Math.round(vals2.reduce(function(a,b){return a+b;},0)*(6/Math.max(vals2.length,1))):0;
     }
     return p.m[2]||0;
+  }
+
+  // ── Filtro de línea de tiempo — componente compartido ─────
+  // periodoActivo controla el consumo/día que alimenta TODO el motor de
+  // cálculo (cobertura, alertas, sugerido, proyección), no solo la vista Ventas.
+  var PERIODOS=[
+    {key:'dia',label:'📅 Diario',mlabel:'📅 Día'},
+    {key:'mes',label:'📆 Mensual',mlabel:'📆 Mes'},
+    {key:'trimestre',label:'🗓️ Trimestral',mlabel:'🗓️ Trim.'},
+    {key:'semestre',label:'📊 Semestral',mlabel:'📊 Sem.'}
+  ];
+
+  function periodDaysCount(){
+    return {dia:1,mes:30,trimestre:90,semestre:180}[periodoActivo]||30;
+  }
+
+  // Consumo/día "real" según el período elegido — reemplaza el promedio fijo
+  // de 3 meses y es la base de diasCobertura, alerta y cantidadSugerida.
+  function avgDailyPeriodo(p){
+    var consumo=getConsumoEnPeriodo(p);
+    var dias=periodDaysCount();
+    return dias>0?consumo/dias:0;
+  }
+
+  function periodFilterBarHtml(id, extraHtml){
+    return '<div class="period-bar" id="'+id+'">'+
+      PERIODOS.map(function(pp){
+        return '<button class="period-btn'+(periodoActivo===pp.key?' active':'')+'" data-period="'+pp.key+'">'+pp.label+'</button>';
+      }).join('')+
+      '<span class="hint">Base de cálculo: <strong>'+getPeriodoLabel()+'</strong></span>'+
+      (extraHtml||'')+
+    '</div>';
+  }
+
+  function periodChipsHtml(id){
+    return '<div class="m-chips" id="'+id+'">'+
+      PERIODOS.map(function(pp){
+        return '<div class="m-chip'+(periodoActivo===pp.key?' active':'')+'" data-period="'+pp.key+'">'+pp.mlabel+'</div>';
+      }).join('')+
+    '</div>';
+  }
+
+  function bindPeriodFilterBar(id, onChange){
+    var bar=document.getElementById(id); if(!bar) return;
+    bar.querySelectorAll('[data-period]').forEach(function(btn){
+      btn.addEventListener('click',function(){ periodoActivo=btn.getAttribute('data-period'); onChange(); });
+    });
   }
 
   // ── Sheets connection ─────────────────────────
@@ -800,23 +881,11 @@
       '<div class="panel">'+
         '<h2>🏆 Productos más vendidos</h2>'+
         '<p class="desc">Ranking de SKUs por volumen de consumo/salidas en el período seleccionado. Basado en el histórico de movimientos.</p>'+
-        '<div class="period-bar" id="period-bar-ventas">'+
-          '<button class="period-btn'+(periodoActivo==='dia'?' active':'')+'" data-period="dia">📅 Hoy / Diario</button>'+
-          '<button class="period-btn'+(periodoActivo==='mes'?' active':'')+'" data-period="mes">📆 Mensual</button>'+
-          '<button class="period-btn'+(periodoActivo==='trimestre'?' active':'')+'" data-period="trimestre">🗓️ Trimestral</button>'+
-          '<button class="period-btn'+(periodoActivo==='semestre'?' active':'')+'" data-period="semestre">📊 Semestral</button>'+
-          '<div class="spacer"></div>'+
-          '<span class="hint" id="ventas-periodo-label">Mostrando: '+getPeriodoLabel()+'</span>'+
-        '</div>'+
+        periodFilterBarHtml('period-bar-ventas')+
         '<div id="ventas-content"></div>'+
       '</div>';
 
-    document.querySelectorAll('#period-bar-ventas .period-btn').forEach(function(btn){
-      btn.addEventListener('click',function(){
-        periodoActivo=btn.getAttribute('data-period');
-        renderVentasView();
-      });
-    });
+    bindPeriodFilterBar('period-bar-ventas', renderVentasView);
 
     renderVentasTabla();
   }
@@ -888,15 +957,11 @@
       '<div class="panel">'+
         '<h2>Dashboard inteligente</h2>'+
         '<p class="desc">Vista ejecutiva. Click en tarjetas, barras o segmentos para filtrar. Lead time proveedor: <strong>120 días</strong>.</p>'+
-        '<div class="period-bar" id="period-bar-dash">'+
-          '<button class="period-btn'+(periodoActivo==='dia'?' active':'')+'" data-period="dia">📅 Diario</button>'+
-          '<button class="period-btn'+(periodoActivo==='mes'?' active':'')+'" data-period="mes">📆 Mensual</button>'+
-          '<button class="period-btn'+(periodoActivo==='trimestre'?' active':'')+'" data-period="trimestre">🗓️ Trimestral</button>'+
-          '<button class="period-btn'+(periodoActivo==='semestre'?' active':'')+'" data-period="semestre">📊 Semestral</button>'+
+        periodFilterBarHtml('period-bar-dash',
           '<div class="spacer"></div>'+
           '<select id="db-canal"><option value="">Todos los canales</option>'+canales.map(function(c){return '<option value="'+escapeHtml(c)+'"'+(c===dashCanalFilter?' selected':'')+'>'+escapeHtml(c)+'</option>';}).join('')+'</select>'+
-          (dashCanalFilter?'<a href="#" id="db-clear-canal" style="font-size:12px;color:var(--navy);font-weight:700;text-decoration:none;">✕ Quitar filtro canal</a>':'')+
-        '</div>'+
+          (dashCanalFilter?'<a href="#" id="db-clear-canal" style="font-size:12px;color:var(--navy);font-weight:700;text-decoration:none;">✕ Quitar filtro canal</a>':'')
+        )+
         '<div class="kpis-row" id="db-kpis"></div>'+
       '</div>'+
       '<div class="chart-grid">'+
@@ -904,7 +969,7 @@
         '<div class="chart-card"><h3>📊 Estado por canal</h3><p class="chart-desc">Click en una barra para filtrar el dashboard.</p><div class="chart-canvas-wrap" style="height:230px;"><canvas id="chart-canal"></canvas></div></div>'+
       '</div>'+
       '<div class="chart-grid full">'+
-        '<div class="chart-card"><h3>🚨 Top 15 más urgentes</h3><p class="chart-desc">Click en una barra para ver el detalle del producto.</p><div class="chart-canvas-wrap" id="topchart-wrap" style="height:380px;"><canvas id="chart-top"></canvas></div></div>'+
+        '<div class="chart-card"><h3>🚨 Top 15 más urgentes</h3><p class="chart-desc">Click en un producto para ver el detalle. Ordenados de menor a mayor cobertura.</p><div id="urgency-summary-wrap"></div><div class="urgency-list" id="urgency-list"></div></div>'+
       '</div>'+
       '<div class="chart-grid three">'+
         '<div class="chart-card"><h3>📈 Cobertura por rangos</h3><p class="chart-desc">Distribución de SKUs por días de cobertura disponible.</p><div class="chart-canvas-wrap" style="height:200px;"><canvas id="chart-hist"></canvas></div></div>'+
@@ -912,9 +977,7 @@
         '<div class="chart-card"><h3>📉 Tendencia de consumo</h3><p class="chart-desc">Unidades consumidas por mes (3 meses de historial).</p><div class="chart-canvas-wrap" style="height:200px;"><canvas id="chart-trend"></canvas></div></div>'+
       '</div>';
 
-    document.querySelectorAll('#period-bar-dash .period-btn').forEach(function(btn){
-      btn.addEventListener('click',function(){ periodoActivo=btn.getAttribute('data-period'); renderDashboardView(); });
-    });
+    bindPeriodFilterBar('period-bar-dash', renderDashboardView);
     document.getElementById('db-canal').addEventListener('change',function(e){ dashCanalFilter=e.target.value; renderDashboardView(); });
     var clearBtn=document.getElementById('db-clear-canal');
     if(clearBtn) clearBtn.addEventListener('click',function(e){ e.preventDefault(); dashCanalFilter=''; renderDashboardView(); });
@@ -950,12 +1013,9 @@
     var ctxC=document.getElementById('chart-canal').getContext('2d');
     dashCharts.canal=new Chart(ctxC,{type:'bar',data:{labels:canalData.map(function(d){return d.canal;}),datasets:[{label:'Pedir ya',data:canalData.map(function(d){return d.p;}),backgroundColor:CHART_COLORS.red,borderRadius:5},{label:'OK',data:canalData.map(function(d){return d.o;}),backgroundColor:CHART_COLORS.green,borderRadius:5},{label:'Sin dato',data:canalData.map(function(d){return d.s;}),backgroundColor:CHART_COLORS.gray,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{stacked:true,grid:{color:CHART_COLORS.grid},ticks:{font:{size:11}}},y:{stacked:true,grid:{display:false},ticks:{font:{size:11.5}}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10,usePointStyle:true,pointStyle:'circle',font:{size:11.5}}}},onClick:function(evt,elems){if(!elems.length)return;dashCanalFilter=canalData[elems[0].index].canal;renderDashboardView();},onHover:function(evt,elems){evt.native.target.style.cursor=elems.length?'pointer':'default';}}});
 
-    // Top 15
-    var top15=pedir.slice().sort(function(a,b){return a.diasCobertura-b.diasCobertura;}).slice(0,15);
-    document.getElementById('topchart-wrap').style.height=Math.max(260,top15.length*28+60)+'px';
-    var ctxT=document.getElementById('chart-top').getContext('2d');
-    dashCharts.top=new Chart(ctxT,{type:'bar',data:{labels:top15.map(function(r){return r.nombre.length>38?r.nombre.slice(0,38)+'…':r.nombre;}),datasets:[{data:top15.map(function(r){return Math.round(r.diasCobertura);}),backgroundColor:top15.map(function(r){return r.diasCobertura<=0?CHART_COLORS.red:(r.diasCobertura<60?CHART_COLORS.red:CHART_COLORS.amber);}),borderRadius:5,barThickness:16}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:CHART_COLORS.grid},title:{display:true,text:'Días de cobertura restante',font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.parsed.x+' días · ref '+top15[c.dataIndex].ref+' · sugerido: '+top15[c.dataIndex].cantidadSugerida.toLocaleString('es-CO')+' u.';}}}} ,onClick:function(evt,elems){if(!elems.length)return;abrirDetalleProducto(top15[elems[0].index].ref);},onHover:function(evt,elems){evt.native.target.style.cursor=elems.length?'pointer':'default';}}});
-    if(!top15.length) document.getElementById('topchart-wrap').innerHTML='<div class="empty">No hay productos en alerta. 🎉</div>';
+    // Top 15 más urgentes — lista enriquecida (en vez de un gráfico casi vacío
+    // cuando la cobertura real es de pocos días, se muestra severidad + monto a pedir)
+    renderUrgencyList(pedir);
 
     // Histograma
     var buckets=[{label:'0-15d',min:0,max:15},{label:'15-30d',min:15,max:30},{label:'30-60d',min:30,max:60},{label:'60-90d',min:60,max:90},{label:'90-150d',min:90,max:150},{label:'150+d',min:150,max:Infinity}];
@@ -976,6 +1036,59 @@
     var trendGrad=ctxTr.createLinearGradient(0,0,0,200);
     trendGrad.addColorStop(0,'rgba(20,33,61,.28)'); trendGrad.addColorStop(1,'rgba(20,33,61,0)');
     dashCharts.trend=new Chart(ctxTr,{type:'line',data:{labels:['Mayo','Junio','Julio'],datasets:[{data:mesesSum,borderColor:CHART_COLORS.navy,backgroundColor:trendGrad,fill:true,tension:.35,pointRadius:5,pointBackgroundColor:'#fff',pointBorderColor:CHART_COLORS.navy,pointBorderWidth:2,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:CHART_COLORS.grid},ticks:{font:{size:10.5},callback:function(v){return v.toLocaleString('es-CO');}}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.parsed.y.toLocaleString('es-CO')+' unidades';}}}}}});
+  }
+
+  // Lista de urgencias: reemplaza el chart de barras "Top 15" que se veía
+  // vacío cuando la cobertura real de los productos críticos es de pocos días
+  // (ej. 0.2 días) sobre un eje 0–1. En su lugar, cada fila muestra severidad,
+  // una barra de "urgencia relativa" (qué tan cerca está de agotarse respecto
+  // a lo que tarda el proveedor) y la cantidad sugerida a pedir.
+  function renderUrgencyList(pedirList){
+    var wrapSummary=document.getElementById('urgency-summary-wrap');
+    var wrapList=document.getElementById('urgency-list');
+    if(!wrapList) return;
+
+    var top15=pedirList.slice().sort(function(a,b){return a.diasCobertura-b.diasCobertura;}).slice(0,15);
+
+    if(wrapSummary){
+      var agotados=pedirList.filter(function(r){return r.diasCobertura<=0;}).length;
+      var totalSugerido=top15.reduce(function(a,r){return a+r.cantidadSugerida;},0);
+      wrapSummary.innerHTML=
+        '<div class="urgency-summary">'+
+          '<div class="urgency-chip red"><div class="uc-num">'+agotados+'</div><div class="uc-lbl">Ya agotados</div></div>'+
+          '<div class="urgency-chip amber"><div class="uc-num">'+pedirList.length+'</div><div class="uc-lbl">En alerta total</div></div>'+
+          '<div class="urgency-chip"><div class="uc-num">'+totalSugerido.toLocaleString('es-CO')+'</div><div class="uc-lbl">Unidades a pedir (top 15)</div></div>'+
+        '</div>';
+    }
+
+    if(!top15.length){
+      wrapList.innerHTML='<div class="empty">No hay productos en alerta. 🎉</div>';
+      return;
+    }
+
+    wrapList.innerHTML=top15.map(function(r,idx){
+      var umbral=(r.leadTime||120)+(r.safety||30);
+      // % de "llenado" de la barra = qué tan cerca/pasado está del umbral de pedido.
+      // Negativo o cero días de cobertura => barra llena (100%).
+      var pct=Math.max(6,Math.min(100,Math.round(100-(r.diasCobertura/umbral)*100)));
+      var sev=r.diasCobertura<=0?'sev-crit':(r.diasCobertura<umbral*0.4?'sev-crit':'sev-warn');
+      var barColor=sev==='sev-crit'?'var(--red)':'var(--amber)';
+      var diasTxt=r.diasCobertura<=0?'0':r.diasCobertura.toFixed(1);
+      return '<div class="urgency-row" data-ref="'+escapeHtml(r.ref)+'">'+
+        '<div class="urgency-rank '+sev+'">'+(idx+1)+'</div>'+
+        '<div class="urgency-main">'+
+          '<div class="urgency-name">'+escapeHtml(r.nombre)+'</div>'+
+          '<div class="urgency-meta">Ref '+escapeHtml(r.ref)+' · '+escapeHtml(r.canal)+' · stock '+Math.round(r.stockActual).toLocaleString('es-CO')+'</div>'+
+        '</div>'+
+        '<div class="urgency-bar-wrap"><div class="urgency-bar-fill" style="width:'+pct+'%;background:'+barColor+';"></div></div>'+
+        '<div class="urgency-days"><span class="ud-num" style="color:'+barColor+';">'+diasTxt+'</span><span class="ud-lbl">días cob.</span></div>'+
+        '<div class="urgency-qty">📦 '+r.cantidadSugerida.toLocaleString('es-CO')+' u.</div>'+
+      '</div>';
+    }).join('');
+
+    wrapList.querySelectorAll('.urgency-row[data-ref]').forEach(function(row){
+      row.addEventListener('click',function(){ abrirDetalleProducto(row.getAttribute('data-ref')); });
+    });
   }
 
   function kpiCard2(icon,num,label,cls,filterValue){
@@ -1082,6 +1195,7 @@
       '<div class="panel">'+
         '<h2>Panel de productos</h2>'+
         '<p class="desc">200 referencias en tiempo real.</p>'+
+        periodFilterBarHtml('period-bar-panel')+
         '<div class="toolbar">'+
           '<input type="text" id="pf-search" placeholder="Buscar por referencia o nombre…">'+
           '<select id="pf-alerta"><option value="">Todas las alertas</option><option value="PEDIR YA">Pedir ya</option><option value="VENCIDO">Plazo vencido</option><option value="OK">OK</option><option value="SIN DATO">Sin dato</option></select>'+
@@ -1099,6 +1213,7 @@
     document.getElementById('pf-alerta').value=alertFilter;
     document.getElementById('pf-search').addEventListener('input',function(e){searchTerm=e.target.value;renderPanelTable();});
     document.getElementById('pf-alerta').addEventListener('change',function(e){alertFilter=e.target.value;renderPanelTable();});
+    bindPeriodFilterBar('period-bar-panel', renderPanelView);
     renderPanelTable();
   }
 
@@ -1293,9 +1408,11 @@
       '<div class="panel">'+
         '<h2>🚨 Alertas activas — productos a pedir ya</h2>'+
         '<p class="desc">'+all.length+' producto(s) por debajo del punto de reorden ('+vencidosCount+' con plazo de pedido ya vencido). Lead time proveedor: <strong>120 días</strong>.</p>'+
+        periodFilterBarHtml('period-bar-alertas')+
         botonPedidos+
         '<div class="table-scroll"><table><thead><tr><th>Referencia</th><th>Producto</th><th>Stock</th><th>Días cobertura</th><th>Agotado el</th><th>Pedir antes de</th><th>Pedir (u.)</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
       '</div>';
+    bindPeriodFilterBar('period-bar-alertas', renderAlertasView);
     document.querySelectorAll('#view-alertas tr[data-ref]').forEach(function(tr){ tr.addEventListener('click',function(){abrirDetalleProducto(tr.getAttribute('data-ref'));}); });
     var btnPed=document.getElementById('btn-generar-pedidos');
     if(btnPed){
@@ -1366,7 +1483,8 @@
     el.innerHTML=
       '<div class="panel">'+
         '<h2>📅 Proyección de inventario</h2>'+
-        '<p class="desc">El tránsito se inyecta en el mes exacto de llegada según el lead time del proveedor. El stock baja mes a mes con el consumo histórico promedio.</p>'+
+        '<p class="desc">El tránsito se inyecta en el mes exacto de llegada según el lead time del proveedor. El stock baja mes a mes con el consumo/día del período elegido abajo.</p>'+
+        periodFilterBarHtml('period-bar-proyeccion')+
 
         '<!-- Filtros de línea de tiempo -->'+
         '<div style="background:var(--gray-soft);border-radius:10px;padding:14px 18px;margin-bottom:18px;">'+
@@ -1404,6 +1522,7 @@
       '</div>';
 
     // Wireup controles
+    bindPeriodFilterBar('period-bar-proyeccion', renderProyeccionView);
     document.getElementById('proy-search').value = proySearch;
     document.getElementById('proy-search').addEventListener('input', function(e){ proySearch=e.target.value; renderProyeccionTable(); });
 
@@ -1961,6 +2080,7 @@
       '<div class="panel">'+
         '<h2>📧 Informe de reabastecimiento — listo para enviar</h2>'+
         '<p class="desc">Vista previa del informe que se envía al correo. Formato profesional, sustentación técnica por producto y descargable como HTML.</p>'+
+        periodFilterBarHtml('period-bar-informe')+
         '<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">'+
           '<button class="btn btn-primary" id="btn-descargar-informe">⬇️ Descargar informe (.html)</button>'+
           (connected?'<button class="btn btn-success" id="btn-enviar-informe">📧 Enviar correo ahora</button>':'')+
@@ -1968,6 +2088,7 @@
         '<div class="report-preview" id="informe-preview">'+htmlInforme+'</div>'+
       '</div>';
 
+    bindPeriodFilterBar('period-bar-informe', renderInformeView);
     document.getElementById('btn-descargar-informe').addEventListener('click',function(){
       var fullHtml='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>ILUMAX · Informe de Reabastecimiento '+hoyStr+'</title>'+
         '<style>body{font-family:Arial,sans-serif;max-width:900px;margin:0 auto;padding:30px;color:#1F2430;}'+
@@ -2335,10 +2456,13 @@
           '<h2>🚨 Alertas</h2>'+
           '<span class="m-count">'+all.length+' productos</span>'+
         '</div>'+
+        periodChipsHtml('m-period-alertas')+
         kpiStrip+
         pedidoBtn+
         cards+
       '</div>';
+
+    bindPeriodFilterBar('m-period-alertas', renderAlertasViewMobile);
 
     // Wire kpi pills
     document.querySelectorAll('#view-alertas [data-kpi-filter]').forEach(function(pill){
@@ -2397,10 +2521,13 @@
           '<h2>📦 Productos</h2>'+
           '<span class="m-count" id="m-panel-count"></span>'+
         '</div>'+
+        periodChipsHtml('m-period-panel')+
         '<div class="m-search"><input type="text" id="m-pf-search" placeholder="Buscar referencia o nombre…" value="'+escapeHtml(searchTerm)+'"></div>'+
         '<div class="m-chips" id="m-chips">'+chipHtml+'</div>'+
         '<div id="m-panel-cards"></div>'+
       '</div>';
+
+    bindPeriodFilterBar('m-period-panel', renderPanelViewMobile);
 
     function renderMobileCards(){
       var list = computeAll();
