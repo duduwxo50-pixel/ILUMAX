@@ -123,9 +123,151 @@
   ::-webkit-scrollbar-thumb{background:#D3D6DD;border-radius:6px;}
   ::-webkit-scrollbar-track{background:transparent;}
 
-  @media (max-width: 720px){
-    .topbar{flex-direction:column;align-items:flex-start;gap:14px;}
-    .row.cols-4,.row.cols-3,.row.cols-2{grid-template-columns:1fr;}
+  /* ─────────────────────────────────────────────
+     MOBILE — vista avanzada ≤ 640 px
+     ───────────────────────────────────────────── */
+
+  /* Bottom navigation bar */
+  .bottom-nav{
+    display:none;
+    position:fixed;bottom:0;left:0;right:0;z-index:200;
+    background:var(--panel);border-top:1px solid var(--line);
+    padding:0 0 env(safe-area-inset-bottom,0px);
+    box-shadow:0 -4px 16px -4px rgba(20,33,61,.12);
+  }
+  .bottom-nav-inner{display:flex;overflow-x:auto;scrollbar-width:none;}
+  .bottom-nav-inner::-webkit-scrollbar{display:none;}
+  .bnav-item{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:8px 12px 6px;min-width:58px;cursor:pointer;
+    border-top:2px solid transparent;font-size:9px;font-weight:700;color:var(--muted);
+    letter-spacing:.03em;text-transform:uppercase;gap:2px;user-select:none;
+  }
+  .bnav-item .bnav-icon{font-size:19px;line-height:1;}
+  .bnav-item.active{color:var(--navy);border-top-color:var(--amber);}
+  .bnav-item:active{background:var(--gray-soft);}
+
+  /* Mobile card */
+  .m-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 15px;margin-bottom:10px;cursor:pointer;
+    transition:box-shadow .15s;
+  }
+  .m-card:active{box-shadow:0 4px 12px -4px rgba(20,33,61,.2);}
+  .m-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+  .m-card-ref{font-size:10px;font-family:var(--mono);color:var(--muted);}
+  .m-card-title{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;margin:2px 0 0;}
+  .m-card-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .m-kv{display:flex;flex-direction:column;}
+  .m-kv .mk{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px;}
+  .m-kv .mv{font-size:15px;font-weight:800;font-family:var(--mono);color:var(--ink);}
+  .m-kv .mv.red{color:var(--red);}
+  .m-kv .mv.amber{color:var(--amber);}
+  .m-kv .mv.green{color:var(--green);}
+  .m-card-footer{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+
+  /* Mobile KPI strip */
+  .m-kpi-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;margin-bottom:14px;}
+  .m-kpi-strip::-webkit-scrollbar{display:none;}
+  .m-kpi-pill{
+    flex:0 0 auto;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;text-align:center;min-width:80px;cursor:pointer;
+  }
+  .m-kpi-pill .mpn{font-family:var(--mono);font-size:22px;font-weight:800;line-height:1;}
+  .m-kpi-pill .mpl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+  .m-kpi-pill.red .mpn{color:var(--red);}
+  .m-kpi-pill.green .mpn{color:var(--green);}
+  .m-kpi-pill.amber .mpn{color:var(--amber);}
+
+  /* Mobile filter chips */
+  .m-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none;}
+  .m-chips::-webkit-scrollbar{display:none;}
+  .m-chip{
+    flex:0 0 auto;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;
+    cursor:pointer;user-select:none;border:1.5px solid var(--line);background:var(--panel);color:var(--muted);
+  }
+  .m-chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .m-chip.chip-red.active{background:var(--red);border-color:var(--red);}
+  .m-chip.chip-green.active{background:var(--green);border-color:var(--green);}
+
+  /* Mobile search bar */
+  .m-search{position:relative;margin-bottom:12px;}
+  .m-search input{padding-left:36px;border-radius:10px;font-size:14px;}
+  .m-search::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
+
+  /* Mobile section header */
+  .m-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .m-section-header h2{font-size:17px;font-weight:800;margin:0;color:var(--ink);}
+  .m-section-header .m-count{font-size:12px;color:var(--muted);background:var(--gray-soft);padding:2px 8px;border-radius:100px;}
+
+  /* ── Breakpoints ────────────────────────────── */
+  @media (max-width: 640px){
+    body{padding-bottom:80px;}
+    .app{padding:10px 10px 88px;}
+    .bottom-nav{display:block;}
+
+    /* Topbar compact */
+    .topbar{flex-direction:row;align-items:center;padding:10px 14px;border-radius:10px;margin-bottom:10px;gap:8px;}
+    .brand h1{font-size:11px;letter-spacing:.07em;}
+    .brand .sub{display:none;}
+    .brand .dot{width:7px;height:7px;}
+    .topbar-right .stats{display:none;}
+    #settings-btn{width:30px;height:30px;font-size:13px;flex-shrink:0;}
+
+    /* Hide desktop tabs — bottom nav takes over */
+    .tabs{display:none;}
+
+    /* Panels */
+    .panel{padding:12px 12px;border-radius:10px;}
+    .panel h2{font-size:14px;}
+
+    /* Grid collapses */
+    .row.cols-4,.row.cols-3,.row.cols-2,
+    .kpis-row,.chart-grid,.chart-grid.three,
+    .hero-grid,.vs-row{grid-template-columns:1fr !important;}
+
+    /* Hero */
+    .hero-banner{padding:18px;}
+    .hero-banner h2{font-size:17px;}
+    .hero-banner .hero-sub{font-size:13px;}
+
+    /* Tables scrollable horizontally */
+    .table-scroll{overflow-x:auto;max-height:480px;}
+    .table-scroll table{font-size:11px;min-width:520px;}
+    th,td{padding:7px 8px;}
+
+    /* Modal — full-screen bottom sheet */
+    .modal-overlay{padding:0;align-items:flex-end;}
+    .modal-box{border-radius:16px 16px 0 0;max-width:100%;padding:20px 14px 24px;max-height:90vh;overflow-y:auto;}
+
+    /* Charts */
+    .chart-card{padding:10px 12px;}
+    #topchart-wrap{height:260px !important;}
+
+    /* Period buttons */
+    .period-bar{gap:4px;flex-wrap:wrap;}
+    .period-btn{padding:5px 10px;font-size:11px;}
+
+    /* Toolbar */
+    .toolbar{flex-direction:column;align-items:stretch;gap:8px;}
+    .toolbar input[type=text]{max-width:100%;}
+    .toolbar select{max-width:100%;}
+    .toolbar .spacer{display:none;}
+
+    /* Hide stat2 hover lift on touch */
+    .stat2:hover{transform:none;box-shadow:none;}
+
+    /* Rank num smaller */
+    .rank-num{width:19px;height:19px;font-size:10px;}
+  }
+
+  @media (min-width:641px) and (max-width:980px){
+    .row.cols-4{grid-template-columns:1fr 1fr;}
+    .row.cols-3{grid-template-columns:1fr 1fr;}
+    .chart-grid{grid-template-columns:1fr;}
+    .chart-grid.three{grid-template-columns:1fr 1fr;}
+    .kpis-row{grid-template-columns:repeat(3,1fr);}
+    .topbar{flex-direction:column;align-items:flex-start;gap:12px;}
   }
 
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,33,61,.45);align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto;}
@@ -256,6 +398,23 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ── Bottom Navigation (mobile only) ── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <div class="bnav-item active" data-tab="inicio"><span class="bnav-icon">🏠</span>Inicio</div>
+    <div class="bnav-item" data-tab="dashboard"><span class="bnav-icon">📊</span>Dashboard</div>
+    <div class="bnav-item" data-tab="alertas"><span class="bnav-icon">🚨</span>Alertas</div>
+    <div class="bnav-item" data-tab="panel"><span class="bnav-icon">📦</span>Productos</div>
+    <div class="bnav-item" data-tab="ventas"><span class="bnav-icon">🏆</span>Ventas</div>
+    <div class="bnav-item" data-tab="proyeccion"><span class="bnav-icon">📅</span>Proyección</div>
+    <div class="bnav-item" data-tab="temporadas"><span class="bnav-icon">🌦️</span>Temporadas</div>
+    <div class="bnav-item" data-tab="registrar"><span class="bnav-icon">✏️</span>Registrar</div>
+    <div class="bnav-item" data-tab="informe"><span class="bnav-icon">📧</span>Informe</div>
+    <div class="bnav-item" data-tab="proveedores"><span class="bnav-icon">🏭</span>Proveed.</div>
+    <div class="bnav-item" data-tab="config"><span class="bnav-icon">⚙️</span>Config</div>
+  </div>
+</nav>
 <datalist id="productList"></datalist>
 
 <script id="products-data" type="application/json">[{"ref": "1222", "nombre": "LED BULB 20W LB E27 20000H ILUM CJ", "canal": "MULTICANAL", "m": [1180, 1090, 1000], "stock0": 54, "transito": 0}, {"ref": "1504", "nombre": "LED BULB 30W LB E27 20000H ILM CAJ", "canal": "MULTICANAL", "m": [1000, -1, -20], "stock0": 0, "transito": 0}, {"ref": "1854", "nombre": "LED BULB 30W LC E27 20000H ILM CJ", "canal": "MULTICANAL", "m": [660, 529, null], "stock0": 0, "transito": 0}, {"ref": "1811", "nombre": "LED BULB 60W LB E27 20000H ILM CJ", "canal": "MULTICANAL", "m": [null, 1167, 1006], "stock0": 678, "transito": 0}, {"ref": "2483", "nombre": "LED BULB 40W LB E27 20000H ILUM CAJ", "canal": "MULTICANAL", "m": [1820, 1808, 513], "stock0": 15699, "transito": 0}, {"ref": "2103", "nombre": "LED LUZ DE NOCHE REDONDA LC ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1262, 264], "stock0": 438, "transito": 0}, {"ref": "726849", "nombre": "MP GV LED PNL PLN 48W LB 60X60 CM SETX10", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726993", "nombre": "MP GV RFLCTOR LED NOVA II 10W LC SETX24U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726948", "nombre": "MP GV ESTACA LED SOL 0.6W SEN LF SETX 8U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "727044", "nombre": "MP GV RFLCTOR LED NOVA II 50W LC SETX12U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "00094", "nombre": "CONECTOR GU10 BOLSA X 1 UND", "canal": "Sin Canal", "m": [3960, 3840, 2508], "stock0": 70000, "transito": 0}, {"ref": "1086", "nombre": "LED BULB 36W LB E27 20000H ILUM CAJ", "canal": "MULTICANAL", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "877", "nombre": "TUBO LED 18W LB VDR 25000H ILUM CAJ", "canal": "EXCLUSIVO", "m": [-14, 1465, 384], "stock0": 2401, "transito": 0}, {"ref": "1090", "nombre": "BALA DE EMPOTRAR AJUSTABLE BLANCA ILUM C", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2300", "nombre": "LED PANEL RED SOB 12W LC DECORA NEG ILM", "canal": "EXCLUSIVO", "m": [816, 792, 588], "stock0": 371, "transito": 0}, {"ref": "926", "nombre": "SOCKET T8 BOLSA X1UND HTR ILUMAX", "canal": "EXCLUSIVO", "m": [950, 550, 800], "stock0": 900, "transito": 0}, {"ref": "2299", "nombre": "LED PANEL RED SOB 12W LB DECORA NEG ILM", "canal": "EXCLUSIVO", "m": [852, 296, 0], "stock0": 0, "transito": 0}, {"ref": "2461", "nombre": "LED FRAMELESS INCRU 24W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [null, 1768, null], "stock0": 0, "transito": 0}, {"ref": "2460", "nombre": "LED FRAMELESS INCRU 18W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [1050, 176, 20], "stock0": 10, "transito": 0}, {"ref": "984", "nombre": "LED GLOBO FIL 8W DIM LC E27 25KH ILM CAJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 2000, "transito": 0}, {"ref": "2211", "nombre": "LED LUZ DE NOCHE NUBE AZUL ILUM BL", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2182", "nombre": "LED FIL PERA 6W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [336, 313, 258], "stock0": 1019, "transito": 0}, {"ref": "1938", "nombre": "LED BULB SENS MICRO 9W LB E27 25KH IL CJ", "canal": "MULTICANAL", "m": [324, 391, -12], "stock0": 0, "transito": 0}, {"ref": "2466", "nombre": "LED BOMBILLO RECAR 20W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [29, null, 360], "stock0": 189, "transito": 0}, {"ref": "2185", "nombre": "LED FRAMELESS 18W LB INC RED 20KH ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 5844, "transito": 0}, {"ref": "1179", "nombre": "LED 1,7W LC G4 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [250, 257, -10], "stock0": 0, "transito": 0}, {"ref": "1791", "nombre": "LED REFLECTOR SMD 20W RGB 25 KH ILM CJ", "canal": "MULTICANAL", "m": [270, 168, 160], "stock0": 595, "transito": 0}, {"ref": "2184", "nombre": "LED FRAMELESS 24W LB INC RED 20KH ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 620, "transito": 0}, {"ref": "2462", "nombre": "LED FRAMELESS INCRU 36W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [null, 1618, null], "stock0": 0, "transito": 0}, {"ref": "2181", "nombre": "LED FIL GLOBO G95 4W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [140, 85, 190], "stock0": 1083, "transito": 0}, {"ref": "2310", "nombre": "UNDERCABINET 2W CCT ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 4032, "transito": 0}, {"ref": "960", "nombre": "LED GLOBO 18W LB E27 30000H ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1550, -40], "stock0": 40, "transito": 0}, {"ref": "1075", "nombre": "ESTACA LED 5W LC 25000H ILUM CJ", "canal": "EXCLUSIVO", "m": [110, 234, 360], "stock0": 277, "transito": 0}, {"ref": "2209", "nombre": "LED LUZ DE NOCHE TORTUGA ILUM BL", "canal": "EXCLUSIVO", "m": [336, 408, 153], "stock0": 0, "transito": 0}, {"ref": "2459", "nombre": "LED FRAMELESS INCRU 8W CCT 20KH ILU CAJ", "canal": "EXCLUSIVO", "m": [580, 151, null], "stock0": 0, "transito": 0}, {"ref": "862", "nombre": "LED BULB NEV 2.5W LF E14 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [186, null, null], "stock0": 0, "transito": 0}, {"ref": "1065", "nombre": "LED MR11 4W LC GU10 15000H ILUM BLR", "canal": "MULTICANAL", "m": [null, 1140, 176], "stock0": 570, "transito": 0}, {"ref": "961", "nombre": "LED GLOBO 18W LC E27 30000H ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1259, -30], "stock0": 14, "transito": 0}, {"ref": "1790", "nombre": "LED REFLECTOR SMD 10W RGB 25KH ILM CJ", "canal": "MULTICANAL", "m": [200, 205, 95], "stock0": 5, "transito": 0}, {"ref": "1405", "nombre": "LUZ DE NOCHE LC ILUM BLR", "canal": "EXCLUSIVO", "m": [null, 1299, -36], "stock0": 0, "transito": 0}, {"ref": "980", "nombre": "LED BULB FIL 6W DIM LC E27 25KH ILM BLR", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 1200, "transito": 0}, {"ref": "1827", "nombre": "COLGANTE 1XE27 CUERDA ILM CAJA", "canal": "MULTICANAL", "m": [260, 220, 110], "stock0": 1556, "transito": 0}, {"ref": "1178", "nombre": "LED 1.7W LB G4 25000H ILUM BLR", "canal": "EXCLUSIVO", "m": [153, 0, null], "stock0": 0, "transito": 0}, {"ref": "2108", "nombre": "BALA EMP MR11 BLANCA ILUM CJ", "canal": "MULTICANAL", "m": [287, -24, 25], "stock0": 0, "transito": 0}, {"ref": "2217", "nombre": "LED LUZ DE NOCHE PATO ILUM BL", "canal": "EXCLUSIVO", "m": [372, 477, 324], "stock0": 580, "transito": 0}, {"ref": "1168", "nombre": "KIT 3 BAL+LED OPT AJUS BLC 6W LC GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2294", "nombre": "LED BOMBILLO 4 ASP 45W LB 20KH E27 ILM C", "canal": "EXCLUSIVO", "m": [null, 974, 96], "stock0": 919, "transito": 0}, {"ref": "2180", "nombre": "LED SOLAR BOMBILLO 20W LB ILM CAJA", "canal": "MULTICANAL", "m": [225, 213, 144], "stock0": 4858, "transito": 0}, {"ref": "1062", "nombre": "LUMINARIA LED REGLET 12W LB 25000H ILUM", "canal": "EXCLUSIVO", "m": [150, 198, 162], "stock0": 0, "transito": 0}, {"ref": "1091", "nombre": "BALA DE EMPOTRAR AJUSTABLE SATIN ILUM CJ", "canal": "MULTICANAL", "m": [null, 325, 600], "stock0": 106, "transito": 0}, {"ref": "2468", "nombre": "LED BULB 12W CCT 25KH ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [null, 1260, 105], "stock0": 98, "transito": 0}, {"ref": "1264", "nombre": "LED PANEL PLAN 24W LB 30X30CM ILM PRM CJ", "canal": "MULTICANAL", "m": [255, 267, -1], "stock0": 0, "transito": 0}, {"ref": "2308", "nombre": "LED PANEL DIM RED SOBR 18W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [null, 984, 263], "stock0": 0, "transito": 4200}, {"ref": "1061", "nombre": "LUMINARIA LED REGLET 9W LB 25000H ILUM C", "canal": "EXCLUSIVO", "m": [186, 144, 156], "stock0": 471, "transito": 0}, {"ref": "1063", "nombre": "LUMINARIA LED REGLET 18W LB 25000H ILUM", "canal": "MULTICANAL", "m": [300, 168, 186], "stock0": 455, "transito": 0}, {"ref": "2219", "nombre": "CINTA LED 4W RGB 20KH 10M ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [210, 247, 230], "stock0": 37, "transito": 0}, {"ref": "2193", "nombre": "LED FIL GLOBO G195 6W LB E27 25KH ILM CJ", "canal": "EXCLUSIVO", "m": [100, 20, 70], "stock0": 1057, "transito": 0}, {"ref": "738", "nombre": "LED GLOBO 12W LB E27 15000H ILUM CJ", "canal": "EXCLUSIVO", "m": [null, 1140, 90], "stock0": 249, "transito": 0}, {"ref": "2186", "nombre": "LED FRAMELESS 10W LB INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 372, "transito": 0}, {"ref": "904", "nombre": "LED BALA PISO 3W LC 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [156, 234, 162], "stock0": 89, "transito": 0}, {"ref": "2467", "nombre": "LED BULB 7W CCT 25KH ILUMAX CAJA", "canal": "EXCLUSIVO", "m": [330, 196, null], "stock0": 0, "transito": 0}, {"ref": "2183", "nombre": "LED FRAMELESS 36W LB INC RED 20KH ILM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1167", "nombre": "KIT 3 BAL+LED OPT AJUS BLC 6W LB GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2307", "nombre": "LED PANEL DIM RED INCRUS 12W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [null, 599, null], "stock0": 1, "transito": 0}, {"ref": "598", "nombre": "LED GLOBO 12W LC E27 15000H ILUM CJ", "canal": "EXCLUSIVO", "m": [80, 140, 120], "stock0": 270, "transito": 0}, {"ref": "466", "nombre": "LED PANEL PLANO 48W LB 60X60CM ILUM CAJ", "canal": "MULTICANAL", "m": [270, 62, null], "stock0": 0, "transito": 0}, {"ref": "2198", "nombre": "LED FRAMELESS 18W LC INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 1143, "transito": 0}, {"ref": "902", "nombre": "LED BALA PISO 1W LC 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [234, 210, 144], "stock0": 575, "transito": 0}, {"ref": "1170", "nombre": "KIT 3 BAL+LED OPT AJUS STN 6W LC GU10 30", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1980", "nombre": "LED LUM HERME 36W LB 25000H ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2212", "nombre": "LED LUZ DE NOCHE CARRO VERDE ILUM BL", "canal": "EXCLUSIVO", "m": [132, 144, 84], "stock0": 1123, "transito": 0}, {"ref": "794", "nombre": "LED PANEL PLANO 48W LB 30X120 CM ILUM CA", "canal": "MULTICANAL", "m": [46, 189, 40], "stock0": 78, "transito": 0}, {"ref": "1169", "nombre": "KIT 3 BAL+LED OPT AJUS SATN 6W LB GU10 3", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1064", "nombre": "LED MR11 4W LB GU10 15KH ILM BLR", "canal": "EXCLUSIVO", "m": [156, 192, 144], "stock0": 0, "transito": 0}, {"ref": "2216", "nombre": "LED VELITA FLAMA 2W E27 ILUM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1460", "nombre": "LED BULB SOLAR 7W LB E27 10000 ILM BL", "canal": "MULTICANAL", "m": [84, 120, 7], "stock0": 557, "transito": 0}, {"ref": "1390", "nombre": "LUMINARIA A SOLAR LED 4W LB 35K H IL CJ", "canal": "MULTICANAL", "m": [90, 108, 132], "stock0": 559, "transito": 0}, {"ref": "2223", "nombre": "LED HERMETICA 50W LB 20KH ILM CJ", "canal": "EXCLUSIVO", "m": [10, null, null], "stock0": 0, "transito": 0}, {"ref": "1343", "nombre": "D LED ESTACA SOLAR 0.06W LB ILM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1407, "transito": 0}, {"ref": "2478", "nombre": "LED PROYECTOR INFANT 1W CCT 15KH ILUM CA", "canal": "EXCLUSIVO", "m": [96, 118, 72], "stock0": 451, "transito": 0}, {"ref": "1112", "nombre": "D LED BULBO ANTIMOSQUITOS 7W 15000H E27", "canal": "Sin Canal", "m": [192, 144, 72], "stock0": 240, "transito": 0}, {"ref": "1807", "nombre": "ESTACA PARA GU10 NEGRA ILM CJ", "canal": "MULTICANAL", "m": [120, 160, 140], "stock0": 1069, "transito": 0}, {"ref": "2473", "nombre": "LED LUZ NOCH CUAD 0,6W LC 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [276, 276, 204], "stock0": 1026, "transito": 0}, {"ref": "2218", "nombre": "LED BOMBILLO FLAMA 3W E27 ILUM CJ", "canal": "EXCLUSIVO", "m": [72, 72, 36], "stock0": 19, "transito": 0}, {"ref": "2293", "nombre": "D LED PLAFON REDOND 32W LB E27 20KH ILM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "1138", "nombre": "COLGANTE VINTAGE 1XE27 NEGRO ILUM TARR", "canal": "EXCLUSIVO", "m": [99, 110, 40], "stock0": 502, "transito": 0}, {"ref": "2304", "nombre": "LED BOMBILLO VENTILADOR 30W LB ILUM CAJA", "canal": "EXCLUSIVO", "m": [48, null, -2], "stock0": 0, "transito": 0}, {"ref": "1380", "nombre": "PX2 LED ALTA POT 5W LC E27 25KH ILUM BL", "canal": "EXCLUSIVO", "m": [60, 64, null], "stock0": 0, "transito": 0}, {"ref": "932", "nombre": "PACK SOCKET T8 ANTIVIB+GANCHO SOP T8 HTR", "canal": "EXCLUSIVO", "m": [150, 200, 100], "stock0": 300, "transito": 0}, {"ref": "1139", "nombre": "COLGANTE VINTAGE 1XE27 BRONCE ILUM TARR", "canal": "EXCLUSIVO", "m": [120, 40, 148], "stock0": 87, "transito": 0}, {"ref": "2301", "nombre": "LED LINEAL 24W E27 LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, -2, null], "stock0": 1452, "transito": 0}, {"ref": "2199", "nombre": "LED FRAMELESS 10W LC INC RED 8KH ILM CAJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 722, "transito": 0}, {"ref": "1388", "nombre": "LED REFLECTOR SOLAR SENSO 5W LB ILM CJ", "canal": "EXCLUSIVO", "m": [114, 114, 156], "stock0": 277, "transito": 0}, {"ref": "1963", "nombre": "D LED REFLE 50W SMART CCT RGB 25KH ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 282, "transito": 0}, {"ref": "2333", "nombre": "LED REFLECTOR SOLAR 100W LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [-4, -2, null], "stock0": 0, "transito": 0}, {"ref": "2464", "nombre": "LED BOMBILLO SOLAR 30W LB 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [132, 118, 72], "stock0": 0, "transito": 0}, {"ref": "2305", "nombre": "LED PANEL SLIM RED SATIN 12W LB ILM CAJ", "canal": "EXCLUSIVO", "m": [48, 60, 48], "stock0": 975, "transito": 0}, {"ref": "2302", "nombre": "LED LINEAL 18W E27 LB ILUM CAJA", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 1476, "transito": 0}, {"ref": "1957", "nombre": "LUMINARIA SOLAR LED 4W LB 35KH ILM CJ", "canal": "MULTICANAL", "m": [48, 34, 72], "stock0": 941, "transito": 0}, {"ref": "1074", "nombre": "ESTACA LED 5W VERDE 25000H ILUM CJ", "canal": "EXCLUSIVO", "m": [88, 32, 32], "stock0": 483, "transito": 0}, {"ref": "1490", "nombre": "BALA PISO GU10 4 ILM CAJ", "canal": "MULTICANAL", "m": [72, 102, 78], "stock0": 660, "transito": 0}, {"ref": "1378", "nombre": "PX2 LED ALTA POT 5W LB E27 25KH ILUM BL", "canal": "MULTICANAL", "m": [72, 84, 84], "stock0": 62, "transito": 0}, {"ref": "2306", "nombre": "LED PANEL SLIM RED SATIN 12W LC ILM CAJ", "canal": "EXCLUSIVO", "m": [60, 48, 60], "stock0": 1536, "transito": 0}, {"ref": "1524", "nombre": "D LED LAMP MESA RECA FLEX BLACA 4W ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 400, "transito": 0}, {"ref": "2303", "nombre": "LED LINEAL CORTA E27 12W LC ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 630, "transito": 0}, {"ref": "2465", "nombre": "LED LINT SOLAR 40W LB 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [216, 297, 204], "stock0": 540, "transito": 0}, {"ref": "1979", "nombre": "D LED LUM HERME 18W LB 25000H ILM CJ", "canal": "Sin Canal", "m": [204, 68, null], "stock0": 0, "transito": 0}, {"ref": "2474", "nombre": "LED LUZ NOCHE RED 0,8W LC 15KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [36, 132, 60], "stock0": 2852, "transito": 0}, {"ref": "2273", "nombre": "D SET X2 LED BULB DIM 9W SMART RGB E27", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1921", "nombre": "LED REFLECTOR 30W VERDE 2500H ILM CJ", "canal": "MULTICANAL", "m": [null, null, null], "stock0": 5, "transito": 0}, {"ref": "969", "nombre": "LED REFLECTOR 10W BAT REC 50000H ILUM CA", "canal": "EXCLUSIVO", "m": [70, 35, 130], "stock0": 145, "transito": 0}, {"ref": "2332", "nombre": "LED REFLECTOR SOLAR 300W LB ILUM CAJ", "canal": "EXCLUSIVO", "m": [86, 88, 62], "stock0": 254, "transito": 0}, {"ref": "903", "nombre": "LED BALA PISO 3W LB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [48, 60, 48], "stock0": 1, "transito": 0}, {"ref": "2192", "nombre": "D LED FIL T30 8W LB E27 25KH ILM CJ", "canal": "Sin Canal", "m": [24, null, null], "stock0": 1324, "transito": 0}, {"ref": "905", "nombre": "LED BALA PISO 3W RGB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [54, 53, 36], "stock0": 385, "transito": 0}, {"ref": "2475", "nombre": "LED LINT RECARG 1+4W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 1139, "transito": 0}, {"ref": "1794", "nombre": "D LED REFLECTOR 10W LF 30000H ILM CAJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1096", "nombre": "LED LUMINARIA EMERGENCIA 12 W BLANCA ILM", "canal": "MULTICANAL", "m": [36, 24, 72], "stock0": 2539, "transito": 0}, {"ref": "901", "nombre": "LED BALA PISO 1W LB 30000H ILUM CAJ", "canal": "MULTICANAL", "m": [48, 48, 36], "stock0": 684, "transito": 0}, {"ref": "2476", "nombre": "LED LINT RECARG 5W LB 20KH ILUM CAJA", "canal": "EXCLUSIVO", "m": [330, 189, 140], "stock0": 1041, "transito": 0}, {"ref": "2368", "nombre": "LED PANEL SLIM RED SOBR 40W CCT ILM CAJ", "canal": "EXCLUSIVO", "m": [50, 68, 25], "stock0": 941, "transito": 0}, {"ref": "1840", "nombre": "D LED REFLECTOR ESTACA 7.5W LB 25KH ILM", "canal": "Sin Canal", "m": [36, 12, 30], "stock0": 234, "transito": 0}, {"ref": "1379", "nombre": "D PX2 LED ALTA POT 5W LF E27 25KH ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2463", "nombre": "LED PANEL SOBRE 20W CCT+RGB 25KH ILUM", "canal": "EXCLUSIVO", "m": [50, 70, 60], "stock0": 361, "transito": 0}, {"ref": "2470", "nombre": "LED APLIQUE CUAD SOLAR 1W RGB 20KH ILM C", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 270, "transito": 0}, {"ref": "2049", "nombre": "D ESTACA LED 0.6W SOLAR SENS LF ILM CJ", "canal": "Sin Canal", "m": [24, 15, 24], "stock0": 393, "transito": 0}, {"ref": "2471", "nombre": "LED APLIQUE SOLAR 1W RGB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [20, 20, 20], "stock0": 2148, "transito": 0}, {"ref": "1810", "nombre": "D LED LAMP MESA FLEX DIM 3W LB BLANCA IL", "canal": "Sin Canal", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "930", "nombre": "SOCKET T5 BOLSA X1UND HTR ILUMAX", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 345, "transito": 0}, {"ref": "2477", "nombre": "LED LINT RECARG 1+15W LB 20KH ILUM CAJ", "canal": "EXCLUSIVO", "m": [24, 60, 60], "stock0": 1332, "transito": 0}, {"ref": "1424", "nombre": "D LED LUMINARIA CAMPING 2W LB RECARGABLE", "canal": "Sin Canal", "m": [-1, null, null], "stock0": 0, "transito": 0}, {"ref": "1855", "nombre": "LED REFLECTOR SOLAR SENSOR 10W LB ILM CJ", "canal": "MULTICANAL", "m": [4, 8, 4], "stock0": 389, "transito": 0}, {"ref": "1813", "nombre": "D LED REFLEC NOVA II 10W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1809", "nombre": "D LED LAMP MESA FLEX DIM 3W LB NEGRA IL", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1385", "nombre": "D APLIQ LED PARED SOL SENS 1.5W LB ILM B", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "348", "nombre": "D CONECTOR MR16 BOLSA X 1 UND", "canal": "Sin Canal", "m": [null, null, null], "stock0": 13, "transito": 0}, {"ref": "1815", "nombre": "D LED REFLEC NOVA II 30W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1817", "nombre": "D LED REFLEC NOVA II 50W LC 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "848", "nombre": "LED PANEL PLANO 48W LF 60X60CM ILUM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 355, "transito": 0}, {"ref": "1812", "nombre": "D LED REFLE NOVA II 10W LB 25KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 42, "transito": 0}, {"ref": "1188", "nombre": "D LED APLIQUE EXTERIOR RECTANGU GRIS 3.5", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1190", "nombre": "D LED APLIQUE EXTERIOR CUADRADO GRIS 3W", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1415", "nombre": "D LUMINARIA A SOLAR LED 15W LB 35KH IL C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1021", "nombre": "PX2 LED BULB 10W LB E27 30000H ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1273", "nombre": "D LUMINARIA HERMETICA LED 2x20W LB 50 KH", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2145", "nombre": "D LED KARDAN 2X12W LC 20KH ILM CAJA", "canal": "Sin Canal", "m": [6, null, null], "stock0": 0, "transito": 0}, {"ref": "849", "nombre": "D LED PANEL PLANO 48W LF 120X30CM IL PRO", "canal": "Sin Canal", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "1797", "nombre": "D LED REFLECTOR 50W LF 30000H ILUM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2144", "nombre": "D LED KARDAN 12W LC 20KH ILM CAJA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 30, "transito": 0}, {"ref": "2104", "nombre": "D ESTACA SOLAR SMRT LED 1WRGB 30KH ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 314, "transito": 0}, {"ref": "726955", "nombre": "MP GV LED APL EXT RCTG GRS 3.5W LB SETX6", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 0, "transito": 0}, {"ref": "726290", "nombre": "MP GV ESTACA LED 5W LUZ CALIDAS SETX 16U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726887", "nombre": "MP GV ESTAC SOL NGR SPR LED 10X LF SETX6", "canal": "Sin Canal", "m": [null, 1, 2], "stock0": 0, "transito": 0}, {"ref": "2106", "nombre": "D BOLARDO LED SOLAR SENSOR 5W LB 35KH IL", "canal": "Sin Canal", "m": [null, null, null], "stock0": 139, "transito": 0}, {"ref": "2458", "nombre": "LED REFLECTOR 100W CCT 30KH ILUMAX CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 855, "transito": 0}, {"ref": "726511", "nombre": "MP GV LED APL EXT CUADRAD GRIS 3W SETX12", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2163", "nombre": "D LED BALA SUMERG 24W RGB 20KH ILUMAX CA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2457", "nombre": "LED REFLECTOR 50W CCT 30KH ILUMAX CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 1181, "transito": 0}, {"ref": "727082", "nombre": "MP GV RFLCTR LED 10W MLTCLOR RGB SETX10U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726979", "nombre": "D PX12 REFLECTOR LED 50W LUZ FRESCA", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726221", "nombre": "D MP GV LED BALA PISO 3W LB SETX12UJ", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 1, "transito": 0}, {"ref": "726313", "nombre": "D MP GV ESTACA LED 5W LUZ VERDE SETX16U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726368", "nombre": "D MP GV LED BALA PISO 1W LC SETX12U", "canal": "Sin Canal", "m": [-2, 1, 1], "stock0": 1, "transito": 0}, {"ref": "726597", "nombre": "MP GV LED GLBO FILMNTO 8W DIM LC SETX20U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726474", "nombre": "MP GV COLGANTE VITAGE 1XE27 NGRO SETX10U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "726528", "nombre": "MP GV APL PRED LED SL SN 3,2W LBC SETX6", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2594", "nombre": "LED LAMPARA RECARGABLE 1+30W 6000k 8KH", "canal": "EXCLUSIVO", "m": [null, null, 400], "stock0": 600, "transito": 0}, {"ref": "2095", "nombre": "LED REFLECTOR 50W LC 25000H ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2530", "nombre": "LED REFLECTOR 50W VERDE 50000H ILUM CAJ", "canal": "FERRETERO", "m": [150, 9, -1], "stock0": 0, "transito": 0}, {"ref": "726665", "nombre": "D MP GV LED MR11 4W LC GU10 SETX24U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2570", "nombre": "LED APLIQUE SOLAR PARED 0.2W 1800K 30000", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 26, "transito": 0}, {"ref": "2528", "nombre": "LED SOLAR REFLECTOR 120W CCT 50KH ILM C", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "2590", "nombre": "LED APLIQUE MULTIFORMA 8W 25KH ILUMAX CJ", "canal": "EXCLUSIVO", "m": [null, null, 144], "stock0": 360, "transito": 0}, {"ref": "2529", "nombre": "LED SOLAR REFLECTOR 240W CCT 50KH ILM C", "canal": "EXCLUSIVO", "m": [-1, null, null], "stock0": 0, "transito": 0}, {"ref": "2525", "nombre": "LAMP ESCRITORIO NEGRA E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 0, "transito": 0}, {"ref": "2567", "nombre": "LED APLIQUE SOLAR 0,37W CCT 20000H ILM C", "canal": "EXCLUSIVO", "m": [250, 230, 340], "stock0": 1529, "transito": 0}, {"ref": "2162", "nombre": "LED SOLAR REFLECTOR 800W LB 30KH ILUM CJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 121, "transito": 0}, {"ref": "2523", "nombre": "LED LAMP RECAR VENT 10W CCT ILM CJ", "canal": "EXCLUSIVO", "m": [-89, -55, -37], "stock0": 313, "transito": 0}, {"ref": "2336", "nombre": "LED PAR 30 IP20 10W LC E27 25000H ILM CJ", "canal": "FERRETERO", "m": [null, null, 216], "stock0": 343, "transito": 0}, {"ref": "726245", "nombre": "MP GV LED BALA PISO 3W LUZ CALIDA SETX6U", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2571", "nombre": "LED APLIQUE SOLAR BOLARDO 0,2W 1800K 300", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 27, "transito": 0}, {"ref": "2526", "nombre": "LAMP ESCRITORIO BLANCA E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2221", "nombre": "D LAMPARA LED RECARGABLE LUNA RGB ILUM", "canal": "Sin Canal", "m": [null, null, null], "stock0": 1150, "transito": 0}, {"ref": "2568", "nombre": "LED APLIQUE SOLAR 0,44W CCT 20000H ILM C", "canal": "EXCLUSIVO", "m": [230, 180, 410], "stock0": 1599, "transito": 0}, {"ref": "2520", "nombre": "LED LAMP RECAR 12W 3 LUC ILM CJ", "canal": "EXCLUSIVO", "m": [null, -1, null], "stock0": 9, "transito": 0}, {"ref": "2522", "nombre": "LED LAMP RECAR MAGNE 10W CCT ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2592", "nombre": "LED TORTUGA CON SENSOR 12W CCT 50KH ILM", "canal": "EXCLUSIVO", "m": [null, null, 492], "stock0": 1484, "transito": 0}, {"ref": "2527", "nombre": "LAMP ESCRITORIO VERDE E27 ILM CJ", "canal": "EXCLUSIVO", "m": [null, null, null], "stock0": 1, "transito": 0}, {"ref": "2593", "nombre": "LED TORTUGA CON SENSOR 8W CCT 50KH ILM", "canal": "EXCLUSIVO", "m": [null, null, 492], "stock0": 1481, "transito": 0}, {"ref": "2578", "nombre": "LED PANEL INCRUSTAR BORDE NEGRO 12W CCT", "canal": "EXCLUSIVO", "m": [null, null, 336], "stock0": 3400, "transito": 0}, {"ref": "2337", "nombre": "D LED PAR 30 IP20 10W LF E27 25000H ILM", "canal": "Sin Canal", "m": [null, null, 216], "stock0": 761, "transito": 0}, {"ref": "2579", "nombre": "LED PANEL INCRUSTAR BORDE NEGRO 18W CCT", "canal": "EXCLUSIVO", "m": [null, null, 336], "stock0": 2608, "transito": 0}, {"ref": "726412", "nombre": "D MP GV LED RFLCTR 10W BATE RECA SETX 5U", "canal": "Sin Canal", "m": [null, null, 1], "stock0": 0, "transito": 0}, {"ref": "726771", "nombre": "D PX12 REFLECTOR LED 30W LUZ FRESCA", "canal": "Sin Canal", "m": [null, 1, null], "stock0": 0, "transito": 0}, {"ref": "2569", "nombre": "LED APLIQUE SOLAR SOBREPONER 0,20W 1800K", "canal": "EXCLUSIVO", "m": [170, null, -10], "stock0": 39, "transito": 0}, {"ref": "1959", "nombre": "LED BULB DUM 9W SMART RGB E27 20KH IILM", "canal": "FERRETERO", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "2311", "nombre": "LED FRAMELESS SOBRP 18W LB ILUM CAJ", "canal": "FERRETERO", "m": [null, null, null], "stock0": 476, "transito": 0}, {"ref": "1387", "nombre": "D APLIQ LED PARED SOL SENS 3.2W LB ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1965", "nombre": "D LED PLAFON REDONDO 18W SMART CCT ILM C", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}, {"ref": "1793", "nombre": "D LED REFLECTOR SMD 50W RGB 25 KH ILM CJ", "canal": "Sin Canal", "m": [null, null, null], "stock0": 0, "transito": 0}]</script>
@@ -2004,6 +2163,247 @@
     renderStats();
     renderInicioView();
   }
+
+  // ══════════════════════════════════════════════
+  //  MOBILE — bottom nav + card renderers
+  // ══════════════════════════════════════════════
+
+  var isMobile = function(){ return window.innerWidth <= 640; };
+
+  // Keep bottom nav in sync with switchTab
+  var _origSwitchTab = switchTab;
+  switchTab = function(tab){
+    _origSwitchTab(tab);
+    // Sync bottom nav highlight
+    document.querySelectorAll('.bnav-item').forEach(function(it){
+      it.classList.toggle('active', it.getAttribute('data-tab') === tab);
+    });
+    // Scroll bottom nav item into view
+    var active = document.querySelector('.bnav-item.active');
+    if (active) active.scrollIntoView({inline:'center', behavior:'smooth', block:'nearest'});
+    // On mobile: re-render card-based views
+    if (isMobile()){
+      if (tab === 'alertas') renderAlertasViewMobile();
+      if (tab === 'panel')   renderPanelViewMobile();
+    }
+  };
+
+  // Wire bottom nav clicks
+  document.getElementById('bottom-nav').addEventListener('click', function(e){
+    var item = e.target.closest('.bnav-item');
+    if (item) switchTab(item.getAttribute('data-tab'));
+  });
+
+  // ── Mobile: Alertas as cards ──────────────────
+  function renderAlertasViewMobile(){
+    var el = document.getElementById('view-alertas');
+    var all = computeAll().filter(function(r){ return r.alerta === 'PEDIR YA'; })
+                          .sort(function(a,b){ return a.diasCobertura - b.diasCobertura; });
+    var vencidos = all.filter(function(r){ return r.vencido; });
+
+    var kpiStrip =
+      '<div class="m-kpi-strip">'+
+        '<div class="m-kpi-pill red" data-kpi-filter="PEDIR YA">'+
+          '<div class="mpn">'+all.length+'</div><div class="mpl">Pedir ya</div>'+
+        '</div>'+
+        '<div class="m-kpi-pill" style="border-color:var(--red);">'+
+          '<div class="mpn" style="color:var(--red);">'+vencidos.length+'</div><div class="mpl">Vencidos</div>'+
+        '</div>'+
+        '<div class="m-kpi-pill amber">'+
+          '<div class="mpn">'+all.reduce(function(a,r){return a+r.cantidadSugerida;},0).toLocaleString('es-CO')+'</div><div class="mpl">Unidades</div>'+
+        '</div>'+
+      '</div>';
+
+    var pedidoBtn = connected
+      ? '<button class="btn btn-primary" id="m-btn-pedidos" style="width:100%;margin-bottom:14px;">📦 Generar y enviar pedidos</button>'
+      : '';
+
+    var cards = all.map(function(r){
+      var bc = r.alerta==='PEDIR YA'?'pedir':'sindato';
+      var vStyle = r.vencido ? 'red' : '';
+      var lt = r.vencido ? '⚠️ VENCIDO' : fmtDate(r.fechaLimitePedido);
+      return '<div class="m-card" data-ref="'+escapeHtml(r.ref)+'">'+
+        '<div class="m-card-header">'+
+          '<div>'+
+            '<div class="m-card-ref">'+escapeHtml(r.ref)+' · '+escapeHtml(r.canal)+'</div>'+
+            '<div class="m-card-title">'+escapeHtml(r.nombre)+'</div>'+
+          '</div>'+
+          '<span class="badge '+bc+'" style="flex-shrink:0;">'+r.alerta+'</span>'+
+        '</div>'+
+        '<div class="m-card-body">'+
+          '<div class="m-kv"><div class="mk">Stock</div><div class="mv">'+Math.round(r.stockActual)+'</div></div>'+
+          '<div class="m-kv"><div class="mk">Cobertura</div><div class="mv '+(r.diasCobertura<30?'red':r.diasCobertura<60?'amber':'')+'">'+r.diasCobertura.toFixed(0)+' d</div></div>'+
+          '<div class="m-kv"><div class="mk">A pedir</div><div class="mv amber">'+r.cantidadSugerida.toLocaleString('es-CO')+'</div></div>'+
+        '</div>'+
+        '<div class="m-card-footer">'+
+          '<span style="font-size:11px;color:var(--muted);">Agotado: <strong>'+fmtDate(r.fechaAgotado)+'</strong></span>'+
+          '<span style="font-size:11px;font-weight:700;color:'+(r.vencido?'var(--red)':'var(--ink)')+';">Pedir antes: '+lt+'</span>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+
+    if (!all.length){
+      cards = '<div class="m-empty"><div class="m-empty-icon">✅</div><p>No hay productos en estado crítico ahora mismo.</p></div>';
+    }
+
+    el.innerHTML =
+      '<div style="padding:4px 0 8px;">'+
+        '<div class="m-section-header">'+
+          '<h2>🚨 Alertas</h2>'+
+          '<span class="m-count">'+all.length+' productos</span>'+
+        '</div>'+
+        kpiStrip+
+        pedidoBtn+
+        cards+
+      '</div>';
+
+    // Wire kpi pills
+    document.querySelectorAll('#view-alertas [data-kpi-filter]').forEach(function(pill){
+      pill.addEventListener('click', function(){
+        alertFilter = pill.getAttribute('data-kpi-filter');
+        switchTab('panel');
+      });
+    });
+
+    // Wire cards
+    document.querySelectorAll('#view-alertas .m-card[data-ref]').forEach(function(card){
+      card.addEventListener('click', function(){ abrirDetalleProducto(card.getAttribute('data-ref')); });
+    });
+
+    // Wire pedidos button
+    var mBtnPed = document.getElementById('m-btn-pedidos');
+    if (mBtnPed){
+      mBtnPed.addEventListener('click', async function(){
+        if (!confirm('¿Enviar correos de pedido a proveedores?')) return;
+        mBtnPed.disabled = true; mBtnPed.textContent = 'Enviando…';
+        try{
+          var res = await fetch(sheetsUrl, {method:'POST', body:JSON.stringify({action:'generarPedidos'})});
+          var json = await res.json();
+          if (!json.ok) throw new Error(json.error||'error');
+          serverProductos = json.productos.map(mapServerProduct);
+          var r2 = json.resumenPedidos||{};
+          toast((r2.correosEnviados||0)+' correo(s) enviado(s) — '+(r2.referencias||0)+' referencias.');
+          renderStats(); renderAlertasViewMobile();
+        }catch(e){ toast('Error al enviar pedidos.'); mBtnPed.disabled=false; mBtnPed.textContent='📦 Generar y enviar pedidos'; }
+      });
+    }
+  }
+
+  // ── Mobile: Panel de productos as cards ───────
+  function renderPanelViewMobile(){
+    var el = document.getElementById('view-panel');
+    var all = computeAll();
+
+    // Filter chips
+    var chips = [
+      {label:'Todos', val:'', cls:''},
+      {label:'🔴 Pedir ya', val:'PEDIR YA', cls:'chip-red'},
+      {label:'✅ OK', val:'OK', cls:'chip-green'},
+      {label:'⏰ Vencidos', val:'VENCIDO', cls:''},
+      {label:'❔ Sin dato', val:'SIN DATO', cls:''}
+    ];
+
+    var chipHtml = chips.map(function(c){
+      var isActive = alertFilter === c.val ? ' active' : (c.val===''&&!alertFilter?' active':'');
+      return '<div class="m-chip '+c.cls+isActive+'" data-filter="'+escapeHtml(c.val)+'">'+c.label+'</div>';
+    }).join('');
+
+    el.innerHTML =
+      '<div style="padding:4px 0 8px;">'+
+        '<div class="m-section-header">'+
+          '<h2>📦 Productos</h2>'+
+          '<span class="m-count" id="m-panel-count"></span>'+
+        '</div>'+
+        '<div class="m-search"><input type="text" id="m-pf-search" placeholder="Buscar referencia o nombre…" value="'+escapeHtml(searchTerm)+'"></div>'+
+        '<div class="m-chips" id="m-chips">'+chipHtml+'</div>'+
+        '<div id="m-panel-cards"></div>'+
+      '</div>';
+
+    function renderMobileCards(){
+      var list = computeAll();
+      var q = document.getElementById('m-pf-search');
+      var s = q ? q.value.toLowerCase() : searchTerm;
+      if (s) list = list.filter(function(r){ return r.ref.toLowerCase().indexOf(s)>=0 || r.nombre.toLowerCase().indexOf(s)>=0; });
+      if (alertFilter === 'VENCIDO') list = list.filter(function(r){ return r.vencido; });
+      else if (alertFilter) list = list.filter(function(r){ return r.alerta === alertFilter; });
+      list.sort(function(a,b){ return a.diasCobertura - b.diasCobertura; });
+
+      var countEl = document.getElementById('m-panel-count');
+      if (countEl) countEl.textContent = list.length+' / '+PRODUCTS_RAW.length;
+
+      var MAX_CARDS = 60; // cap for performance
+      var html = list.slice(0, MAX_CARDS).map(function(r){
+        var bc = r.alerta==='PEDIR YA'?'pedir':(r.alerta==='OK'?'ok':'sindato');
+        var covColor = r.diasCobertura < 30 ? 'red' : r.diasCobertura < 90 ? 'amber' : 'green';
+        return '<div class="m-card" data-ref="'+escapeHtml(r.ref)+'">'+
+          '<div class="m-card-header">'+
+            '<div style="min-width:0;">'+
+              '<div class="m-card-ref">'+escapeHtml(r.ref)+' · '+escapeHtml(r.canal)+'</div>'+
+              '<div class="m-card-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(r.nombre)+'</div>'+
+            '</div>'+
+            '<span class="badge '+bc+'" style="flex-shrink:0;font-size:10px;">'+r.alerta+'</span>'+
+          '</div>'+
+          '<div class="m-card-body">'+
+            '<div class="m-kv"><div class="mk">Stock</div><div class="mv">'+Math.round(r.stockActual).toLocaleString('es-CO')+'</div></div>'+
+            '<div class="m-kv"><div class="mk">Cobertura</div><div class="mv '+covColor+'">'+r.diasCobertura.toFixed(0)+' d</div></div>'+
+            '<div class="m-kv"><div class="mk">Pedir</div><div class="mv '+(r.cantidadSugerida>0?'amber':'')+'">'+r.cantidadSugerida.toLocaleString('es-CO')+'</div></div>'+
+          '</div>'+
+        '</div>';
+      }).join('');
+
+      if (!list.length) html = '<div class="m-empty"><div class="m-empty-icon">🔍</div><p>Sin resultados para este filtro.</p></div>';
+      else if (list.length > MAX_CARDS) html += '<p class="hint" style="text-align:center;padding:10px;">Mostrando primeros '+MAX_CARDS+' de '+list.length+'. Usa el buscador para filtrar.</p>';
+
+      var box = document.getElementById('m-panel-cards');
+      if (box) box.innerHTML = html;
+
+      document.querySelectorAll('#m-panel-cards .m-card[data-ref]').forEach(function(card){
+        card.addEventListener('click', function(){ abrirDetalleProducto(card.getAttribute('data-ref')); });
+      });
+    }
+
+    // Wire search
+    document.getElementById('m-pf-search').addEventListener('input', function(e){
+      searchTerm = e.target.value;
+      renderMobileCards();
+    });
+
+    // Wire chips
+    document.querySelectorAll('#m-chips .m-chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        alertFilter = chip.getAttribute('data-filter');
+        document.querySelectorAll('#m-chips .m-chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-filter')===alertFilter); });
+        renderMobileCards();
+      });
+    });
+
+    renderMobileCards();
+  }
+
+  // ── Mobile: override renderAlertasView ────────
+  // Intercept renderAlertasView to use mobile card version when on mobile
+  var _origRenderAlertasView = renderAlertasView;
+  renderAlertasView = function(){
+    if (isMobile()) renderAlertasViewMobile();
+    else _origRenderAlertasView();
+  };
+
+  // Intercept renderPanelView to use mobile card version when on mobile
+  var _origRenderPanelView = renderPanelView;
+  renderPanelView = function(){
+    if (isMobile()) renderPanelViewMobile();
+    else _origRenderPanelView();
+  };
+
+  // Re-render on resize crossing the 640px boundary
+  var _lastWasMobile = isMobile();
+  window.addEventListener('resize', function(){
+    var nowMobile = isMobile();
+    if (nowMobile !== _lastWasMobile){
+      _lastWasMobile = nowMobile;
+      switchTab(currentTab);
+    }
+  });
 
   // Expose switchTab globally (used in onclick attributes in renderInicioView)
   window.switchTab = switchTab;
