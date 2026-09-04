@@ -700,9 +700,8 @@
       connected=true; sheetsUrl=url;
       try{ await window.storage.set(STORE_URL_KEY,url,false); }catch(e){}
       setConnectionStatus('Conectado a '+(json.empresa||'Google Sheets')+' — '+serverProductos.length+' productos.',true);
-      renderStats();
-      switchTab(currentTab);
-      if(!silencioso) toast('✅ Conectado a Google Sheets — '+serverProductos.length+' productos en tiempo real.');
+      renderStats(); switchTab(currentTab);
+      if(!silencioso) toast('Conectado a Google Sheets correctamente.');
     }catch(e){
       connected=false; serverProductos=null;
       setConnectionStatus('No se pudo conectar. Verifica que la URL termine en /exec y acceso sea "Cualquier persona".',false);
@@ -736,7 +735,7 @@
     document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active',t.getAttribute('data-tab')===tab); });
     ALL_TABS.forEach(function(v){ document.getElementById('view-'+v).style.display=(v===tab)?'block':'none'; });
     var renders={inicio:renderInicioView,dashboard:renderDashboardView,ventas:renderVentasView,registrar:renderRegistrarView,panel:renderPanelView,alertas:renderAlertasView,proyeccion:renderProyeccionView,temporadas:renderTemporadasView,informe:renderInformeView,proveedores:renderProveedoresView,narrativa:renderNarrativaView,'ia-avanzada':renderIaAvanzadaView,'pedidos-live':renderPedidosLiveView,'abc-xyz':renderAbcXyzView,'roturas-kpis':renderRoturasKpisView,config:renderConfigView};
-    if(renders[tab]) Promise.resolve(renders[tab]()).catch(function(e){ console.error('Tab render error:', e); });
+    if(renders[tab]) renders[tab]();
   }
   document.getElementById('tabs').addEventListener('click',function(e){
     var t=e.target.closest('.tab'); if(t) switchTab(t.getAttribute('data-tab'));
@@ -2483,28 +2482,24 @@
       var ctx = buildContextoInventario();
       var prompt = buildPromptGerencial(ctx, pregunta);
 
-      var GAS_URL = 'https://script.google.com/macros/s/AKfycbwrub1N_jokQMH1yOrsKcPBAr3IR09DrQ-ojaa2CI-TSPNWYf5KfU8v8BN_b7FA-0hd/exec';
-
-      var res = await fetch(GAS_URL, {
+      var res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'ia', prompt: prompt }),
-        redirect: 'follow'
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: 'Eres analista de cadena de suministro de ILUMAX Colombia. Responde SIEMPRE en español. Usa un lenguaje claro y directo, con emojis de semáforo (🔴🟡🟢) para indicar nivel de urgencia. Sé concreto y evita términos técnicos sin explicación. Usa saltos de línea y separadores para que el texto sea fácil de leer en móvil.',
+          messages: [{ role: 'user', content: prompt }]
+        })
       });
 
-      var text = await res.text();
-      var data;
-      try { data = JSON.parse(text); }
-      catch(pe) {
-        // GAS a veces devuelve HTML de login — intenta GET como fallback
-        var url2 = GAS_URL + '?action=ia&prompt=' + encodeURIComponent(prompt.substring(0,500));
-        var res2 = await fetch(url2, { redirect: 'follow' });
-        var text2 = await res2.text();
-        data = JSON.parse(text2);
+      var data = await res.json();
+      var texto = '';
+      if(data && data.content){
+        texto = data.content.map(function(b){ return b.type === 'text' ? b.text : ''; }).join('\n');
       }
-      if(!data.ok){ throw new Error(data.error || 'Error en el servidor'); }
-      var texto = data.texto || '';
-      if(!texto){ throw new Error('Respuesta vacía del servidor'); }
+
+      if(!texto){ throw new Error('Respuesta vacía'); }
 
       // Render response
       var fechaAhora = new Date();
@@ -2580,6 +2575,7 @@
 
   async function renderIaAvanzadaView(){
     var el = document.getElementById('view-ia-avanzada');
+    var productos = computeAll();
 
     // ── Si no hay datos, mostrar estado vacío ──────────────────
     if(!productos || productos.length === 0){
@@ -2818,6 +2814,8 @@
     var W_REC     = 0.70;
     var W_HIS     = 0.30;
     var hoy       = new Date();
+    var productos = computeAll();
+    var movimientos = state.movimientos||[];
 
     // Agrupar movimientos por ref → { 'AAAA-MM': qty }
     var movMap = {};
@@ -2920,6 +2918,7 @@
 
   // ── Charts ──────────────────────────────────────────────────────
   function renderIaCharts(metricas){
+    var movimientos = state.movimientos||[];
     var activos = metricas.filter(function(m){ return m.demandaDia > 0; });
 
     // 1. Scatter: Cobertura vs Score
@@ -3122,8 +3121,8 @@
                 '<div style="display:flex;gap:6px;">' +
                   '<span style="background:var(--red-soft);color:var(--red);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;">+'+p.diasRetraso+' días</span>' +
                   (connected
-                    ? '<button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="abrirReprogramar(''+escapeHtml(p.numPedido)+'')">📅 Reprogramar</button>' +
-                      '<button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="abrirRecibir(''+escapeHtml(p.numPedido)+'','+p.cantPendiente+')">📥 Recibir</button>'
+                    ? '<button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="abrirReprogramar(\'+escapeHtml(p.numPedido)+\')">📅 Reprogramar</button>' +
+                      '<button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="abrirRecibir(\'+escapeHtml(p.numPedido)+\','+p.cantPendiente+')">📥 Recibir</button>'
                     : '') +
                 '</div>' +
               '</div>';
@@ -3241,8 +3240,8 @@
         '</div>' +
         (connected
           ? '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">' +
-              '<button class="btn btn-ghost" style="font-size:10px;padding:3px 8px;" onclick="abrirRecibir(''+escapeHtml(p.numPedido)+'','+p.cantPendiente+')">📥 Recibir</button>' +
-              '<button class="btn btn-ghost" style="font-size:10px;padding:3px 8px;" onclick="abrirReprogramar(''+escapeHtml(p.numPedido)+'')">📅 Reprog.</button>' +
+              '<button class="btn btn-ghost" style="font-size:10px;padding:3px 8px;" onclick="abrirRecibir(\'+escapeHtml(p.numPedido)+\','+p.cantPendiente+')">📥 Recibir</button>' +
+              '<button class="btn btn-ghost" style="font-size:10px;padding:3px 8px;" onclick="abrirReprogramar(\'+escapeHtml(p.numPedido)+\')">📅 Reprog.</button>' +
             '</div>'
           : '') +
       '</div>';
@@ -3282,9 +3281,9 @@
         (isConnected
           ? '<td style="padding:5px 9px;white-space:nowrap;text-align:center;">' +
               (!['Recibido','Cancelado'].includes(p.estado)
-                ? '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;" onclick="abrirRecibir(''+escapeHtml(p.numPedido)+'','+p.cantPendiente+')">📥</button>' +
-                  '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;" onclick="abrirReprogramar(''+escapeHtml(p.numPedido)+'')">📅</button>' +
-                  '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;color:var(--red);" onclick="confirmarCancelar(''+escapeHtml(p.numPedido)+'')">✕</button>'
+                ? '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;" onclick="abrirRecibir(\'+escapeHtml(p.numPedido)+\','+p.cantPendiente+')">📥</button>' +
+                  '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;" onclick="abrirReprogramar(\'+escapeHtml(p.numPedido)+\')">📅</button>' +
+                  '<button class="btn btn-ghost" style="font-size:10px;padding:2px 7px;margin:1px;color:var(--red);" onclick="confirmarCancelar(\'+escapeHtml(p.numPedido)+\')">✕</button>'
                 : '<span style="color:var(--muted);font-size:10px;">—</span>') +
             '</td>'
           : '') +
@@ -3881,25 +3880,18 @@
     var dl=document.getElementById('productList');
     dl.innerHTML=PRODUCTS_RAW.map(function(p){return'<option value="'+escapeHtml(p.ref+' — '+p.nombre)+'"></option>';}).join('');
 
-    // Arrancar INMEDIATAMENTE en modo local — no esperar al Sheet
-    renderStats();
-    renderInicioView();
-
-    // Cargar estado guardado
-    try{ await loadState(); }catch(e){}
+    await loadState();
 
     document.getElementById('settings-btn').addEventListener('click',abrirAjustesConexion);
 
-    // Conectar al Sheet EN BACKGROUND sin bloquear la UI
-    setTimeout(async function(){
-      try{
-        var saved=await window.storage.get(STORE_URL_KEY,false);
-        var urlAUsar=(saved&&saved.value)?saved.value:DEFAULT_SHEETS_URL;
-        await conectarSheets(urlAUsar,true);
-      }catch(e){
-        try{ await conectarSheets(DEFAULT_SHEETS_URL,true); }catch(e2){}
-      }
-    }, 100);
+    try{
+      var saved=await window.storage.get(STORE_URL_KEY,false);
+      var urlAUsar=(saved&&saved.value)?saved.value:DEFAULT_SHEETS_URL;
+      await conectarSheets(urlAUsar,true);
+    }catch(e){ await conectarSheets(DEFAULT_SHEETS_URL,true); }
+
+    renderStats();
+    renderInicioView();
   }
 
   // ══════════════════════════════════════════════
