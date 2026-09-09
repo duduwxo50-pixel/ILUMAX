@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ILUMAX Pro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -1347,16 +1348,33 @@ function renderDash(){
   updStats();
 }
 
+
+function renderLogs(){
+  const logs=JSON.parse(localStorage.getItem('ilx_logs')||'[]');
+  const el=qs('#logs-list');
+  if(!el) return;
+  el.innerHTML=logs.length===0
+    ?'<div style="color:var(--mu);text-align:center;padding:30px;font-size:12px;">Sin registros aún — los cambios aparecerán aquí</div>'
+    :logs.map(l=>`<div class="log-item"><div style="display:flex;justify-content:space-between;"><span class="log-user">${l.user||'Demo'}</span><span class="log-ts">${l.ts}</span></div><div style="margin-top:2px;">${l.accion} — <span style="color:var(--mu);">${l.detalle}</span></div></div>`).join('');
+}
+async function limpiarLogs(){
+  const ok=await ILX.confirm('¿Limpiar todo el historial de cambios?','danger');
+  if(!ok) return;
+  localStorage.removeItem('ilx_logs');renderLogs();toast('Historial limpiado','ok');
+}
+
 function updStats(){
-  qs('#d-crit').textContent=pd.filter(p=>p.st<=alertaU).length;
-  qs('#d-act').textContent=pd.filter(p=>p.vis).length;
-  qs('#nb-a').textContent=pd.filter(p=>p.st<=alertaU).length;
-  const pd=getProds();qs('#i-tot').textContent=pd.length;
-  qs('#i-ok').textContent=pd.filter(p=>p.st>umbral).length;
-  qs('#i-low').textContent=pd.filter(p=>p.st>0&&p.st<=umbral).length;
-  qs('#i-out').textContent=pd.filter(p=>p.st===0).length;
+  const pd=getProds();
+  if(qs('#d-crit')) qs('#d-crit').textContent=pd.filter(p=>p.st<=alertaU).length;
+  if(qs('#d-act')) qs('#d-act').textContent=pd.filter(p=>p.vis).length;
+  if(qs('#nb-a')) qs('#nb-a').textContent=pd.filter(p=>p.st<=alertaU).length;
+  if(qs('#i-tot')) qs('#i-tot').textContent=pd.length;
+  if(qs('#i-ok')) qs('#i-ok').textContent=pd.filter(p=>p.st>umbral).length;
+  if(qs('#i-low')) qs('#i-low').textContent=pd.filter(p=>p.st>0&&p.st<=umbral).length;
+  if(qs('#i-out')) qs('#i-out').textContent=pd.filter(p=>p.st===0).length;
+  if(qs('#cup-act')) qs('#cup-act').textContent=cups.filter(c=>c.on).length;
   const u=notifs.filter(n=>!n.r).length;
-  qs('#nc').textContent=u;qs('#nc').style.display=u>0?'block':'none';
+  const nc=qs('#nc');if(nc){nc.textContent=u;nc.style.display=u>0?'block':'none';}
 }
 
 // ════════════ VENTAS ════════════
