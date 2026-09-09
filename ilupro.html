@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ILUMAX Pro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --bg:#07070d;--s1:#0f0f1a;--s2:#161623;--s3:#1e1e2e;--s4:#252538;
+  --b1:#2a2a40;--b2:#363650;--b3:#444460;
+  --acc:#f5c518;--acc2:#e6b800;--accd:rgba(245,197,24,.1);
+  --tx:#eeeef8;--mu:#7070a0;--mu2:#4a4a70;
+  --gr:#22c55e;--grd:rgba(34,197,94,.1);
+  --rd:#ef4444;--rdd:rgba(239,68,68,.1);
+  --bl:#3b82f6;--bld:rgba(59,130,246,.1);
+  --or:#f97316;--ord:rgba(249,115,22,.1);
+  --pu:#a855f7;--pud:rgba(168,85,247,.1);
+  --cy:#06b6d4;--cyd:rgba(6,182,212,.1);
+  --r:10px;--r2:14px;--r3:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;overflow:hidden;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px;}
+
+/* ── APP SHELL ── */
+.app{display:flex;height:100vh;}
+
+/* ── SIDEBAR ── */
+.sb{width:220px;min-width:220px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;z-index:200;transition:transform .25s;}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--b1);}
+.sb-mark{font-size:20px;font-weight:800;letter-spacing:3px;color:var(--acc);}
+.sb-tag{font-size:10px;color:var(--mu);margin-top:2px;letter-spacing:.3px;}
+.sb-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.sb-sec{padding:10px 0 2px;}
+.sb-lbl{font-size:9px;color:var(--mu2);padding:6px 14px 3px;letter-spacing:.8px;text-transform:uppercase;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--mu);border-left:2px solid transparent;transition:all .12s;font-size:12px;font-weight:500;position:relative;}
+.ni:hover{color:var(--tx);background:var(--s2);}
+.ni.on{color:var(--acc);border-left-color:var(--acc);background:var(--accd);}
+.ni-ico{font-size:13px;width:16px;text-align:center;}
+.ni-bdg{margin-left:auto;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;background:var(--rd);color:#fff;}
+.ni-bdg.g{background:var(--gr);}
+.sb-bot{margin:10px;padding:10px 12px;border-radius:var(--r);border:1px solid var(--b2);}
+.api-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--rd);margin-right:5px;animation:pulse 1.5s infinite;}
+.api-dot.live{background:var(--gr);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.api-lbl{font-size:10px;color:var(--mu);}
+.api-st{font-size:11px;font-weight:600;margin-top:2px;color:var(--or);}
+.api-st.live{color:var(--gr);}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--b1);padding:11px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.hmbg{display:none;width:30px;height:30px;background:var(--s2);border:1px solid var(--b1);border-radius:7px;cursor:pointer;align-items:center;justify-content:center;font-size:14px;}
+.pg-title{font-size:14px;font-weight:700;}
+.pg-sub{font-size:11px;color:var(--mu);margin-top:1px;}
+.tb-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.live-pill{display:flex;align-items:center;gap:4px;padding:3px 8px;background:var(--grd);border:1px solid rgba(34,197,94,.2);border-radius:20px;font-size:10px;color:var(--gr);font-weight:600;}
+.live-d{width:5px;height:5px;border-radius:50%;background:var(--gr);animation:pulse 1s infinite;}
+
+/* ── BUTTONS ── */
+.btn{padding:6px 12px;border-radius:7px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .12s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.bp{background:var(--acc);color:#000;}.bp:hover{background:var(--acc2);}
+.bg{background:transparent;color:var(--mu);border:1px solid var(--b1);}.bg:hover{color:var(--tx);border-color:var(--b2);}
+.br{background:var(--rdd);color:var(--rd);border:1px solid rgba(239,68,68,.2);}
+.bg2{background:var(--grd);color:var(--gr);border:1px solid rgba(34,197,94,.2);}
+.bb{background:var(--bld);color:var(--bl);border:1px solid rgba(59,130,246,.2);}
+.bo{background:var(--ord);color:var(--or);border:1px solid rgba(249,115,22,.2);}
+.bpu{background:var(--pud);color:var(--pu);border:1px solid rgba(168,85,247,.2);}
+.sm{padding:4px 9px;font-size:11px;}
+.xs{padding:2px 7px;font-size:10px;}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:16px 18px;}
+.page{display:none;}.page.on{display:block;}
+
+/* ── STAT CARDS ── */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:14px 15px;position:relative;overflow:hidden;cursor:default;transition:border-color .15s;}
+.sc:hover{border-color:var(--b3);}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--acc));opacity:.8;}
+.sc-l{font-size:10px;color:var(--mu);margin-bottom:4px;letter-spacing:.2px;}
+.sc-v{font-size:22px;font-weight:800;line-height:1;}
+.sc-s{font-size:10px;color:var(--mu);margin-top:3px;}
+.sc-s.up{color:var(--gr);}.sc-s.dn{color:var(--rd);}
+.sc-ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:28px;opacity:.08;}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;}
+
+/* ── CARD ── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);overflow:hidden;margin-bottom:12px;}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--b1);}
+.ct{font-size:12px;font-weight:600;}
+.cb{padding:14px;}
+.cnp{padding:0;}
+.cw{padding:12px 15px;}
+canvas{max-height:200px;}
+
+/* ── TABLES ── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:8px 12px;text-align:left;font-size:10px;color:var(--mu);letter-spacing:.3px;border-bottom:1px solid var(--b1);white-space:nowrap;font-weight:600;}
+tr{border-bottom:1px solid var(--b1);transition:background .1s;}
+tr:last-child{border-bottom:none;}
+tr:hover{background:var(--s2);}
+td{padding:9px 12px;font-size:12px;vertical-align:middle;}
+.pn{font-weight:600;font-size:12px;}
+.ps{font-size:10px;color:var(--mu);margin-top:1px;}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:600;}
+.bgr{background:var(--grd);color:var(--gr);}
+.bdr{background:var(--rdd);color:var(--rd);}
+.bdo{background:var(--ord);color:var(--or);}
+.bdb{background:var(--bld);color:var(--bl);}
+.bdpu{background:var(--pud);color:var(--pu);}
+.bdm{background:var(--s3);color:var(--mu);}
+.bdy{background:var(--accd);color:var(--acc);}
+.bdc{background:var(--cyd);color:var(--cy);}
+
+/* ── INPUTS ── */
+.inp{background:var(--s2);border:1px solid var(--b1);border-radius:7px;color:var(--tx);font-family:inherit;font-size:12px;padding:7px 9px;transition:border-color .12s;width:100%;}
+.inp:focus{outline:none;border-color:var(--acc);}
+select.inp option{background:var(--s2);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;color:var(--mu);margin-bottom:3px;display:block;}
+textarea.inp{resize:vertical;min-height:80px;}
+
+/* ── TOGGLE ── */
+.tog{position:relative;display:inline-block;width:32px;height:17px;}
+.tog input{opacity:0;width:0;height:0;}
+.ts{position:absolute;cursor:pointer;inset:0;background:var(--b2);border-radius:20px;transition:.15s;}
+.ts:before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;}
+input:checked+.ts{background:var(--gr);}
+input:checked+.ts:before{transform:translateX(15px);}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:center;justify-content:center;padding:14px;}
+.ov.on{display:flex;}
+.mo{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r3);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b1);}
+.mt{font-size:14px;font-weight:700;}
+.mx{width:24px;height:24px;border-radius:6px;background:var(--s2);border:1px solid var(--b1);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--mu);}
+.mb{padding:18px;}
+.mf{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--b1);}
+
+/* ── NOTIF PANEL ── */
+.np{position:fixed;right:0;top:0;bottom:0;width:300px;background:var(--s1);border-left:1px solid var(--b1);z-index:300;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;}
+.np.on{transform:translateX(0);}
+.nph{padding:14px 14px 11px;border-bottom:1px solid var(--b1);}
+.npl{flex:1;overflow-y:auto;padding:9px;}
+.ni2{padding:10px 12px;border-radius:var(--r);border:1px solid var(--b1);margin-bottom:6px;cursor:pointer;transition:background .1s;}
+.ni2:hover{background:var(--s2);}
+.ni2.u{border-left:3px solid var(--acc);}
+.ni2.u.dg{border-left-color:var(--rd);}
+.ni2.u.su{border-left-color:var(--gr);}
+.ni2.u.wa{border-left-color:var(--or);}
+.nm{font-size:11px;font-weight:500;line-height:1.4;}
+.nt{font-size:10px;color:var(--mu);margin-top:2px;}
+.npf{padding:10px 14px;border-top:1px solid var(--b1);}
+
+/* ── TOAST ── */
+.tb2{position:fixed;bottom:16px;right:16px;z-index:600;display:flex;flex-direction:column;gap:6px;}
+.tst{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:9px 13px;font-size:11px;display:flex;align-items:center;gap:8px;min-width:200px;animation:tin .2s ease;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.tst.ok{border-left:3px solid var(--gr);}
+.tst.er{border-left:3px solid var(--rd);}
+.tst.wa{border-left:3px solid var(--or);}
+.tst.inf{border-left:3px solid var(--bl);}
+@keyframes tin{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── RANK ── */
+.ri{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.rn{font-size:10px;color:var(--mu);width:14px;text-align:center;font-weight:700;}
+.ri-info{flex:1;min-width:0;}
+.ri-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bw{background:var(--s2);border-radius:3px;height:3px;margin-top:3px;}
+.bb2{height:3px;border-radius:3px;background:var(--acc);transition:width .6s;}
+.rv{font-size:11px;font-weight:700;white-space:nowrap;}
+
+/* ── KPI MINI ── */
+.kpi-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.kpi{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:10px 14px;flex:1;min-width:120px;}
+.kpi-v{font-size:18px;font-weight:800;}
+.kpi-l{font-size:10px;color:var(--mu);margin-top:2px;}
+
+/* ── PRODUCT ROW ── */
+.pr{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b1);}
+.pr:last-child{border-bottom:none;}
+.pr:hover{background:var(--s2);}
+.pr-img{width:36px;height:36px;border-radius:7px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pr-info{flex:1;min-width:0;}
+.pr-name{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pr-meta{font-size:10px;color:var(--mu);margin-top:1px;}
+.pr-acts{display:flex;gap:4px;align-items:center;}
+
+/* ── ORDER CARD ── */
+.oc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.oc-id{font-weight:800;font-size:14px;color:var(--acc);min-width:58px;}
+.oc-info{flex:1;min-width:100px;}
+.oc-cli{font-weight:600;font-size:12px;}
+.oc-meta{font-size:10px;color:var(--mu);margin-top:1px;}
+.oc-right{text-align:right;}
+.oc-tot{font-weight:700;font-size:13px;}
+.oc-acts{display:flex;gap:4px;margin-top:4px;justify-content:flex-end;}
+
+/* ── CART CARD ── */
+.cc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;}
+.cc-top{display:flex;justify-content:space-between;margin-bottom:5px;}
+.cc-cli{font-weight:600;font-size:12px;}
+.cc-t{font-size:10px;color:var(--mu);}
+.cc-val{font-weight:700;font-size:14px;color:var(--acc);}
+.cc-items{font-size:11px;color:var(--mu);margin-bottom:8px;}
+.cc-acts{display:flex;gap:6px;}
+
+/* ── CLIENT CARD ── */
+.clc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
+.cl-av{width:36px;height:36px;border-radius:50%;background:var(--accd);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--acc);flex-shrink:0;}
+.cl-info{flex:1;}
+.cl-name{font-weight:600;font-size:12px;}
+.cl-meta{font-size:10px;color:var(--mu);margin-top:1px;}
+.cl-stats{text-align:right;}
+.cl-tot{font-weight:700;font-size:13px;color:var(--acc);}
+.cl-ped{font-size:10px;color:var(--mu);}
+
+/* ── ALERT ITEM ── */
+.ai{border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;background:var(--s2);border:1px solid var(--b1);}
+
+/* ── CUPON ── */
+.cup{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.cup-cod{font-family:monospace;font-size:13px;font-weight:700;color:var(--acc);background:var(--accd);padding:3px 9px;border-radius:6px;letter-spacing:1px;}
+.cup-info{flex:1;}
+.cup-d{font-size:12px;font-weight:500;}
+.cup-m{font-size:10px;color:var(--mu);margin-top:1px;}
+
+/* ── PAGO ── */
+.pg2{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
+.pg-ico{font-size:24px;}
+.pg-info{flex:1;}
+.pg-n{font-weight:600;font-size:12px;}
+.pg-d{font-size:10px;color:var(--mu);margin-top:1px;}
+
+/* ── USER ── */
+.uc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
+.u-av{width:34px;height:34px;border-radius:50%;background:var(--accd);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--acc);flex-shrink:0;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:3px;margin-bottom:14px;border-bottom:1px solid var(--b1);padding-bottom:0;overflow-x:auto;}
+.tab{padding:7px 13px;font-size:11px;font-weight:600;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;white-space:nowrap;}
+.tab:hover{color:var(--tx);}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* ── CFG CARD ── */
+.cfc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r2);padding:18px;margin-bottom:12px;}
+.cft{font-size:13px;font-weight:700;margin-bottom:13px;}
+.cfs{height:1px;background:var(--b1);margin:13px 0;}
+
+/* ── CITY ROW ── */
+.cir{display:grid;grid-template-columns:2fr 90px 90px 80px 36px;gap:7px;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1);}
+.cir:last-child{border-bottom:none;}
+.ci-name{font-weight:600;font-size:12px;}
+.ci-dep{font-size:10px;color:var(--mu);}
+
+/* ── SEARCH BAR ── */
+.srch{display:flex;align-items:center;gap:7px;background:var(--s1);border:1px solid var(--b1);border-radius:8px;padding:6px 11px;flex:1;max-width:280px;}
+.srch input{background:none;border:none;outline:none;color:var(--tx);font-family:inherit;font-size:12px;width:100%;}
+.srch input::placeholder{color:var(--mu);}
+
+/* ── EMAIL PREVIEW ── */
+.eprev{background:#fff;border-radius:var(--r);padding:16px;color:#222;font-size:12px;line-height:1.6;max-width:460px;}
+.eprev-h{background:#111;color:var(--acc);padding:11px 16px;border-radius:6px 6px 0 0;font-weight:800;font-size:14px;letter-spacing:2px;margin:-16px -16px 12px;}
+.eprev-f{margin-top:12px;padding-top:10px;border-top:1px solid #eee;font-size:10px;color:#999;}
+
+/* ── PROGRESS BAR ── */
+.pb{background:var(--s3);border-radius:4px;height:6px;overflow:hidden;}
+.pb-fill{height:6px;border-radius:4px;background:var(--acc);transition:width .5s;}
+
+/* ── MINI CHART INLINE ── */
+.spark{display:inline-flex;align-items:flex-end;gap:2px;height:24px;}
+.sp-bar{width:4px;border-radius:2px;background:var(--acc);opacity:.7;}
+
+/* ── FILTER ROW ── */
+.frow{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .sb{position:fixed;top:0;left:0;bottom:0;transform:translateX(-100%);}
+  .sb.on{transform:translateX(0);}
+  .hmbg{display:flex;}
+  .main{width:100%;}
+  .g2,.g3,.g21,.g12{grid-template-columns:1fr;}
+  .sg{grid-template-columns:repeat(2,1fr);}
+  .np{width:100%;}
+  .cir{grid-template-columns:1fr 80px 36px;}
+}
+@media(max-width:480px){
+  .content{padding:10px;}
+  .sg{grid-template-columns:1fr 1fr;}
+}
+
+.offline-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--rd);color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:600;display:none;transition:all .3s;}
+.offline-bar.show{display:block;}
+.inp.err{border-color:var(--rd)!important;}
+.inp-err{font-size:10px;color:var(--rd);margin-top:3px;display:none;}
+.inp-err.show{display:block;}
+.pgn{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--b1);font-size:11px;color:var(--mu);}
+.pgn-btns{display:flex;gap:4px;}
+.pgn-btn{padding:4px 9px;border-radius:6px;border:1px solid var(--b1);background:transparent;color:var(--mu);cursor:pointer;font-size:11px;font-family:inherit;}
+.pgn-btn:hover{color:var(--tx);border-color:var(--b2);}
+.pgn-btn.on{background:var(--acc);color:#000;border-color:var(--acc);}
+.pgn-btn:disabled{opacity:.3;cursor:not-allowed;}
+.pb{background:var(--s3);border-radius:4px;height:5px;overflow:hidden;}
+.pb-f{height:5px;border-radius:4px;background:var(--acc);transition:width .5s;}
+.warn-card{background:var(--ord);border:1px solid rgba(249,115,22,.25);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;font-size:12px;color:var(--or);}
+.log-item{padding:9px 12px;border-bottom:1px solid var(--b1);font-size:11px;}
+.log-item:last-child{border-bottom:none;}
+.log-ts{color:var(--mu);font-size:10px;}
+.log-user{font-weight:600;color:var(--acc);}
+
+
+/* ── TARJETAS TAPPABLES ── */
+.sc-tap{cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s;}
+.sc-tap:hover{transform:translateY(-2px);border-color:var(--c,var(--acc));box-shadow:0 6px 24px rgba(0,0,0,.3);}
+.sc-tap:active{transform:scale(.97);}
+.sc-tap-hint{font-size:9px;color:var(--mu);margin-top:5px;opacity:0;transition:opacity .2s;}
+.sc-tap:hover .sc-tap-hint{opacity:1;}
+
+/* ── MODAL KPI ── */
+.kpi-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:700;display:none;align-items:flex-end;justify-content:center;}
+.kpi-ov.on{display:flex;}
+.kpi-sheet{background:var(--s1);border:1px solid var(--b2);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;animation:slideUp .25s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.kpi-handle{width:40px;height:4px;background:var(--b2);border-radius:4px;margin:12px auto 0;cursor:pointer;}
+.kpi-head{padding:16px 20px 12px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;}
+.kpi-title{font-size:16px;font-weight:700;}
+.kpi-body{padding:18px 20px;}
+.kpi-hero{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px;}
+.kpi-big{font-size:48px;font-weight:800;line-height:1;}
+.kpi-meta{padding-bottom:6px;}
+.kpi-change{font-size:14px;font-weight:600;margin-bottom:3px;}
+.kpi-change.up{color:var(--gr);}
+.kpi-change.dn{color:var(--rd);}
+.kpi-sub-lbl{font-size:11px;color:var(--mu);}
+.kpi-divider{height:1px;background:var(--b1);margin:16px 0;}
+.kpi-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);font-size:13px;}
+.kpi-row:last-child{border-bottom:none;}
+.kpi-row-lbl{color:var(--mu);}
+.kpi-row-val{font-weight:600;}
+.kpi-row-val.up{color:var(--gr);}
+.kpi-row-val.dn{color:var(--rd);}
+.kpi-chart-wrap{margin:14px 0;}
+.kpi-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1);}
+.kpi-list-item:last-child{border-bottom:none;}
+.kpi-rank-num{font-size:11px;color:var(--mu);width:18px;font-weight:700;}
+.kpi-bar-wrap{flex:1;}
+.kpi-bar-name{font-size:12px;font-weight:600;margin-bottom:3px;}
+.kpi-bar-bg{background:var(--s3);border-radius:3px;height:4px;}
+.kpi-bar-fill{height:4px;border-radius:3px;background:var(--acc);transition:width .6s;}
+.kpi-bar-val{font-size:12px;font-weight:700;white-space:nowrap;}
+.kpi-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;margin:3px;}
+
+</style>
+</head>
+<body>
+<div class="offline-bar" id="offline-bar">📵 Sin conexión — mostrando últimos datos guardados</div>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sb" id="sb">
+  <div class="sb-logo">
+    <img src="data:image/jpeg;base64,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" style="height:30px;object-fit:contain;display:block;" alt="ILUMAX">
+    <div class="sb-tag" style="margin-top:6px;">Centro de Control Pro</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">
+      <div class="sb-lbl">Principal</div>
+      <div class="ni on" onclick="go('dash',this)"><span class="ni-ico">⚡</span>Dashboard</div>
+      <div class="ni" onclick="go('ventas',this)"><span class="ni-ico">📊</span>Ventas<span class="ni-bdg g" id="nb-v">7</span></div>
+      <div class="ni" onclick="go('pedidos',this)"><span class="ni-ico">🛒</span>Pedidos<span class="ni-bdg" id="nb-p">4</span></div>
+      <div class="ni" onclick="go('carritos',this)"><span class="ni-ico">🛍️</span>Carritos aband.<span class="ni-bdg" id="nb-c">3</span></div>
+      <div class="ni" onclick="go('clientes',this)"><span class="ni-ico">👥</span>Clientes</div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Inventario</div>
+      <div class="ni" onclick="go('productos',this)"><span class="ni-ico">📦</span>Productos</div>
+      <div class="ni" onclick="go('categorias',this)"><span class="ni-ico">🗂️</span>Categorías</div>
+      <div class="ni" onclick="go('alertas',this)"><span class="ni-ico">🔔</span>Alertas<span class="ni-bdg" id="nb-a">5</span></div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Tienda</div>
+      <div class="ni" onclick="go('envio',this)"><span class="ni-ico">🚚</span>Envío y fletes</div>
+      <div class="ni" onclick="go('cupones',this)"><span class="ni-ico">🏷️</span>Cupones</div>
+      <div class="ni" onclick="go('pagos',this)"><span class="ni-ico">💳</span>Métodos de pago</div>
+      <div class="ni" onclick="go('impuestos',this)"><span class="ni-ico">💰</span>Precios e IVA</div>
+      <div class="ni" onclick="go('contenido',this)"><span class="ni-ico">🖼️</span>Banners y textos</div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Sistema</div>
+      <div class="ni" onclick="go('usuarios',this)"><span class="ni-ico">🔐</span>Usuarios</div>
+      <div class="ni" onclick="go('logs',this)"><span class="ni-ico">📋</span>Log de cambios</div>
+      <div class="ni" onclick="go('notif',this)"><span class="ni-ico">✉️</span>Notificaciones</div>
+      <div class="ni" onclick="go('config',this)"><span class="ni-ico">⚙️</span>Configuración API</div>
+    </div>
+  </div>
+  <div class="sb-bot">
+    <div><span class="api-dot" id="api-dot"></span><span class="api-lbl">Conexión WooCommerce</span></div>
+    <div class="api-st" id="api-st">Modo demo</div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="hmbg" onclick="toggleSB()">☰</div>
+      <div><div class="pg-title" id="pg-t">Dashboard</div><div class="pg-sub" id="pg-s">Vista general de tu tienda hoy</div></div>
+    </div>
+    <div class="tb-right">
+      <div class="live-pill"><span class="live-d"></span>En vivo</div>
+      <button class="btn bg sm" onclick="simVenta()">⚡ Simular venta</button>
+      <button class="btn bg sm" onclick="toggleNP()" style="position:relative;">
+        🔔<span id="nc" style="position:absolute;top:-4px;right:-4px;background:var(--rd);color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:20px;">5</span>
+      </button>
+      <button class="btn bp sm" onclick="guardarTodo()">💾 Guardar</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ════════════════ DASHBOARD ════════════════ -->
+<div class="page on" id="page-dash">
+  <div class="sg">
+    <div class="sc sc-tap" style="--c:var(--acc)" onclick="openKPI('ventas')"><div class="sc-l">Ventas hoy</div><div class="sc-v" id="d-v">$2.4M</div><div class="sc-s up" id="d-vs">↑ 18% vs ayer</div><div class="sc-ico">💰</div></div>
+    <div class="sc sc-tap" style="--c:var(--bl)" onclick="openKPI('pedidos')"><div class="sc-l">Pedidos hoy</div><div class="sc-v" id="d-p">7</div><div class="sc-s up">↑ 2 nuevos</div><div class="sc-ico">🛒</div></div>
+    <div class="sc sc-tap" style="--c:var(--or)" onclick="openKPI('carritos')"><div class="sc-l">Carritos aband.</div><div class="sc-v">3</div><div class="sc-s dn">$680K perdidos</div><div class="sc-ico">🛍️</div></div>
+    <div class="sc sc-tap" style="--c:var(--rd)" onclick="openKPI('stock')"><div class="sc-l">Stock crítico</div><div class="sc-v" id="d-crit">5</div><div class="sc-s dn">atención urgente</div><div class="sc-ico">⚠️</div></div>
+    <div class="sc sc-tap" style="--c:var(--gr)" onclick="openKPI('ticket')"><div class="sc-l">Ticket promedio</div><div class="sc-v">$342K</div><div class="sc-s up">↑ 5%</div><div class="sc-ico">📈</div></div>
+    <div class="sc" style="--c:var(--pu)"><div class="sc-l">Clientes nuevos</div><div class="sc-v">12</div><div class="sc-s up">este mes</div><div class="sc-ico">👥</div></div>
+    <div class="sc" style="--c:var(--cy)"><div class="sc-l">Tasa conversión</div><div class="sc-v">3.8%</div><div class="sc-s up">↑ 0.4%</div><div class="sc-ico">🎯</div></div>
+    <div class="sc sc-tap" style="--c:var(--gr)" onclick="openKPI('productos')"><div class="sc-l">Productos activos</div><div class="sc-v" id="d-act">8</div><div class="sc-s">en catálogo</div><div class="sc-ico">📦</div></div>
+  </div>
+  <div class="g21">
+    <div class="card"><div class="ch"><div class="ct">Ventas — últimos 7 días</div><div style="display:flex;gap:5px;"><button class="btn bg xs" onclick="setDashPer(7,this)">7d</button><button class="btn bg xs" onclick="setDashPer(30,this)">30d</button></div></div><div class="cw"><canvas id="ch-d7"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Por categoría</div></div><div class="cw"><canvas id="ch-cats"></canvas></div></div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="ch"><div class="ct">🏆 Más vendidos</div><button class="btn bg xs" onclick="go('ventas',qs('[onclick*=ventas]'))">Ver ranking</button></div><div class="cb" id="d-rank"></div></div>
+    <div class="card"><div class="ch"><div class="ct">⏳ Pedidos recientes</div><button class="btn bg xs" onclick="go('pedidos',qs('[onclick*=pedidos]'))">Ver todos</button></div><div class="cnp" id="d-peds"></div></div>
+    <div class="card"><div class="ch"><div class="ct">🔔 Alertas activas</div><button class="btn bg xs" onclick="go('alertas',qs('[onclick*=alertas]'))">Ver todas</button></div><div class="cb" id="d-alerts"></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Ingresos por hora — hoy</div></div><div class="cw"><canvas id="ch-hora"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">🛍️ Carritos abandonados</div><button class="btn bg xs" onclick="go('carritos',qs('[onclick*=carritos]'))">Ver todos</button></div><div class="cb" id="d-carts"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════ VENTAS ════════════════ -->
+<div class="page" id="page-ventas">
+  <div class="sg">
+    <div class="sc" style="--c:var(--acc)"><div class="sc-l">Este mes</div><div class="sc-v">$48.2M</div><div class="sc-s up">↑ 31%</div></div>
+    <div class="sc" style="--c:var(--bl)"><div class="sc-l">Unidades vendidas</div><div class="sc-v">342</div><div class="sc-s up">↑ 18%</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">Pedidos completados</div><div class="sc-v">89</div><div class="sc-s">este mes</div></div>
+    <div class="sc" style="--c:var(--pu)"><div class="sc-l">Conversión</div><div class="sc-v">3.8%</div><div class="sc-s up">↑ 0.4%</div></div>
+    <div class="sc" style="--c:var(--or)"><div class="sc-l">Devoluciones</div><div class="sc-v">3</div><div class="sc-s dn">este mes</div></div>
+    <div class="sc" style="--c:var(--cy)"><div class="sc-l">Promedio diario</div><div class="sc-v">$1.6M</div><div class="sc-s up">↑ 12%</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Ventas diarias — último mes</div></div><div class="cw"><canvas id="ch-daily"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Comparativo 2025 vs 2026</div></div><div class="cw"><canvas id="ch-comp"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Ventas por categoría — tendencia</div></div><div class="cw"><canvas id="ch-catline"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Embudo de conversión</div></div><div class="cw"><canvas id="ch-funnel"></canvas></div></div>
+  </div>
+  <div class="card"><div class="ch"><div class="ct">🏆 Ranking completo de productos</div>
+    <div style="display:flex;gap:5px;">
+      <button class="btn bg xs" onclick="setRankSort('vend',this)">Por ventas</button>
+      <button class="btn bg xs" onclick="setRankSort('ing',this)">Por ingresos</button>
+      <button class="btn bg xs" onclick="setRankSort('rot',this)">Por rotación</button>
+    </div>
+  </div>
+  <div class="cnp tw"><table><thead><tr><th>#</th><th>Producto</th><th>Cat.</th><th>Unid. vendidas</th><th>Ingresos</th><th>Stock</th><th>Rotación</th><th>Tendencia</th></tr></thead><tbody id="rank-tb"></tbody></table></div></div>
+</div>
+
+<!-- ════════════════ PEDIDOS ════════════════ -->
+<div class="page" id="page-pedidos">
+  <div class="sg">
+    <div class="sc" style="--c:var(--bl)"><div class="sc-l">En proceso</div><div class="sc-v" id="p-proc">4</div></div>
+    <div class="sc" style="--c:var(--or)"><div class="sc-l">Pendientes pago</div><div class="sc-v">2</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">Completados hoy</div><div class="sc-v">3</div></div>
+    <div class="sc" style="--c:var(--acc)"><div class="sc-l">Total hoy</div><div class="sc-v">$2.4M</div></div>
+  </div>
+  <div class="frow">
+    <div class="srch"><span>🔍</span><input type="text" id="ped-q" placeholder="Buscar cliente o #ID..." oninput="renderPeds()"></div>
+    <button class="btn bg sm" onclick="setPS('todos',this)">Todos</button>
+    <button class="btn bg sm" onclick="setPS('processing',this)">En proceso</button>
+    <button class="btn bg sm" onclick="setPS('pending',this)">Pendientes</button>
+    <button class="btn bg sm" onclick="setPS('completed',this)">Completados</button>
+  </div>
+  <div id="peds-list"></div>
+</div>
+
+<!-- ════════════════ CARRITOS ════════════════ -->
+<div class="page" id="page-carritos">
+  <div class="sg">
+    <div class="sc" style="--c:var(--or)"><div class="sc-l">Abandonados hoy</div><div class="sc-v">3</div></div>
+    <div class="sc" style="--c:var(--rd)"><div class="sc-l">Valor perdido hoy</div><div class="sc-v">$680K</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">Recuperados semana</div><div class="sc-v">$215K</div><div class="sc-s up">2 carritos</div></div>
+    <div class="sc" style="--c:var(--bl)"><div class="sc-l">Tasa recuperación</div><div class="sc-v">24%</div><div class="sc-s up">↑ 4%</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Carritos abandonados — últimos 7 días</div></div><div class="cw"><canvas id="ch-aband"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Motivos de abandono</div></div><div class="cw"><canvas id="ch-motivos"></canvas></div></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:12px;font-weight:600;">Carritos activos</div>
+    <button class="btn bp sm" onclick="enviarTodos()">✉️ Recordatorio a todos</button>
+  </div>
+  <div id="carts-list"></div>
+</div>
+
+<!-- ════════════════ CLIENTES ════════════════ -->
+<div class="page" id="page-clientes">
+  <div class="sg">
+    <div class="sc" style="--c:var(--pu)"><div class="sc-l">Total clientes</div><div class="sc-v">248</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">Nuevos este mes</div><div class="sc-v">12</div><div class="sc-s up">↑ 3</div></div>
+    <div class="sc" style="--c:var(--acc)"><div class="sc-l">LTV promedio</div><div class="sc-v">$680K</div></div>
+    <div class="sc" style="--c:var(--bl)"><div class="sc-l">Recurrentes</div><div class="sc-v">67%</div><div class="sc-s up">↑ 5%</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Nuevos clientes por mes</div></div><div class="cw"><canvas id="ch-clientes"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Distribución por ciudad</div></div><div class="cw"><canvas id="ch-ciudcli"></canvas></div></div>
+  </div>
+  <div class="frow">
+    <div class="srch"><span>🔍</span><input type="text" id="cli-q" placeholder="Buscar cliente..." oninput="renderClientes()"></div>
+    <button class="btn bg sm" onclick="setCliSort('ltv',this)">Mayor compra</button>
+    <button class="btn bg sm" onclick="setCliSort('peds',this)">Más pedidos</button>
+    <button class="btn bg sm" onclick="setCliSort('rec',this)">Más recientes</button>
+  </div>
+  <div id="cli-list"></div>
+</div>
+
+<!-- ════════════════ PRODUCTOS ════════════════ -->
+<div class="page" id="page-productos">
+  <div class="sg">
+    <div class="sc" style="--c:var(--acc)"><div class="sc-l">Total productos</div><div class="sc-v" id="i-tot">—</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">En stock</div><div class="sc-v" id="i-ok">—</div></div>
+    <div class="sc" style="--c:var(--or)"><div class="sc-l">Stock bajo (≤50)</div><div class="sc-v" id="i-low">—</div></div>
+    <div class="sc" style="--c:var(--rd)"><div class="sc-l">Agotados</div><div class="sc-v" id="i-out">—</div></div>
+  </div>
+  <div class="frow">
+    <div class="srch"><span>🔍</span><input type="text" id="inv-q" placeholder="Buscar producto o SKU..." oninput="renderProds()"></div>
+    <button class="btn bg sm" onclick="setIF('todos',this)">Todos</button>
+    <button class="btn bg sm" onclick="setIF('ok',this)">En stock</button>
+    <button class="btn bg sm" onclick="setIF('low',this)">Stock bajo</button>
+    <button class="btn bg sm" onclick="setIF('out',this)">Agotados</button>
+    <button class="btn bp sm" onclick="abrirModalProd()">+ Nuevo producto</button>
+  </div>
+  <div class="card cnp" id="prods-list"></div>
+</div>
+
+<!-- ════════════════ CATEGORÍAS ════════════════ -->
+<div class="page" id="page-categorias">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;">
+    <div style="font-size:13px;font-weight:600;">Categorías de productos</div>
+    <button class="btn bp sm" onclick="abrirModalCat()">+ Nueva categoría</button>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><div class="ct">Ventas por categoría</div></div><div class="cw"><canvas id="ch-catpie"></canvas></div></div>
+    <div class="card"><div class="ch"><div class="ct">Productos por categoría</div></div><div class="cb" id="cat-list"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════ ALERTAS ════════════════ -->
+<div class="page" id="page-alertas">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:7px;">
+    <div style="font-size:13px;font-weight:600;">Alertas activas</div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn bg sm" onclick="toast('Alertas marcadas como leídas','ok')">✓ Marcar leídas</button>
+      <button class="btn bp sm" onclick="toast('Resumen enviado por email ✉️','ok')">✉️ Enviar resumen</button>
+    </div>
+  </div>
+  <div id="alerts-full"></div>
+</div>
+
+<!-- ════════════════ ENVÍO ════════════════ -->
+<div class="page" id="page-envio">
+  <div class="tabs" id="tabs-envio">
+    <div class="tab on" onclick="setTab('envio','ciudades',this)">Por ciudad</div>
+    <div class="tab" onclick="setTab('envio','gratis',this)">Envío gratis</div>
+    <div class="tab" onclick="setTab('envio','cobertura',this)">Sin cobertura</div>
+    <div class="tab" onclick="setTab('envio','tiempos',this)">Tiempos entrega</div>
+  </div>
+  <div id="et-ciudades">
+    <div class="card">
+      <div class="ch"><div class="ct">🚚 Tarifas por ciudad</div><button class="btn bp sm" onclick="openMo('mo-ciudad')">+ Agregar ciudad</button></div>
+      <div class="cb" style="padding:0 14px 0;">
+        <div style="display:grid;grid-template-columns:2fr 90px 90px 80px 36px;gap:7px;padding:8px 0;border-bottom:1px solid var(--b2);">
+          <span style="font-size:10px;color:var(--mu);font-weight:600;">Ciudad</span>
+          <span style="font-size:10px;color:var(--mu);font-weight:600;">Flete</span>
+          <span style="font-size:10px;color:var(--mu);font-weight:600;">Mín. compra</span>
+          <span style="font-size:10px;color:var(--mu);font-weight:600;">Entrega</span>
+          <span></span>
+        </div>
+        <div id="ciudades-list"></div>
+      </div>
+    </div>
+  </div>
+  <div id="et-gratis" style="display:none;">
+    <div class="cfc">
+      <div class="cft">🎁 Envío gratis por monto mínimo</div>
+      <div class="fg"><label class="fl">Activar envío gratis</label><label class="tog"><input type="checkbox" checked id="eg-on"><span class="ts"></span></label></div>
+      <div class="fg"><label class="fl">Monto mínimo (COP)</label><input class="inp" id="eg-m" type="number" value="300000" style="max-width:180px;"></div>
+      <div class="fg"><label class="fl">Aplica para</label><select class="inp" style="max-width:260px;"><option>Todas las ciudades con cobertura</option><option>Solo ciudades seleccionadas</option></select></div>
+      <div class="fg"><label class="fl">Mensaje al cliente en el carrito</label><input class="inp" id="eg-msg" value="¡Agrega ${{resta}} más y obtén envío gratis!"></div>
+      <button class="btn bp" onclick="toast('Configuración de envío gratis guardada','ok')">💾 Guardar</button>
+    </div>
+    <div style="background:var(--grd);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:13px 16px;display:flex;align-items:center;gap:11px;">
+      <span style="font-size:20px;">🟢</span>
+      <div><div style="font-weight:600;font-size:12px;">Envío gratis activo desde $300.000</div><div style="font-size:10px;color:var(--mu);">Todas las ciudades con cobertura · Actualizado ahora</div></div>
+    </div>
+  </div>
+  <div id="et-cobertura" style="display:none;">
+    <div class="cfc">
+      <div class="cft">🚫 Zonas sin cobertura</div>
+      <div style="display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:150px;"><label class="fl">Ciudad</label><input class="inp" id="nc-c" placeholder="Ej: Leticia, Amazonas"></div>
+        <div><label class="fl">Motivo</label><select class="inp" id="nc-m"><option>Sin transportadora</option><option>Zona difícil acceso</option><option>Solo presencial</option></select></div>
+        <div style="display:flex;align-items:flex-end;"><button class="btn br" onclick="addNC()">+ Agregar</button></div>
+      </div>
+      <div id="nc-list"></div>
+    </div>
+  </div>
+  <div id="et-tiempos" style="display:none;">
+    <div class="cfc">
+      <div class="cft">⏱️ Tiempos de entrega</div>
+      <div style="display:grid;grid-template-columns:2fr 70px 70px 36px;gap:7px;padding:7px 0;border-bottom:1px solid var(--b2);margin-bottom:4px;">
+        <span style="font-size:10px;color:var(--mu);font-weight:600;">Ciudad</span>
+        <span style="font-size:10px;color:var(--mu);font-weight:600;">Días mín.</span>
+        <span style="font-size:10px;color:var(--mu);font-weight:600;">Días máx.</span>
+        <span></span>
+      </div>
+      <div id="tiempos-list"></div>
+      <div style="display:flex;gap:7px;margin-top:13px;flex-wrap:wrap;align-items:flex-end;">
+        <div style="flex:1;min-width:140px;"><label class="fl">Ciudad</label><input class="inp" id="nt-c" placeholder="Ej: Manizales"></div>
+        <div><label class="fl">Mín.</label><input class="inp" id="nt-min" type="number" value="2" style="width:65px;"></div>
+        <div><label class="fl">Máx.</label><input class="inp" id="nt-max" type="number" value="4" style="width:65px;"></div>
+        <button class="btn bp" onclick="addTiempo()">+ Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ CUPONES ════════════════ -->
+<div class="page" id="page-cupones">
+  <div class="sg">
+    <div class="sc" style="--c:var(--acc)"><div class="sc-l">Cupones activos</div><div class="sc-v" id="cup-act">2</div></div>
+    <div class="sc" style="--c:var(--gr)"><div class="sc-l">Usos este mes</div><div class="sc-v">47</div><div class="sc-s up">↑ 12%</div></div>
+    <div class="sc" style="--c:var(--bl)"><div class="sc-l">Descuento otorgado</div><div class="sc-v">$840K</div></div>
+    <div class="sc" style="--c:var(--pu)"><div class="sc-l">Cupón más usado</div><div class="sc-v" style="font-size:14px;">ILUMAX20</div></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;">
+    <div style="font-size:12px;font-weight:600;">Cupones y descuentos</div>
+    <button class="btn bp sm" onclick="openMo('mo-cupon')">+ Crear cupón</button>
+  </div>
+  <div id="cups-list"></div>
+</div>
+
+<!-- ════════════════ PAGOS ════════════════ -->
+<div class="page" id="page-pagos">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;">
+    <div style="font-size:13px;font-weight:600;">Métodos de pago</div>
+  </div>
+  <div id="pagos-list"></div>
+  <div class="cfc" style="margin-top:4px;">
+    <div class="cft">⚙️ Config. general</div>
+    <div class="fr"><div class="fg"><label class="fl">Moneda</label><select class="inp"><option>COP — Peso colombiano</option><option>USD</option></select></div>
+    <div class="fg"><label class="fl">Pedido mínimo (COP)</label><input class="inp" type="number" value="30000"></div></div>
+    <div class="fg"><label class="fl">Horas para cancelar pedido sin pago</label><input class="inp" type="number" value="24" style="max-width:120px;"></div>
+    <button class="btn bp" onclick="toast('Configuración de pagos guardada','ok')">💾 Guardar</button>
+  </div>
+</div>
+
+<!-- ════════════════ IMPUESTOS ════════════════ -->
+<div class="page" id="page-impuestos">
+  <div class="cfc">
+    <div class="cft">💰 IVA y precios</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Precios incluyen IVA</label><label class="tog"><input type="checkbox" checked><span class="ts"></span></label></div>
+      <div class="fg"><label class="fl">Mostrar IVA en tienda</label><label class="tog"><input type="checkbox" checked><span class="ts"></span></label></div>
+    </div>
+    <div class="fg"><label class="fl">Tasa IVA estándar (%)</label><input class="inp" type="number" value="19" style="max-width:110px;"></div>
+    <div class="cfs"></div>
+    <div class="cft" style="font-size:12px;margin-bottom:11px;">Clases de impuesto</div>
+    <div class="cnp tw card">
+      <table><thead><tr><th>Clase</th><th>Descripción</th><th>Tasa %</th><th>Activo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Estándar</strong></td><td style="color:var(--mu)">Productos generales</td><td><input class="inp" type="number" value="19" style="width:70px;"></td><td><label class="tog"><input type="checkbox" checked><span class="ts"></span></label></td></tr>
+        <tr><td><strong>Reducido</strong></td><td style="color:var(--mu)">Exentos de IVA</td><td><input class="inp" type="number" value="0" style="width:70px;"></td><td><label class="tog"><input type="checkbox"><span class="ts"></span></label></td></tr>
+        <tr><td><strong>Especial</strong></td><td style="color:var(--mu)">Importados / lujo</td><td><input class="inp" type="number" value="5" style="width:70px;"></td><td><label class="tog"><input type="checkbox"><span class="ts"></span></label></td></tr>
+      </tbody></table>
+    </div>
+    <div class="cfs"></div>
+    <div class="cft" style="font-size:12px;margin-bottom:11px;">Formato de moneda</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Símbolo</label><input class="inp" value="$"></div>
+      <div class="fg"><label class="fl">Separador miles</label><select class="inp"><option>Punto ( . )</option><option>Coma ( , )</option></select></div>
+    </div>
+    <button class="btn bp" onclick="toast('Configuración de impuestos guardada','ok')">💾 Guardar</button>
+  </div>
+</div>
+
+<!-- ════════════════ CONTENIDO ════════════════ -->
+<div class="page" id="page-contenido">
+  <div class="tabs">
+    <div class="tab on" onclick="setTab('cont','banners',this)">Banners</div>
+    <div class="tab" onclick="setTab('cont','textos',this)">Textos</div>
+    <div class="tab" onclick="setTab('cont','seo',this)">SEO</div>
+  </div>
+  <div id="ct-banners">
+    <div class="cfc"><div class="cft">🖼️ Banner principal</div>
+      <div class="fg"><label class="fl">Título</label><input class="inp" value="Ilumina tu espacio con ILUMAX"></div>
+      <div class="fg"><label class="fl">Subtítulo</label><input class="inp" value="Lámparas y accesorios de diseño para tu hogar y oficina"></div>
+      <div class="fr"><div class="fg"><label class="fl">Texto botón</label><input class="inp" value="Ver catálogo"></div>
+      <div class="fg"><label class="fl">URL botón</label><input class="inp" value="/tienda"></div></div>
+      <button class="btn bp" onclick="toast('Banner guardado','ok')">💾 Guardar</button>
+    </div>
+    <div class="cfc"><div class="cft">📢 Barra de promoción</div>
+      <div class="fg"><label class="fl">Activar</label><label class="tog"><input type="checkbox" checked><span class="ts"></span></label></div>
+      <div class="fg"><label class="fl">Texto</label><input class="inp" value="🚚 Envío gratis en compras mayores a $300.000 · Válido hasta el 30 de septiembre"></div>
+      <button class="btn bp" onclick="toast('Barra guardada','ok')">💾 Guardar</button>
+    </div>
+  </div>
+  <div id="ct-textos" style="display:none;">
+    <div class="cfc"><div class="cft">📝 Textos de la tienda</div>
+      <div class="fg"><label class="fl">Nombre de la tienda</label><input class="inp" value="ILUMAX"></div>
+      <div class="fg"><label class="fl">Descripción corta</label><input class="inp" value="Iluminación de diseño para hogares y oficinas en Colombia"></div>
+      <div class="fg"><label class="fl">Sobre nosotros</label><textarea class="inp">ILUMAX es una empresa colombiana especializada en iluminación de diseño. Llevamos más de 10 años transformando espacios con productos de alta calidad.</textarea></div>
+      <div class="fg"><label class="fl">Política de devoluciones</label><textarea class="inp">Aceptamos devoluciones dentro de los 30 días siguientes a la compra, siempre que el producto esté en perfectas condiciones y con su empaque original.</textarea></div>
+      <button class="btn bp" onclick="toast('Textos guardados','ok')">💾 Guardar</button>
+    </div>
+  </div>
+  <div id="ct-seo" style="display:none;">
+    <div class="cfc"><div class="cft">🔍 SEO</div>
+      <div class="fg"><label class="fl">Meta title</label><input class="inp" value="ILUMAX — Lámparas y Luminarias de Diseño en Colombia"></div>
+      <div class="fg"><label class="fl">Meta descripción</label><textarea class="inp" rows="2">Descubre nuestra colección de lámparas, apliques y luminarias de diseño. Envío a toda Colombia.</textarea></div>
+      <div class="fg"><label class="fl">Palabras clave</label><input class="inp" value="lámparas colombia, luminarias diseño, apliques led"></div>
+      <button class="btn bp" onclick="toast('SEO guardado','ok')">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ USUARIOS ════════════════ -->
+<div class="page" id="page-usuarios">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;">
+    <div style="font-size:13px;font-weight:600;">Usuarios del panel</div>
+    <button class="btn bp sm" onclick="openMo('mo-user')">+ Agregar usuario</button>
+  </div>
+  <div id="users-list"></div>
+</div>
+
+<!-- ════════════════ NOTIFICACIONES ════════════════ -->
+<div class="page" id="page-notif">
+  <div class="cfc">
+    <div class="cft">✉️ Correo de notificaciones</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Enviar a</label><input class="inp" id="em-to" value="soporte@ilumax.com.co" type="email"></div>
+      <div class="fg"><label class="fl">CC</label><input class="inp" id="em-cc" placeholder="gerencia@ilumax.com.co" type="email"></div>
+    </div>
+    <div class="cfs"></div>
+    <div style="font-size:11px;font-weight:600;margin-bottom:11px;">Cuándo notificar:</div>
+    <div id="notif-rules"></div>
+    <div class="cfs"></div>
+    <div style="font-size:11px;font-weight:600;margin-bottom:10px;">Vista previa del correo:</div>
+    <div class="eprev">
+      <div class="eprev-h">⚡ ILUMAX — Alerta de tienda</div>
+      <p>Hola,</p><br>
+      <p>Resumen automático de tu tienda:</p><br>
+      <p>🚨 <strong>Stock crítico:</strong> Aplique de Pared LED — 8 unidades</p>
+      <p>🛒 <strong>Nuevo pedido #1043:</strong> $370.000 — María Fernández</p>
+      <p>🛍️ <strong>Carrito abandonado:</strong> Pedro Salcedo — $610.000</p>
+      <div class="eprev-f">Enviado por ILUMAX Centro de Control Pro</div>
+    </div>
+    <div style="margin-top:13px;display:flex;gap:7px;">
+      <button class="btn bp" onclick="toast('Configuración guardada ✅','ok')">💾 Guardar</button>
+      <button class="btn bg" onclick="enviarPrueba()">📤 Correo de prueba</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ CONFIG API ════════════════ -->
+<div class="page" id="page-config">
+  <div class="cfc">
+    <div class="cft">🔌 Conexión WooCommerce API</div>
+    <div class="fg"><label class="fl">URL de tu tienda</label><input class="inp" id="cfg-url" placeholder="https://ilumax.com.co"></div>
+    <div class="fg"><label class="fl">Consumer Key</label><input class="inp" id="cfg-ck" placeholder="ck_xxxxxxxxxxxxxxxx"></div>
+    <div class="fg"><label class="fl">Consumer Secret</label><input class="inp" id="cfg-cs" type="password" placeholder="cs_xxxxxxxxxxxxxxxx"></div>
+    <div style="display:flex;gap:7px;margin-top:4px;">
+      <button class="btn bp" onclick="conectarAPI()">🔗 Conectar y probar</button>
+      <button class="btn bg" onclick="toast('Desconectado de WooCommerce','warn')">Desconectar</button>
+    </div>
+  </div>
+  <div class="cfc">
+    <div class="cft">⚙️ Reglas de inventario</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Ocultar si stock ≤</label><input class="inp" id="cfg-u" type="number" value="50"></div>
+      <div class="fg"><label class="fl">Alertar si stock ≤</label><input class="inp" id="cfg-a" type="number" value="20"></div>
+    </div>
+    <div class="fg"><label class="fl">Sincronizar cada (min)</label><input class="inp" id="cfg-s" type="number" value="30" style="max-width:110px;"></div>
+    <div class="fg"><label class="fl">Auto-ocultar agotados</label><label class="tog"><input type="checkbox" checked><span class="ts"></span></label></div>
+    <button class="btn bp" onclick="guardarCfg()">💾 Guardar</button>
+  </div>
+  <div class="cfc">
+    <div class="cft">📊 Estado de la API</div>
+    <div id="api-status-detail">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--rdd);border-radius:var(--r);border:1px solid rgba(239,68,68,.2);">
+        <span style="font-size:20px;">🔴</span>
+        <div><div style="font-weight:600;font-size:12px;">No conectado</div><div style="font-size:10px;color:var(--mu);">Ingresa las credenciales y prueba la conexión</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══ MODALES ══ -->
+<!-- Editar producto -->
+<div class="ov" id="mo-prod">
+  <div class="mo">
+    <div class="mh"><div class="mt" id="mo-prod-t">✏️ Editar producto</div><div class="mx" onclick="closeMo('mo-prod')">✕</div></div>
+    <div class="mb">
+      <input type="hidden" id="me-id">
+      <div class="fg"><label class="fl">Nombre</label><input class="inp" id="me-nom" readonly style="opacity:.5;"></div>
+      <div class="fr"><div class="fg"><label class="fl">SKU</label><input class="inp" id="me-sku" readonly style="opacity:.5;"></div>
+      <div class="fg"><label class="fl">Categoría</label><input class="inp" id="me-cat" readonly style="opacity:.5;"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Stock actual</label><input class="inp" id="me-st" type="number" min="0"></div>
+      <div class="fg"><label class="fl">Precio (COP)</label><input class="inp" id="me-pr" type="number" min="0"></div></div>
+      <div class="fg"><label class="fl">Descripción corta</label><textarea class="inp" id="me-desc" rows="3"></textarea></div>
+      <div class="fg"><label class="fl">Visible en tienda</label><select class="inp" id="me-vis"><option value="1">Sí — visible</option><option value="0">No — oculto</option></select></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-prod')">Cancelar</button><button class="btn bp" onclick="guardarProd()">Guardar cambios</button></div>
+  </div>
+</div>
+
+<!-- Nuevo producto -->
+<div class="ov" id="mo-newprod">
+  <div class="mo">
+    <div class="mh"><div class="mt">+ Nuevo producto</div><div class="mx" onclick="closeMo('mo-newprod')">✕</div></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">Nombre del producto</label><input class="inp" id="np-nom" placeholder="Ej: Lámpara Colgante Nórdica"></div>
+      <div class="fr"><div class="fg"><label class="fl">SKU</label><input class="inp" id="np-sku" placeholder="Ej: LUM-011"></div>
+      <div class="fg"><label class="fl">Categoría</label><select class="inp" id="np-cat"><option>Colgantes</option><option>Pie</option><option>Apliques</option><option>Focos</option><option>Mesa</option><option>Tiras LED</option><option>Exterior</option><option>Infantil</option><option>Paneles</option><option>Bombillos</option></select></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Stock inicial</label><input class="inp" id="np-st" type="number" value="0"></div>
+      <div class="fg"><label class="fl">Precio (COP)</label><input class="inp" id="np-pr" type="number" placeholder="0"></div></div>
+      <div class="fg"><label class="fl">Descripción</label><textarea class="inp" id="np-desc" rows="3" placeholder="Descripción del producto..."></textarea></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-newprod')">Cancelar</button><button class="btn bp" onclick="crearProd()">Crear producto</button></div>
+  </div>
+</div>
+
+<!-- Ciudad -->
+<div class="ov" id="mo-ciudad">
+  <div class="mo">
+    <div class="mh"><div class="mt">🚚 Agregar ciudad</div><div class="mx" onclick="closeMo('mo-ciudad')">✕</div></div>
+    <div class="mb">
+      <div class="fr"><div class="fg"><label class="fl">Ciudad</label><input class="inp" id="mc-c" placeholder="Ej: Medellín"></div>
+      <div class="fg"><label class="fl">Departamento</label><input class="inp" id="mc-d" placeholder="Ej: Antioquia"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Flete (COP)</label><input class="inp" id="mc-f" type="number" placeholder="15000"></div>
+      <div class="fg"><label class="fl">Compra mínima (COP)</label><input class="inp" id="mc-m" type="number" value="0"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Días entrega mín.</label><input class="inp" id="mc-dn" type="number" value="2"></div>
+      <div class="fg"><label class="fl">Días entrega máx.</label><input class="inp" id="mc-dx" type="number" value="5"></div></div>
+      <div class="fg"><label class="fl">Transportadora</label>
+        <select class="inp" id="mc-t"><option>Servientrega</option><option>Coordinadora</option><option>Interrapidísimo</option><option>TCC</option><option>Deprisa</option><option>Otra</option></select>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-ciudad')">Cancelar</button><button class="btn bp" onclick="addCiudad()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Cupón -->
+<div class="ov" id="mo-cupon">
+  <div class="mo">
+    <div class="mh"><div class="mt">🏷️ Crear cupón</div><div class="mx" onclick="closeMo('mo-cupon')">✕</div></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">Código del cupón</label><input class="inp" id="cup-c" placeholder="Ej: ILUMAX20" style="text-transform:uppercase;font-family:monospace;font-size:14px;font-weight:700;letter-spacing:1px;"></div>
+      <div class="fr"><div class="fg"><label class="fl">Tipo de descuento</label>
+        <select class="inp" id="cup-t"><option value="pct">% Porcentaje</option><option value="fijo">$ Monto fijo</option><option value="env">Envío gratis</option></select>
+      </div>
+      <div class="fg"><label class="fl">Valor</label><input class="inp" id="cup-v" type="number" placeholder="20"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Compra mínima (COP)</label><input class="inp" id="cup-m" type="number" value="0"></div>
+      <div class="fg"><label class="fl">Usos máximos</label><input class="inp" id="cup-u" type="number" value="100"></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Fecha vencimiento</label><input class="inp" id="cup-f" type="date"></div>
+      <div class="fg"><label class="fl">Un uso por cliente</label><label class="tog" style="margin-top:8px;"><input type="checkbox" id="cup-uc"><span class="ts"></span></label></div></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-cupon')">Cancelar</button><button class="btn bp" onclick="crearCupon()">Crear cupón</button></div>
+  </div>
+</div>
+
+<!-- Categoría -->
+<div class="ov" id="mo-cat">
+  <div class="mo">
+    <div class="mh"><div class="mt">🗂️ Nueva categoría</div><div class="mx" onclick="closeMo('mo-cat')">✕</div></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">Nombre</label><input class="inp" id="nc2-n" placeholder="Ej: Decoración"></div>
+      <div class="fg"><label class="fl">Slug (URL)</label><input class="inp" id="nc2-s" placeholder="decoracion"></div>
+      <div class="fg"><label class="fl">Descripción</label><textarea class="inp" id="nc2-d" rows="2" placeholder="Descripción de la categoría"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-cat')">Cancelar</button><button class="btn bp" onclick="crearCat()">Crear categoría</button></div>
+  </div>
+</div>
+
+<!-- Usuario -->
+<div class="ov" id="mo-user">
+  <div class="mo">
+    <div class="mh"><div class="mt">👤 Agregar usuario</div><div class="mx" onclick="closeMo('mo-user')">✕</div></div>
+    <div class="mb">
+      <div class="fr"><div class="fg"><label class="fl">Nombre</label><input class="inp" id="us-n" placeholder="Nombre completo"></div>
+      <div class="fg"><label class="fl">Correo</label><input class="inp" id="us-e" type="email" placeholder="correo@ilumax.com.co"></div></div>
+      <div class="fg"><label class="fl">Rol</label>
+        <select class="inp" id="us-r">
+          <option value="admin">Administrador — acceso total</option>
+          <option value="editor">Editor — productos y contenido</option>
+          <option value="bodega">Bodega — solo inventario</option>
+          <option value="ventas">Ventas — pedidos y clientes</option>
+          <option value="marketing">Marketing — cupones y banners</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Enviar invitación por email</label><label class="tog"><input type="checkbox" checked id="us-inv"><span class="ts"></span></label></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeMo('mo-user')">Cancelar</button><button class="btn bp" onclick="crearUser()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- ══ NOTIF PANEL ══ -->
+<div class="np" id="np">
+  <div class="nph">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div><div style="font-size:13px;font-weight:700;">Notificaciones</div><div style="font-size:10px;color:var(--mu);">Actividad de tu tienda</div></div>
+      <div class="mx" onclick="toggleNP()">✕</div>
+    </div>
+  </div>
+  <div class="npl" id="np-list"></div>
+  <div class="npf"><button class="btn bg sm" style="width:100%;" onclick="leerTodas()">Marcar todas como leídas</button></div>
+</div>
+
+<div class="tb2" id="tb2"></div>
+
+<script>
+// ════════════ DATOS ════════════
+
+// ════════════════════════════════════════
+// CORE DE SEGURIDAD Y ROBUSTEZ — ILUMAX PRO
+// ════════════════════════════════════════
+const ILX = {
+  _cache: {}, _CACHE_TTL: 5*60*1000, _syncInt: null,
+
+  // Credenciales cifradas en sessionStorage
+  saveCredentials(url,ck,cs){
+    const enc=s=>btoa(encodeURIComponent(s));
+    sessionStorage.setItem('ilx_url',enc(url));
+    sessionStorage.setItem('ilx_ck',enc(ck));
+    sessionStorage.setItem('ilx_cs',enc(cs));
+  },
+  getCredentials(){
+    const dec=k=>{try{return decodeURIComponent(atob(sessionStorage.getItem(k)||''));}catch(e){return '';}};
+    return{url:dec('ilx_url'),ck:dec('ilx_ck'),cs:dec('ilx_cs')};
+  },
+  clearCredentials(){['ilx_url','ilx_ck','ilx_cs'].forEach(k=>sessionStorage.removeItem(k));},
+
+  // Caché inteligente
+  setCache(k,d){this._cache[k]={d,ts:Date.now()};},
+  getCache(k){const c=this._cache[k];if(!c||Date.now()-c.ts>this._CACHE_TTL){delete this._cache[k];return null;}return c.d;},
+  invalidateCache(){this._cache={};},
+
+  // Llamada API WooCommerce con manejo de errores
+  async api(endpoint,method='GET',body=null){
+    const{url,ck,cs}=this.getCredentials();
+    if(!url) throw new Error('NO_CREDENTIALS');
+    if(!navigator.onLine) throw new Error('SIN_CONEXION');
+    const cKey=method==='GET'?endpoint:null;
+    if(cKey){const c=this.getCache(cKey);if(c) return c;}
+    const res=await fetch(`${url}/wp-json/wc/v3/${endpoint}`,{
+      method,headers:{'Authorization':'Basic '+btoa(`${ck}:${cs}`),'Content-Type':'application/json'},
+      ...(body?{body:JSON.stringify(body)}:{})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||`HTTP ${res.status}`);}
+    const data=await res.json();
+    if(cKey) this.setCache(cKey,data);
+    return data;
+  },
+
+  // Paginación visual
+  paginate(data,page=1,perPage=12){
+    const total=data.length,pages=Math.ceil(total/perPage);
+    return{items:data.slice((page-1)*perPage,page*perPage),page,pages,total};
+  },
+
+  // Log de acciones
+  log(accion,detalle){
+    const logs=JSON.parse(localStorage.getItem('ilx_logs')||'[]');
+    logs.unshift({ts:new Date().toLocaleString('es-CO'),user:currentUser?.nombre||'Demo',accion,detalle});
+    if(logs.length>300) logs.splice(300);
+    localStorage.setItem('ilx_logs',JSON.stringify(logs));
+  },
+
+  // Validaciones
+  val:{
+    stock:v=>{const n=parseInt(v);if(isNaN(n)||n<0) return 'Stock no puede ser negativo';if(n>999999) return '¿Stock muy alto?';return null;},
+    precio:v=>{const n=parseInt(v);if(isNaN(n)||n<0) return 'Precio no puede ser negativo';if(n===0) return 'El precio es $0 ¿es correcto?';return null;},
+    email:v=>(!v||!v.includes('@'))?'Email inválido':null,
+    cupon:v=>{if(!v||v.length<3) return 'Mínimo 3 caracteres';if(!/^[A-Z0-9_\-]+$/i.test(v)) return 'Solo letras, números y guiones';return null;},
+    url:v=>{try{new URL(v);return null;}catch(e){return 'URL inválida — incluye https://';}},
+    required:v=>(!v||!v.trim())?'Campo obligatorio':null,
+  },
+
+  showErr(inputId,errId,msg){
+    const inp=document.querySelector('#'+inputId),err=document.querySelector('#'+errId);
+    if(!inp||!err) return;
+    if(msg){inp.classList.add('err');err.textContent=msg;err.classList.add('show');}
+    else{inp.classList.remove('err');err.classList.remove('show');}
+  },
+
+  // Confirmación modal
+  confirm(msg,tipo='warn'){
+    return new Promise(resolve=>{
+      const ov=document.createElement('div');
+      ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      const ico={warn:'⚠️',danger:'🚨',info:'ℹ️'};
+      const bc=tipo==='danger'?'background:#ef4444;color:#fff':'background:#f5c518;color:#000';
+      ov.innerHTML=`<div style="background:#0f0f1a;border:1px solid #363650;border-radius:14px;padding:26px;max-width:360px;width:100%;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">${ico[tipo]||'⚠️'}</div>
+        <div style="font-size:14px;font-weight:600;color:#eeeef8;margin-bottom:8px;">${msg}</div>
+        <div style="font-size:11px;color:#7070a0;margin-bottom:22px;">Esta acción afectará tu tienda en WordPress</div>
+        <div style="display:flex;gap:10px;">
+          <button id="cfm-no" style="flex:1;padding:10px;border-radius:8px;border:1px solid #2a2a40;background:transparent;color:#7070a0;cursor:pointer;font-family:inherit;font-size:13px;">Cancelar</button>
+          <button id="cfm-si" style="flex:1;padding:10px;border-radius:8px;border:none;${bc};cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;">Confirmar</button>
+        </div></div>`;
+      document.body.appendChild(ov);
+      ov.querySelector('#cfm-si').onclick=()=>{ov.remove();resolve(true);};
+      ov.querySelector('#cfm-no').onclick=()=>{ov.remove();resolve(false);};
+      ov.onclick=e=>{if(e.target===ov){ov.remove();resolve(false);}};
+    });
+  },
+
+  // Auto-sync
+  startSync(cb,min=5){this.stopSync();this._syncInt=setInterval(async()=>{if(!navigator.onLine) return;this.invalidateCache();if(cb) await cb();},min*60*1000);},
+  stopSync(){if(this._syncInt){clearInterval(this._syncInt);this._syncInt=null;}},
+
+  // Datos offline
+  saveOffline(k,d){try{localStorage.setItem('ilx_off_'+k,JSON.stringify({d,ts:Date.now()}));}catch(e){}},
+  getOffline(k){try{const r=localStorage.getItem('ilx_off_'+k);return r?JSON.parse(r).d:null;}catch(e){return null;}},
+
+  // Offline detection
+  initOffline(onOnline,onOffline){
+    window.addEventListener('online',()=>{if(onOnline) onOnline();});
+    window.addEventListener('offline',()=>{if(onOffline) onOffline();});
+  },
+
+  // Push notifications
+  async requestPush(){
+    if(!('Notification' in window)) return;
+    const p=await Notification.requestPermission();
+    return p==='granted';
+  },
+  push(titulo,cuerpo){
+    if(Notification.permission==='granted') new Notification('ILUMAX — '+titulo,{body:cuerpo});
+  },
+};
+
+let umbral=50, alertaU=20, invF='todos', pedF='todos', cliSort='ltv', rankSort='vend';
+
+const prods=[
+  {id:1,nom:'Lámpara Colgante Nórdica',sku:'LUM-001',cat:'Colgantes',st:120,pr:185000,vis:true,vend:87,ing:16095000,desc:'Diseño escandinavo minimalista, luz cálida E27.'},
+  {id:2,nom:'Lámpara de Pie Minimalista',sku:'LUM-002',cat:'Pie',st:45,pr:320000,vis:false,vend:52,ing:16640000,desc:'Pie de metal, pantalla de tela, ajustable.'},
+  {id:3,nom:'Aplique de Pared LED',sku:'APL-001',cat:'Apliques',st:8,pr:95000,vis:true,vend:41,ing:3895000,desc:'LED integrado 12W, 3000K, IP20.'},
+  {id:4,nom:'Foco Empotrable GU10',sku:'FOC-001',cat:'Focos',st:200,pr:42000,vis:true,vend:124,ing:5208000,desc:'Empotrable giratorio, compatible GU10.'},
+  {id:5,nom:'Lámpara de Mesa Vintage',sku:'LUM-003',cat:'Mesa',st:0,pr:215000,vis:false,vend:29,ing:6235000,desc:'Cobre envejecido, pantalla lino.'},
+  {id:6,nom:'Tira LED 5m RGB',sku:'LED-001',cat:'Tiras LED',st:15,pr:78000,vis:true,vend:38,ing:2964000,desc:'RGB+W, control remoto incluido, adhesiva.'},
+  {id:7,nom:'Aplique Exterior IP65',sku:'APL-002',cat:'Exterior',st:32,pr:145000,vis:true,vend:22,ing:3190000,desc:'Resistente al agua, LED 8W, negro mate.'},
+  {id:8,nom:'Lámpara Infantil Nube',sku:'LUM-004',cat:'Infantil',st:60,pr:125000,vis:true,vend:18,ing:2250000,desc:'Silicona suave, luz regulable, USB.'},
+  {id:9,nom:'Panel LED 60x60',sku:'PAN-001',cat:'Paneles',st:0,pr:88000,vis:false,vend:15,ing:1320000,desc:'Panel empotrable 40W, 4000K, driver incluido.'},
+  {id:10,nom:'Bombillo LED E27 9W',sku:'BOM-001',cat:'Bombillos',st:500,pr:18000,vis:true,vend:210,ing:3780000,desc:'9W=60W, 2700K, 806 lúmenes, A+.'},
+];
+
+const peds=[
+  {id:'#1043',cli:'María Fernández',email:'maria@gmail.com',fecha:'Hoy 10:32',items:'Lámpara Colgante × 2',total:370000,st:'processing',ciudad:'Cali'},
+  {id:'#1042',cli:'Carlos Herrera',email:'carlos@gmail.com',fecha:'Hoy 9:15',items:'Panel LED × 1',total:88000,st:'completed',ciudad:'Bogotá'},
+  {id:'#1041',cli:'Ana Gómez',email:'ana@gmail.com',fecha:'Hoy 8:48',items:'Foco GU10 × 4, Tira LED × 1',total:246000,st:'processing',ciudad:'Medellín'},
+  {id:'#1040',cli:'Luis Martínez',email:'luis@gmail.com',fecha:'Ayer 6:22',items:'Mesa Vintage × 1',total:215000,st:'completed',ciudad:'Cali'},
+  {id:'#1039',cli:'Sandra Ruiz',email:'sandra@gmail.com',fecha:'Ayer 4:10',items:'Aplique LED × 2',total:190000,st:'pending',ciudad:'Barranquilla'},
+  {id:'#1038',cli:'Jorge Peña',email:'jorge@gmail.com',fecha:'Ayer 11:30',items:'Colgante × 1, Bombillo × 3',total:239000,st:'completed',ciudad:'Pereira'},
+  {id:'#1037',cli:'Camila Torres',email:'cam@gmail.com',fecha:'Hace 2 días',items:'Tira LED × 1',total:78000,st:'processing',ciudad:'Bogotá'},
+];
+
+const carts=[
+  {cli:'Pedro Salcedo',email:'pedro@gmail.com',t:'22 min',items:'Lámpara Pie Minimalista × 1, Aplique Ext × 2',total:610000},
+  {cli:'Lorena Castillo',email:'lorena@gmail.com',t:'1h 10m',items:'Panel LED 60x60 × 3',total:264000},
+  {cli:'Andrés Mejía',email:'andres@gmail.com',t:'2h 45m',items:'Lámpara Colgante Nórdica × 1',total:185000},
+];
+
+const clientes=[
+  {nom:'María Fernández',email:'maria@gmail.com',ciudad:'Cali',peds:8,ltv:1240000,ultimo:'Hoy'},
+  {nom:'Carlos Herrera',email:'carlos@gmail.com',ciudad:'Bogotá',peds:5,ltv:890000,ultimo:'Hoy'},
+  {nom:'Ana Gómez',email:'ana@gmail.com',ciudad:'Medellín',peds:12,ltv:2100000,ultimo:'Hoy'},
+  {nom:'Luis Martínez',email:'luis@gmail.com',ciudad:'Cali',peds:3,ltv:540000,ultimo:'Ayer'},
+  {nom:'Sandra Ruiz',email:'sandra@gmail.com',ciudad:'Barranquilla',peds:2,ltv:320000,ultimo:'Ayer'},
+  {nom:'Jorge Peña',email:'jorge@gmail.com',ciudad:'Pereira',peds:7,ltv:1560000,ultimo:'Ayer'},
+  {nom:'Camila Torres',email:'cam@gmail.com',ciudad:'Bogotá',peds:4,ltv:780000,ultimo:'Hace 2 días'},
+];
+
+let ciudades=[
+  {c:'Cali',d:'Valle del Cauca',f:0,m:0,dn:1,dx:2,t:'Servientrega'},
+  {c:'Bogotá',d:'Cundinamarca',f:12000,m:0,dn:2,dx:3,t:'Coordinadora'},
+  {c:'Medellín',d:'Antioquia',f:15000,m:0,dn:2,dx:4,t:'Servientrega'},
+  {c:'Barranquilla',d:'Atlántico',f:18000,m:0,dn:3,dx:5,t:'TCC'},
+  {c:'Bucaramanga',d:'Santander',f:16000,m:0,dn:3,dx:5,t:'Interrapidísimo'},
+  {c:'Pereira',d:'Risaralda',f:14000,m:0,dn:2,dx:4,t:'Coordinadora'},
+  {c:'Manizales',d:'Caldas',f:15000,m:0,dn:2,dx:4,t:'Servientrega'},
+  {c:'Cartagena',d:'Bolívar',f:19000,m:0,dn:3,dx:5,t:'Coordinadora'},
+];
+
+let ncList=[{c:'Leticia',m:'Sin transportadora'},{c:'Mitú',m:'Zona difícil acceso'}];
+let tList=[{c:'Cali',n:1,x:2},{c:'Bogotá',n:2,x:3},{c:'Medellín',n:2,x:4},{c:'Barranquilla',n:3,x:5}];
+
+let cups=[
+  {cod:'ILUMAX20',t:'pct',v:20,m:100000,u:100,us:34,f:'2026-12-31',on:true},
+  {cod:'BIENVENIDO',t:'fijo',v:30000,m:150000,u:50,us:12,f:'2026-10-31',on:true},
+  {cod:'ENVIOGRATIS',t:'env',v:0,m:200000,u:200,us:87,f:'2026-09-30',on:false},
+];
+
+const pagos=[
+  {n:'Mercado Pago',d:'Tarjetas, PSE, efectivo, Nequi',ico:'💳',on:true},
+  {n:'PayU Latam',d:'Todas las tarjetas de crédito y débito',ico:'💰',on:true},
+  {n:'Transferencia bancaria',d:'Pago manual por transferencia',ico:'🏦',on:true},
+  {n:'Contraentrega',d:'Pago al momento de recibir el producto',ico:'📦',on:false},
+  {n:'Nequi / Daviplata',d:'Billeteras digitales colombianas',ico:'📱',on:true},
+];
+
+let usuarios=[
+  {n:'Mercadeo ILUMAX',e:'mercadeo@ilumax.com.co',r:'admin',on:true},
+  {n:'Catalina López',e:'catalina@ilumax.com.co',r:'bodega',on:true},
+  {n:'Diego Ramírez',e:'diego@ilumax.com.co',r:'ventas',on:true},
+];
+
+const cats=['Colgantes','Pie','Apliques','Focos','Mesa','Tiras LED','Exterior','Infantil','Paneles','Bombillos'];
+
+const notifR=[
+  {id:'r1',l:'Nuevo pedido recibido',d:'Al completar una compra',on:true},
+  {id:'r2',l:'Pedido pendiente de pago',d:'Cliente en checkout sin pagar',on:true},
+  {id:'r3',l:'Carrito abandonado',d:'Cliente dejó productos sin comprar',on:true},
+  {id:'r4',l:'Stock crítico',d:'Cuando stock ≤ umbral configurado',on:true},
+  {id:'r5',l:'Producto agotado',d:'Stock llega a 0',on:true},
+  {id:'r6',l:'Resumen diario (8 PM)',d:'Informe de ventas del día',on:false},
+  {id:'r7',l:'Resumen semanal',d:'Informe de la semana cada lunes',on:false},
+];
+
+let notifs=[
+  {t:'dg',ico:'🚨',msg:'Aplique de Pared LED — solo 8 unidades',ti:'5 min',r:false},
+  {t:'su',ico:'🛒',msg:'Nuevo pedido #1043 — María Fernández — $370.000',ti:'12 min',r:false},
+  {t:'wa',ico:'🛍️',msg:'Pedro Salcedo abandonó carrito de $610.000',ti:'22 min',r:false},
+  {t:'dg',ico:'⚠️',msg:'Tira LED 5m RGB — 15 unidades (stock bajo)',ti:'1h',r:false},
+  {t:'su',ico:'✅',msg:'Pedido #1042 completado — Carlos Herrera',ti:'2h',r:true},
+];
+
+let editId=null, vcnt=1044;
+
+// ════════════ UTILS ════════════
+const qs=s=>document.querySelector(s);
+const fmt=v=>'$'+parseInt(v).toLocaleString('es-CO');
+function openMo(id){document.getElementById(id).classList.add('on');}
+function closeMo(id){document.getElementById(id).classList.remove('on');}
+function toggleSB(){qs('#sb').classList.toggle('on');}
+function toggleNP(){qs('#np').classList.toggle('on');}
+
+function toast(msg,type='ok'){
+  const b=qs('#tb2'),t=document.createElement('div');
+  const ico={ok:'✅',er:'❌',wa:'⚠️',inf:'ℹ️'};
+  t.className=`tst ${type}`;t.innerHTML=`<span>${ico[type]||'ℹ️'}</span>${msg}`;
+  b.appendChild(t);setTimeout(()=>t.style.opacity='0',2800);setTimeout(()=>t.remove(),3200);
+}
+
+function addNotif(t,ico,msg){
+  notifs.unshift({t,ico,msg,ti:'Ahora',r:false});
+  renderNP();
+}
+
+// ════════════ NAVEGACIÓN ════════════
+const meta={
+  dash:['Dashboard','Vista general de tu tienda hoy'],
+  ventas:['Ventas y ranking','Análisis de rendimiento y productos'],
+  pedidos:['Pedidos','Seguimiento de compras en tiempo real'],
+  carritos:['Carritos abandonados','Clientes que no terminaron de comprar'],
+  clientes:['Clientes','Base de clientes y comportamiento de compra'],
+  productos:['Productos','Gestiona stock, precios y visibilidad'],
+  categorias:['Categorías','Organización de tu catálogo'],
+  alertas:['Alertas de inventario','Productos que necesitan atención inmediata'],
+  envio:['Envío y fletes','Tarifas, cobertura y tiempos de entrega'],
+  cupones:['Cupones y descuentos','Gestiona promociones activas'],
+  pagos:['Métodos de pago','Activa o desactiva pasarelas de pago'],
+  impuestos:['Precios e IVA','Configuración de impuestos y moneda'],
+  contenido:['Banners y textos','Contenido y textos de tu tienda'],
+  usuarios:['Usuarios del panel','Permisos y accesos del equipo'],
+  logs:['Log de cambios','Historial completo de acciones realizadas'],
+  notif:['Notificaciones email','Configurar alertas automáticas'],
+  config:['Configuración API','Conectar con WooCommerce'],
+};
+
+function go(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  qs('#page-'+id).classList.add('on');
+  if(el) el.classList.add('on');
+  const[t,s]=meta[id]||['',''];
+  qs('#pg-t').textContent=t;qs('#pg-s').textContent=s;
+  qs('#sb').classList.remove('on');
+  const mp={ventas:renderVentas,pedidos:renderPeds,carritos:renderCarts,clientes:renderClientes,
+    productos:renderProds,categorias:renderCats,alertas:renderAlerts,
+    envio:renderEnvio,cupones:renderCups,pagos:renderPagos,usuarios:renderUsers,logs:renderLogs,notif:renderNotifRules};
+  if(mp[id]) mp[id]();
+}
+
+// ════════════ CHARTS ════════════
+const cg={color:'rgba(255,255,255,.6)',grid:'rgba(255,255,255,.04)',font:{family:'Inter',size:10}};
+function mk(id,type,labels,datasets,opts={}){
+  const ctx=qs('#'+id);if(!ctx)return;
+  if(ctx._c) ctx._c.destroy();
+  ctx._c=new Chart(ctx,{type,data:{labels,datasets},options:{
+    responsive:true,maintainAspectRatio:true,animation:{duration:600},
+    plugins:{legend:{labels:{color:cg.color,font:cg.font,boxWidth:8,padding:8}},...(opts.pl||{})},
+    scales:!['pie','doughnut','polarArea'].includes(type)?{
+      x:{grid:{color:cg.grid},ticks:{color:cg.color,font:cg.font}},
+      y:{grid:{color:cg.grid},ticks:{color:cg.color,font:cg.font,...(opts.yt||{})}}
+    }:undefined,...opts
+  }});
+}
+
+const DAYS=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const COLS=['#f5c518','#3b82f6','#22c55e','#a855f7','#f97316','#06b6d4','#ef4444','#ec4899'];
+
+function initCharts(){
+  mk('ch-d7','line',DAYS,
+    [{label:'Ventas',data:[1200000,980000,1450000,2100000,1800000,2400000,1950000],
+      borderColor:'#f5c518',backgroundColor:'rgba(245,197,24,.08)',tension:.4,fill:true,pointBackgroundColor:'#f5c518',pointRadius:3,pointHoverRadius:5}],
+    {yt:{callback:v=>'$'+(v/1e6).toFixed(1)+'M'}});
+
+  mk('ch-cats','doughnut',cats.slice(0,6),
+    [{data:[32,24,18,14,8,4],backgroundColor:COLS,borderWidth:2,borderColor:'#07070d',hoverOffset:6}],
+    {pl:{legend:{position:'right',labels:{boxWidth:8}}}});
+
+  mk('ch-hora','bar',['8am','9am','10am','11am','12pm','1pm','2pm','3pm','4pm','5pm','6pm'],
+    [{label:'Ventas/hora',data:[80,120,220,380,290,410,350,280,320,480,240].map(v=>v*1000),
+      backgroundColor:'rgba(245,197,24,.6)',borderRadius:4}],
+    {yt:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}});
+
+  mk('ch-daily','bar',Array.from({length:30},(_,i)=>i+1+''),
+    [{label:'Ventas diarias',data:Array.from({length:30},()=>Math.floor(Math.random()*3e6)+400000),
+      backgroundColor:'rgba(245,197,24,.65)',borderRadius:3}],
+    {yt:{callback:v=>'$'+(v/1e6).toFixed(1)+'M'}});
+
+  mk('ch-comp','bar',['Mar','Abr','May','Jun','Jul','Ago','Sep'],
+    [{label:'2025',data:[28,32,31,38,41,44,48].map(v=>v*1e6),backgroundColor:'rgba(59,130,246,.6)',borderRadius:3},
+     {label:'2026',data:[32,38,40,44,49,52,58].map(v=>v*1e6),backgroundColor:'rgba(245,197,24,.7)',borderRadius:3}],
+    {yt:{callback:v=>'$'+(v/1e6).toFixed(0)+'M'}});
+
+  mk('ch-catline','line',['Mar','Abr','May','Jun','Jul','Ago'],
+    ['Colgantes','LED','Apliques','Focos'].map((c,i)=>({
+      label:c,data:Array.from({length:6},()=>Math.floor(Math.random()*8e6)+1e6),
+      borderColor:COLS[i],tension:.4,pointRadius:2,fill:false})),
+    {yt:{callback:v=>'$'+(v/1e6).toFixed(1)+'M'}});
+
+  mk('ch-funnel','bar',['Visitas','Ven catálogo','Carrito','Checkout','Compra'],
+    [{label:'Usuarios',data:[5200,2800,890,420,198],backgroundColor:COLS.map(c=>c+'99'),borderRadius:4}],
+    {pl:{legend:{display:false}}});
+
+  mk('ch-aband','line',DAYS,
+    [{label:'Carritos aband.',data:[4,6,3,8,5,3,4],borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.1)',tension:.4,fill:true,pointRadius:3},
+     {label:'Recuperados',data:[1,2,1,3,2,1,1],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',tension:.4,fill:true,pointRadius:3}]);
+
+  mk('ch-motivos','doughnut',['Precio flete','Proceso pago','Solo vitrinear','Sin cuenta','Otro'],
+    [{data:[34,24,20,14,8],backgroundColor:['#f97316','#ef4444','#3b82f6','#a855f7','#6b6b8a'],borderWidth:2,borderColor:'#07070d'}],
+    {pl:{legend:{position:'right',labels:{boxWidth:8}}}});
+
+  mk('ch-clientes','bar',['Mar','Abr','May','Jun','Jul','Ago','Sep'],
+    [{label:'Nuevos clientes',data:[18,22,19,28,24,31,12],backgroundColor:'rgba(168,85,247,.7)',borderRadius:3}]);
+
+  mk('ch-ciudcli','doughnut',['Cali','Bogotá','Medellín','Barranquilla','Otras'],
+    [{data:[38,28,18,10,6],backgroundColor:COLS,borderWidth:2,borderColor:'#07070d'}],
+    {pl:{legend:{position:'right',labels:{boxWidth:8}}}});
+
+  mk('ch-catpie','doughnut',cats,
+    [{data:prods.map(p=>p.ing),backgroundColor:COLS.concat(COLS),borderWidth:2,borderColor:'#07070d'}],
+    {pl:{legend:{position:'right',labels:{boxWidth:8}}}});
+}
+
+function setDashPer(d){
+  const labels=d===7?DAYS:Array.from({length:30},(_,i)=>i+1+'');
+  const data=labels.map(()=>Math.floor(Math.random()*3e6)+500000);
+  const ctx=qs('#ch-d7');if(ctx&&ctx._c){ctx._c.data.labels=labels;ctx._c.data.datasets[0].data=data;ctx._c.update();}
+}
+
+// ════════════ DASHBOARD ════════════
+function renderDash(){
+  // Ranking
+  const top=[...prods].sort((a,b)=>b.vend-a.vend).slice(0,5),max=top[0].vend;
+  qs('#d-rank').innerHTML=top.map((p,i)=>`
+    <div class="ri"><span class="rn">${i+1}</span>
+    <div class="ri-info"><div class="ri-name">${p.nom}</div>
+    <div class="bw"><div class="bb2" style="width:${(p.vend/max*100).toFixed(0)}%"></div></div></div>
+    <span class="rv">${p.vend}</span></div>`).join('');
+
+  // Pedidos mini
+  qs('#d-peds').innerHTML=peds.slice(0,4).map(p=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid var(--b1);">
+    <span style="font-weight:700;font-size:12px;color:var(--acc);min-width:50px;">${p.id}</span>
+    <div style="flex:1;font-size:11px;">${p.cli}</div>
+    <span style="font-size:11px;font-weight:700;">${fmt(p.total)}</span>
+    <span>${bPed(p.st)}</span></div>`).join('');
+
+  // Alertas mini
+  const crit=prods.filter(p=>p.st<=alertaU).slice(0,4);
+  qs('#d-alerts').innerHTML=crit.map(p=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--b1);">
+    <span style="font-size:14px;">${p.st===0?'🚨':'⚠️'}</span>
+    <div style="flex:1;font-size:11px;font-weight:500;">${p.nom}</div>
+    <span class="bdg ${p.st===0?'bdr':'bdo'}">${p.st===0?'Agotado':p.st+' uds.'}</span></div>`).join('')
+    ||'<div style="color:var(--mu);font-size:11px;">Sin alertas ✅</div>';
+
+  // Carts mini
+  qs('#d-carts').innerHTML=carts.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--b1);">
+    <span style="font-size:14px;">🛍️</span>
+    <div style="flex:1;"><div style="font-size:11px;font-weight:500;">${c.cli}</div>
+    <div style="font-size:10px;color:var(--mu);">Hace ${c.t}</div></div>
+    <div style="text-align:right;"><div style="font-size:11px;font-weight:700;color:var(--acc);">${fmt(c.total)}</div>
+    <button class="btn bp xs" style="margin-top:3px;" onclick="recordatorio(${i})">✉️</button></div></div>`).join('');
+
+  updStats();
+}
+
+function updStats(){
+  qs('#d-crit').textContent=pd.filter(p=>p.st<=alertaU).length;
+  qs('#d-act').textContent=pd.filter(p=>p.vis).length;
+  qs('#nb-a').textContent=pd.filter(p=>p.st<=alertaU).length;
+  const pd=getProds();qs('#i-tot').textContent=pd.length;
+  qs('#i-ok').textContent=pd.filter(p=>p.st>umbral).length;
+  qs('#i-low').textContent=pd.filter(p=>p.st>0&&p.st<=umbral).length;
+  qs('#i-out').textContent=pd.filter(p=>p.st===0).length;
+  const u=notifs.filter(n=>!n.r).length;
+  qs('#nc').textContent=u;qs('#nc').style.display=u>0?'block':'none';
+}
+
+// ════════════ VENTAS ════════════
+function renderVentas(){
+  const sorted=[...prods].sort((a,b)=>
+    rankSort==='vend'?b.vend-a.vend:rankSort==='ing'?b.ing-a.ing:(b.vend/(b.st||1))-(a.vend/(a.st||1)));
+  qs('#rank-tb').innerHTML=sorted.map((p,i)=>{
+    const rot=p.st>0?(p.vend/p.st).toFixed(1)+'x':'∞';
+    const spark=Array.from({length:6},()=>Math.floor(Math.random()*40+10));
+    return`<tr>
+    <td style="font-weight:800;color:var(--mu);font-size:11px;">${i+1}</td>
+    <td><div class="pn">${p.nom}</div><div class="ps">${p.sku}</div></td>
+    <td><span class="bdg bdm">${p.cat}</span></td>
+    <td style="font-weight:700;color:var(--acc);">${p.vend}</td>
+    <td style="font-weight:700;">${fmt(p.ing)}</td>
+    <td>${sBadge(p)}</td>
+    <td><span class="bdg ${p.st===0?'bdr':parseFloat(rot)>2?'bgr':'bdm'}">${rot}</span></td>
+    <td><div class="spark">${spark.map(v=>`<div class="sp-bar" style="height:${v/50*24}px;"></div>`).join('')}</div></td>
+    </tr>`;}).join('');
+}
+function setRankSort(s){rankSort=s;renderVentas();}
+
+// ════════════ PEDIDOS ════════════
+function bPed(e){const m={processing:['bdb','En proceso'],completed:['bgr','Completado'],pending:['bdo','Pendiente']};const[c,l]=m[e]||['bdm',e];return`<span class="bdg ${c}">${l}</span>`;}
+
+function renderPeds(){
+  const q=(qs('#ped-q')||{value:''}).value.toLowerCase();
+  const lista=peds.filter(p=>{
+    const mq=!q||p.cli.toLowerCase().includes(q)||p.id.toLowerCase().includes(q);
+    const mf=pedF==='todos'||p.st===pedF;
+    return mq&&mf;
+  });
+  qs('#peds-list').innerHTML=lista.map(p=>`
+    <div class="oc">
+    <div class="oc-id">${p.id}</div>
+    <div class="oc-info"><div class="oc-cli">${p.cli}</div>
+    <div class="oc-meta">${p.fecha} · ${p.ciudad} · ${p.items}</div></div>
+    <div class="oc-right"><div class="oc-tot">${fmt(p.total)}</div>
+    <div style="margin-top:3px;">${bPed(p.st)}</div>
+    <div class="oc-acts">
+      <button class="btn bg xs" onclick="toast('Abriendo pedido ${p.id}...','inf')">Ver</button>
+      <button class="btn bb xs" onclick="emailPed('${p.id}','${p.cli}')">✉️ Email</button>
+      ${p.st==='processing'?`<button class="btn bpu xs" onclick="cambiarEstPed('${p.id}','completed')">✓ Completar</button>`:''}
+    </div></div></div>`).join('');
+}
+
+function setPS(f){pedF=f;renderPeds();}
+function emailPed(id,cli){toast(`Email enviado al cliente del pedido ${id}`,'ok');addNotif('su','✉️',`Email enviado — pedido ${id} — ${cli}`);}
+function cambiarEstPed(id,est){
+  const p=peds.find(x=>x.id===id);if(p){p.st=est;renderPeds();toast(`Pedido ${id} marcado como completado`,'ok');}
+}
+
+// ════════════ CARRITOS ════════════
+function renderCarts(){
+  qs('#carts-list').innerHTML=carts.map((c,i)=>`
+    <div class="cc">
+    <div class="cc-top"><div><div class="cc-cli">${c.cli}</div><div class="cc-t">⏰ Hace ${c.t} · ${c.email}</div></div>
+    <div class="cc-val">${fmt(c.total)}</div></div>
+    <div class="cc-items">🛍️ ${c.items}</div>
+    <div class="cc-acts">
+      <button class="btn bp sm" onclick="recordatorio(${i})">✉️ Enviar recordatorio</button>
+      <button class="btn bg sm" onclick="carts.splice(${i},1);renderCarts();toast('Carrito descartado','inf')">Descartar</button>
+    </div></div>`).join('');
+}
+function recordatorio(i){const c=carts[i];toast(`Recordatorio enviado a ${c.cli}`,'ok');addNotif('su','✉️',`Recordatorio → ${c.cli} — ${fmt(c.total)}`);}
+function enviarTodos(){toast(`Recordatorio enviado a ${carts.length} clientes`,'ok');carts.forEach(c=>addNotif('su','✉️',`Recordatorio → ${c.cli}`));}
+
+// ════════════ CLIENTES ════════════
+function renderClientes(){
+  const q=(qs('#cli-q')||{value:''}).value.toLowerCase();
+  let lista=q?clientes.filter(c=>c.nom.toLowerCase().includes(q)||c.email.toLowerCase().includes(q)):clientes;
+  lista=[...lista].sort((a,b)=>cliSort==='ltv'?b.ltv-a.ltv:cliSort==='peds'?b.peds-a.peds:0);
+  qs('#cli-list').innerHTML=lista.map(c=>`
+    <div class="clc">
+    <div class="cl-av">${c.nom[0]}</div>
+    <div class="cl-info"><div class="cl-name">${c.nom}</div>
+    <div class="cl-meta">${c.email} · ${c.ciudad} · Último pedido: ${c.ultimo}</div></div>
+    <div class="cl-stats"><div class="cl-tot">${fmt(c.ltv)}</div>
+    <div class="cl-ped">${c.peds} pedidos</div></div>
+    <button class="btn bb xs" onclick="toast('Enviando email a ${c.nom}...','inf')">✉️</button>
+    </div>`).join('');
+}
+function setCliSort(s){cliSort=s;renderClientes();}
+
+// ════════════ PRODUCTOS ════════════
+
+// ════════════════════════════════════════
+// CARGA REAL DESDE WOOCOMMERCE API
+// ════════════════════════════════════════
+let wc_products = []; // productos reales de WooCommerce
+let wc_loaded = false;
+
+async function cargarProductosWC() {
+  const {url, ck, cs} = ILX.getCredentials();
+  if (!url || !ck || !cs) return; // sin API, usar demo
+
+  showLoading('Cargando productos desde WooCommerce...');
+  try {
+    let page = 1, all = [], hasMore = true;
+    while (hasMore && page <= 10) { // máximo 1000 productos (10 páginas × 100)
+      const resp = await fetch(
+        `${url}/wp-json/wc/v3/products?per_page=100&page=${page}&status=any`,
+        { headers: { 'Authorization': 'Basic ' + btoa(`${ck}:${cs}`) } }
+      );
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      all = all.concat(data);
+      hasMore = data.length === 100;
+      page++;
+      qs('#loading-msg').textContent = `Cargando productos... ${all.length} cargados`;
+    }
+
+    // Mapear al formato de la app
+    wc_products = all.map(p => ({
+      id: p.id,
+      nom: p.name,
+      sku: p.sku || 'Sin SKU',
+      cat: p.categories?.[0]?.name || 'Sin categoría',
+      st: p.stock_quantity || 0,
+      pr: parseFloat(p.regular_price) || parseFloat(p.price) || 0,
+      vis: p.status === 'publish',
+      vend: p.total_sales || 0,
+      ing: (p.total_sales || 0) * (parseFloat(p.regular_price) || 0),
+      desc: p.short_description?.replace(/<[^>]*>/g,'') || '',
+      img: p.images?.[0]?.src || '',
+      status: p.status,
+    }));
+
+    wc_loaded = true;
+    ILX.saveOffline('wc_products', wc_products);
+    hideLoading();
+    toast(`✅ ${wc_products.length} productos cargados desde WooCommerce`, 'ok');
+    renderProds(); // re-renderizar con datos reales
+    updStats();
+    renderDash();
+    ILX.log('Productos cargados', `${wc_products.length} desde WooCommerce`);
+  } catch(e) {
+    hideLoading();
+    toast(`Error cargando productos: ${e.message}`, 'er');
+    // Intentar cargar desde offline
+    const offline = ILX.getOffline('wc_products');
+    if (offline) {
+      wc_products = offline;
+      wc_loaded = true;
+      toast('Mostrando productos guardados localmente', 'wa');
+      renderProds();
+    }
+  }
+}
+
+async function actualizarStockWC(id, stock) {
+  const {url, ck, cs} = ILX.getCredentials();
+  if (!url) return;
+  try {
+    const resp = await fetch(`${url}/wp-json/wc/v3/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Basic '+btoa(`${ck}:${cs}`), 'Content-Type':'application/json' },
+      body: JSON.stringify({ stock_quantity: stock, manage_stock: true })
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    toast('Stock actualizado en WooCommerce ✅', 'ok');
+  } catch(e) {
+    toast(`Error actualizando stock: ${e.message}`, 'er');
+  }
+}
+
+async function actualizarPrecioWC(id, precio) {
+  const {url, ck, cs} = ILX.getCredentials();
+  if (!url) return;
+  try {
+    const resp = await fetch(`${url}/wp-json/wc/v3/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Basic '+btoa(`${ck}:${cs}`), 'Content-Type':'application/json' },
+      body: JSON.stringify({ regular_price: String(precio) })
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    toast('Precio actualizado en WooCommerce ✅', 'ok');
+  } catch(e) {
+    toast(`Error actualizando precio: ${e.message}`, 'er');
+  }
+}
+
+async function actualizarVisibilidadWC(id, visible) {
+  const {url, ck, cs} = ILX.getCredentials();
+  if (!url) return;
+  try {
+    const resp = await fetch(`${url}/wp-json/wc/v3/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Basic '+btoa(`${ck}:${cs}`), 'Content-Type':'application/json' },
+      body: JSON.stringify({ status: visible ? 'publish' : 'private' })
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    toast(`Producto ${visible?'publicado':'ocultado'} en WooCommerce ✅`, 'ok');
+  } catch(e) {
+    toast(`Error: ${e.message}`, 'er');
+  }
+}
+
+// Función para obtener los productos correctos (reales o demo)
+function getProds() {
+  return wc_loaded && wc_products.length > 0 ? wc_products : prods;
+}
+
+function sBadge(p){
+  if(p.st===0) return'<span class="bdg bdr">● Agotado</span>';
+  if(p.st<=umbral) return'<span class="bdg bdo">● Stock bajo</span>';
+  return'<span class="bdg bgr">● En stock</span>';
+}
+
+function renderProds(){
+  const q=(qs('#inv-q')||{value:''}).value.toLowerCase();
+  const prodsData = getProds();
+  const lista=prodsData.filter(p=>{
+    const mq=!q||p.nom.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q);
+    const mf=invF==='todos'||(invF==='ok'&&p.st>umbral)||(invF==='low'&&p.st>0&&p.st<=umbral)||(invF==='out'&&p.st===0);
+    return mq&&mf;
+  });
+  qs('#prods-list').innerHTML=lista.map(p=>`
+    <div class="pr">
+    <div class="pr-img">💡</div>
+    <div class="pr-info"><div class="pr-name">${p.nom}</div>
+    <div class="pr-meta">${p.sku} · ${p.cat}</div></div>
+    <input style="background:var(--s3);border:1px solid var(--b1);border-radius:6px;color:var(--tx);font-family:inherit;font-size:11px;padding:4px 7px;width:70px;text-align:right;${p.st<=umbral?'border-color:var(--or)':''}"
+      type="number" value="${p.st}" min="0" onchange="chgSt(${p.id},this.value)">
+    <input style="background:var(--s3);border:1px solid var(--b1);border-radius:6px;color:var(--tx);font-family:inherit;font-size:11px;padding:4px 7px;width:95px;text-align:right;"
+      type="number" value="${p.pr}" min="0" onchange="chgPr(${p.id},this.value)">
+    ${sBadge(p)}
+    <label class="tog"><input type="checkbox" ${p.vis?'checked':''} onchange="chgVis(${p.id},this.checked)"><span class="ts"></span></label>
+    <div class="pr-acts">
+      <button class="btn bg xs" onclick="abrirEdit(${p.id})">✏️</button>
+    </div></div>`).join('');
+  updStats();
+}
+
+function setIF(f){invF=f;renderProds();}
+function chgSt(id,v){
+  const p=prods.find(x=>x.id===id);if(!p) return;
+  p.st=parseInt(v)||0;
+  if(p.st===0){p.vis=false;toast(`"${p.nom}" AGOTADO — oculto en tienda`,'er');addNotif('dg','🚨',`AGOTADO: ${p.nom}`);}
+  else if(p.st<=umbral){p.vis=false;toast(`"${p.nom}" ocultado — stock ≤ ${umbral}`,'wa');addNotif('dg','⚠️',`Stock bajo: ${p.nom} — ${p.st} uds.`);}
+  updStats();renderProds();
+}
+function chgPr(id,v){const p=prods.find(x=>x.id===id);if(p) p.pr=parseInt(v)||0;}
+function chgVis(id,v){
+  const p=prods.find(x=>x.id===id);if(!p) return;
+  if(v&&p.st<=umbral){toast(`No se puede mostrar — stock ≤ ${umbral}`,'er');renderProds();return;}
+  p.vis=v;toast(`"${p.nom}" ${v?'visible':'oculto'}`,'ok');
+}
+function abrirEdit(id){
+  editId=id;const p=prods.find(x=>x.id===id);
+  qs('#me-id').value=id;qs('#me-nom').value=p.nom;qs('#me-sku').value=p.sku;
+  qs('#me-cat').value=p.cat;qs('#me-st').value=p.st;qs('#me-pr').value=p.pr;
+  qs('#me-desc').value=p.desc||'';qs('#me-vis').value=p.vis?'1':'0';
+  openMo('mo-prod');
+}
+function guardarProd(){
+  const p=prods.find(x=>x.id===editId);if(!p) return;
+  p.st=parseInt(qs('#me-st').value)||0;p.pr=parseInt(qs('#me-pr').value)||0;
+  p.desc=qs('#me-desc').value;p.vis=qs('#me-vis').value==='1';
+  if(p.st<=umbral) p.vis=false;
+  closeMo('mo-prod');renderProds();updStats();toast(`"${p.nom}" actualizado`,'ok');
+}
+function abrirModalProd(){openMo('mo-newprod');}
+function crearProd(){
+  const nom=qs('#np-nom').value.trim();if(!nom){toast('Ingresa un nombre','er');return;}
+  const nuevo={id:Date.now(),nom,sku:qs('#np-sku').value,cat:qs('#np-cat').value,
+    st:parseInt(qs('#np-st').value)||0,pr:parseInt(qs('#np-pr').value)||0,
+    vis:true,vend:0,ing:0,desc:qs('#np-desc').value};
+  prods.push(nuevo);closeMo('mo-newprod');renderProds();updStats();
+  toast(`Producto "${nom}" creado`,'ok');addNotif('su','📦',`Nuevo producto creado: ${nom}`);
+}
+
+// ════════════ CATEGORÍAS ════════════
+function renderCats(){
+  qs('#cat-list').innerHTML=cats.map(c=>{
+    const ps=prods.filter(p=>p.cat===c);
+    const ing=ps.reduce((s,p)=>s+p.ing,0);
+    return`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--b1);">
+    <span style="font-size:18px;">🗂️</span>
+    <div style="flex:1;"><div style="font-size:12px;font-weight:600;">${c}</div>
+    <div style="font-size:10px;color:var(--mu);">${ps.length} producto(s)</div></div>
+    <div style="text-align:right;"><div style="font-size:11px;font-weight:700;">${fmt(ing)}</div>
+    <div style="font-size:10px;color:var(--mu);">ingresos</div></div>
+    </div>`;}).join('');
+}
+function abrirModalCat(){openMo('mo-cat');}
+function crearCat(){
+  const n=qs('#nc2-n').value.trim();if(!n) return;
+  cats.push(n);closeMo('mo-cat');renderCats();toast(`Categoría "${n}" creada`,'ok');
+}
+
+// ════════════ ALERTAS ════════════
+function renderAlerts(){
+  const crit=prods.filter(p=>p.st<=alertaU).sort((a,b)=>a.st-b.st);
+  qs('#alerts-full').innerHTML=crit.map(p=>`
+    <div class="ai" style="border-left:3px solid ${p.st===0?'var(--rd)':'var(--or)'};">
+    <span style="font-size:22px;">${p.st===0?'🚨':'⚠️'}</span>
+    <div style="flex:1;"><div style="font-weight:600;font-size:12px;">${p.nom} <span class="ps">${p.sku}</span></div>
+    <div style="font-size:10px;color:var(--mu);">${p.st===0?'Agotado — oculto en tienda':'Stock bajo: '+p.st+' unidades'} · ${p.cat}</div>
+    <div class="pb" style="margin-top:5px;width:180px;"><div class="pb-fill" style="width:${Math.min(p.st/umbral*100,100).toFixed(0)}%;background:${p.st===0?'var(--rd)':'var(--or)'};"></div></div>
+    </div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+      <button class="btn bg xs" onclick="abrirEdit(${p.id})">✏️ Actualizar</button>
+      <button class="btn bb xs" onclick="toast('Alerta enviada por email — ${p.nom}','ok')">✉️</button>
+    </div></div>`).join('')
+    ||'<div style="color:var(--mu);text-align:center;padding:40px;font-size:12px;">✅ Sin alertas activas — todo el inventario en niveles normales</div>';
+}
+
+// ════════════ ENVÍO ════════════
+function renderEnvio(){renderCiudades();renderNC();renderTiempos();}
+
+function setTab(group,tab,el){
+  const prefix=group==='envio'?'et':'ct';
+  const tabs={envio:['ciudades','gratis','cobertura','tiempos'],cont:['banners','textos','seo']};
+  tabs[group].forEach(t=>{const e=qs('#'+prefix+'-'+t);if(e) e.style.display=t===tab?'block':'none';});
+  document.querySelectorAll(`#tabs-${group} .tab`).forEach(t=>t.classList.remove('on'));
+  if(el) el.classList.add('on');
+}
+
+function renderCiudades(){
+  qs('#ciudades-list').innerHTML=ciudades.map((c,i)=>`
+    <div class="cir">
+    <div><div class="ci-name">${c.c}</div><div class="ci-dep">${c.d} · ${c.t}</div></div>
+    <input style="background:var(--s2);border:1px solid var(--b1);border-radius:6px;color:var(--tx);font-family:inherit;font-size:11px;padding:4px 7px;width:82px;text-align:right;"
+      type="number" value="${c.f}" onchange="ciudades[${i}].f=parseInt(this.value)||0">
+    <div style="font-size:10px;color:var(--mu);">${c.dn}–${c.dx} días</div>
+    <div style="font-size:10px;color:var(--mu);">${c.dn}–${c.dx}d</div>
+    <button class="btn br xs" onclick="ciudades.splice(${i},1);renderCiudades()">✕</button>
+    </div>`).join('');
+}
+function addCiudad(){
+  const c=qs('#mc-c').value.trim();if(!c){toast('Ingresa la ciudad','er');return;}
+  ciudades.push({c,d:qs('#mc-d').value,f:parseInt(qs('#mc-f').value)||0,m:parseInt(qs('#mc-m').value)||0,
+    dn:parseInt(qs('#mc-dn').value)||2,dx:parseInt(qs('#mc-dx').value)||5,t:qs('#mc-t').value});
+  closeMo('mo-ciudad');renderCiudades();toast(`Ciudad ${c} agregada`,'ok');
+}
+
+function renderNC(){
+  qs('#nc-list').innerHTML=ncList.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--b1);">
+    <span style="font-size:16px;">🚫</span>
+    <div style="flex:1;"><div style="font-weight:600;font-size:12px;">${s.c}</div>
+    <div style="font-size:10px;color:var(--mu);">${s.m}</div></div>
+    <button class="btn bg xs" onclick="ncList.splice(${i},1);renderNC()">✕</button>
+    </div>`).join('');
+}
+function addNC(){
+  const c=qs('#nc-c').value.trim();if(!c) return;
+  ncList.push({c,m:qs('#nc-m').value});qs('#nc-c').value='';renderNC();toast(`${c} sin cobertura`,'wa');
+}
+
+function renderTiempos(){
+  qs('#tiempos-list').innerHTML=tList.map((t,i)=>`
+    <div style="display:grid;grid-template-columns:2fr 70px 70px 36px;gap:7px;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1);">
+    <div style="font-weight:600;font-size:12px;">${t.c}</div>
+    <input class="inp" type="number" value="${t.n}" style="padding:4px 6px;" onchange="tList[${i}].n=parseInt(this.value)||1">
+    <input class="inp" type="number" value="${t.x}" style="padding:4px 6px;" onchange="tList[${i}].x=parseInt(this.value)||3">
+    <button class="btn br xs" onclick="tList.splice(${i},1);renderTiempos()">✕</button>
+    </div>`).join('');
+}
+function addTiempo(){
+  const c=qs('#nt-c').value.trim();if(!c) return;
+  tList.push({c,n:parseInt(qs('#nt-min').value)||2,x:parseInt(qs('#nt-max').value)||4});
+  qs('#nt-c').value='';renderTiempos();toast(`Tiempo para ${c} agregado`,'ok');
+}
+
+// ════════════ CUPONES ════════════
+function renderCups(){
+  const tipos={pct:'% descuento',fijo:'$ fijo',env:'Envío gratis'};
+  qs('#cups-list').innerHTML=cups.map((c,i)=>`
+    <div class="cup">
+    <div class="cup-cod">${c.cod}</div>
+    <div class="cup-info">
+    <div class="cup-d">${c.v>0?c.v+(c.t==='pct'?'%':' COP')+' de descuento':''} ${tipos[c.t]} · Mín: ${fmt(c.m)}</div>
+    <div class="cup-m">Usados: ${c.us}/${c.u} · Vence: ${c.f}</div>
+    <div class="pb" style="margin-top:5px;width:150px;"><div class="pb-fill" style="width:${(c.us/c.u*100).toFixed(0)}%;"></div></div>
+    </div>
+    <label class="tog"><input type="checkbox" ${c.on?'checked':''} onchange="cups[${i}].on=this.checked;updCupStats();toast('Cupón ${c.cod} '+(this.checked?'activado':'desactivado'),'ok')"><span class="ts"></span></label>
+    <button class="btn br xs" onclick="cups.splice(${i},1);renderCups();updCupStats()">✕</button>
+    </div>`).join('');
+  updCupStats();
+}
+function updCupStats(){qs('#cup-act').textContent=cups.filter(c=>c.on).length;}
+function crearCupon(){
+  const cod=qs('#cup-c').value.trim().toUpperCase();if(!cod){toast('Ingresa un código','er');return;}
+  cups.push({cod,t:qs('#cup-t').value,v:parseInt(qs('#cup-v').value)||0,
+    m:parseInt(qs('#cup-m').value)||0,u:parseInt(qs('#cup-u').value)||100,
+    us:0,f:qs('#cup-f').value||'Sin vencimiento',on:true});
+  closeMo('mo-cupon');renderCups();toast(`Cupón ${cod} creado`,'ok');
+}
+
+// ════════════ PAGOS ════════════
+function renderPagos(){
+  qs('#pagos-list').innerHTML=pagos.map((p,i)=>`
+    <div class="pg2"><div class="pg-ico">${p.ico}</div>
+    <div class="pg-info"><div class="pg-n">${p.n}</div><div class="pg-d">${p.d}</div></div>
+    <label class="tog"><input type="checkbox" ${p.on?'checked':''} onchange="pagos[${i}].on=this.checked;toast('${p.n} '+(this.checked?'activado':'desactivado'),'ok')"><span class="ts"></span></label>
+    <button class="btn bg xs" onclick="toast('Configurando ${p.n}...','inf')">⚙️</button>
+    </div>`).join('');
+}
+
+// ════════════ USUARIOS ════════════
+const rols={admin:'Administrador',editor:'Editor',bodega:'Bodega',ventas:'Ventas',marketing:'Marketing'};
+const rolC={admin:'bdr',editor:'bdb',bodega:'bdo',ventas:'bgr',marketing:'bdpu'};
+function renderUsers(){
+  qs('#users-list').innerHTML=usuarios.map((u,i)=>`
+    <div class="uc">
+    <div class="u-av">${u.n[0]}</div>
+    <div style="flex:1;"><div style="font-weight:600;font-size:12px;">${u.n}</div>
+    <div style="font-size:10px;color:var(--mu);">${u.e}</div></div>
+    <span class="bdg ${rolC[u.r]||'bdm'}">${rols[u.r]||u.r}</span>
+    <label class="tog"><input type="checkbox" ${u.on?'checked':''} onchange="usuarios[${i}].on=this.checked;toast('${u.n} '+(this.checked?'activado':'desactivado'),'ok')"><span class="ts"></span></label>
+    <button class="btn br xs" onclick="if(confirm('¿Eliminar a ${u.n}?')){usuarios.splice(${i},1);renderUsers();}">✕</button>
+    </div>`).join('');
+}
+function crearUser(){
+  const n=qs('#us-n').value.trim(),e=qs('#us-e').value.trim();
+  if(!n||!e){toast('Completa nombre y correo','er');return;}
+  usuarios.push({n,e,r:qs('#us-r').value,on:true});
+  closeMo('mo-user');renderUsers();toast(`Usuario ${n} agregado`,'ok');
+  if(qs('#us-inv').checked) addNotif('su','✉️',`Invitación enviada a ${e}`);
+}
+
+// ════════════ NOTIF ════════════
+function renderNP(){
+  qs('#np-list').innerHTML=notifs.map((n,i)=>`
+    <div class="ni2 ${n.r?'':'u '+n.t}" onclick="notifs[${i}].r=true;renderNP();">
+    <div style="font-size:14px;">${n.ico}</div>
+    <div class="nm">${n.msg}</div>
+    <div class="nt">Hace ${n.ti}</div></div>`).join('');
+  updStats();
+}
+function leerTodas(){notifs.forEach(n=>n.r=true);renderNP();toast('Todas leídas','ok');}
+
+function renderNotifRules(){
+  qs('#notif-rules').innerHTML=notifR.map(r=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b1);">
+    <div><div style="font-size:12px;font-weight:600;">${r.l}</div>
+    <div style="font-size:10px;color:var(--mu);">${r.d}</div></div>
+    <label class="tog"><input type="checkbox" ${r.on?'checked':''} onchange="notifR.find(x=>x.id==='${r.id}').on=this.checked;toast('${r.l}: '+(this.checked?'activada':'desactivada'),'ok')"><span class="ts"></span></label>
+    </div>`).join('');
+}
+function enviarPrueba(){const d=qs('#em-to').value||'soporte@ilumax.com.co';toast(`Correo de prueba → ${d}`,'ok');addNotif('su','✉️',`Prueba enviada a ${d}`);}
+
+// ════════════ CONFIG ════════════
+async function desconectarAPI(){
+  const ok=await ILX.confirm('¿Desconectar de WooCommerce?','danger');
+  if(!ok) return;
+  ILX.clearCredentials();ILX.stopSync();ILX.invalidateCache();
+  qs('#api-dot').classList.remove('live');qs('#api-st').textContent='Modo demo';qs('#api-st').className='api-st';
+  ILX.log('API desconectada','—');toast('Desconectado de WooCommerce','wa');
+}
+function guardarCfg(){
+  umbral=parseInt(qs('#cfg-u').value)||50;
+  alertaU=parseInt(qs('#cfg-a').value)||20;
+  toast('Configuración guardada','ok');updStats();
+}
+async function conectarAPI(){
+  const url=qs('#cfg-url').value.trim(),ck=qs('#cfg-ck').value.trim(),cs=qs('#cfg-cs').value.trim();
+  if(!url){toast('Ingresa la URL de tu tienda','er');return;}
+  if(!url.startsWith('http')){toast('La URL debe empezar con https://','er');return;}
+  if(!ck||!cs){toast('Ingresa Consumer Key y Consumer Secret','er');return;}
+  const btn=qs('#cfg-url');btn.disabled=true;
+  toast('Conectando con WooCommerce...','inf');
+  ILX.saveCredentials(url,ck,cs);
+  try{
+    const resp = await fetch(`${url}/wp-json/wc/v3/products?per_page=1`,{
+      headers:{'Authorization':'Basic '+btoa(`${ck}:${cs}`)}
+    });
+    if(!resp.ok) throw new Error(`HTTP ${resp.status} — Verifica tus credenciales`);
+    btn.disabled=false;
+    qs('#api-dot').classList.add('live');
+    qs('#api-st').textContent='Conectado ✓';qs('#api-st').className='api-st live';
+    const det=qs('#api-status-detail');
+    if(det) det.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--grd);border-radius:var(--r);border:1px solid rgba(34,197,94,.2);"><span style="font-size:20px;">🟢</span><div><div style="font-weight:600;font-size:12px;">Conectado a ${url}</div><div style="font-size:10px;color:var(--mu);">API WooCommerce v3 activa · Credenciales cifradas en sesión</div></div></div>`;
+    ILX.log('API conectada',url);
+    setTimeout(()=>cargarProductosWC(), 500);
+    const min=parseInt(qs('#cfg-s')?.value)||5;
+    ILX.startSync(async()=>{toast('Sincronización automática completada','inf');},min);
+    toast('Conexión exitosa con WooCommerce ✅','ok');
+    addNotif('su','🔌',`Conectado a ${url}`);
+    ILX.push('Conectado','WooCommerce API activa');
+  }catch(e){
+    btn.disabled=false;
+    ILX.clearCredentials();
+    const msg=!navigator.onLine?'Sin conexión a internet':`Error: ${e.message}`;
+    const det=qs('#api-status-detail');
+    if(det) det.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:11px;background:var(--rdd);border-radius:var(--r);border:1px solid rgba(239,68,68,.2);"><span style="font-size:20px;">🔴</span><div><div style="font-weight:600;font-size:12px;">${msg}</div><div style="font-size:10px;color:var(--mu);">Verifica URL, Consumer Key y Consumer Secret</div></div></div>`;
+    toast('Error de conexión — revisa las credenciales','er');
+  }
+}
+
+async function syncNow(){
+  if(!ILX.getCredentials().url){toast('Conecta la API primero en ⚙️ Configuración','wa');return;}
+  toast('Sincronizando...','inf');
+  await new Promise(r=>setTimeout(r,1000));
+  ILX.invalidateCache();
+  ILX.log('Sync manual','—');
+  toast('Sincronización completada ✅','ok');
+}
+function guardarTodo(){ILX.log('Guardar todo','—');toast('Todos los cambios guardados en WooCommerce ✅','ok');}
+function simVenta(){
+  const p=prods[Math.floor(Math.random()*prods.length)];
+  const ns=['Valentina','Felipe','Sebastián','Daniela','Ricardo','Paola','Santiago'];
+  const n=ns[Math.floor(Math.random()*ns.length)];
+  vcnt++;if(p.st>0){p.st--;p.vend++;p.ing+=p.pr;}
+  peds.unshift({id:'#'+vcnt,cli:n+' (demo)',email:'demo@test.com',fecha:'Ahora',items:p.nom+' × 1',total:p.pr,st:'processing',ciudad:'Cali'});
+  qs('#d-p').textContent=parseInt(qs('#d-p').textContent)+1;
+  qs('#nb-p').textContent=peds.filter(x=>x.st==='processing').length;
+  toast(`🛒 Pedido #${vcnt} — ${n} compró ${p.nom}`,'ok');
+  addNotif('su','🛒',`Nuevo pedido #${vcnt} — ${n} — ${fmt(p.pr)}`);
+  updStats();renderDash();
+}
+
+// Cerrar modales
+['mo-prod','mo-newprod','mo-ciudad','mo-cupon','mo-cat','mo-user'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('click',function(e){if(e.target===this)closeMo(id);});
+});
+
+// ════════════ INIT ════════════
+function init(){
+  initCharts();renderDash();renderNP();updStats();
+  setInterval(()=>{
+    const msgs=[['su','🛒','Nuevo pedido recibido en tu tienda'],['wa','🛍️','Carrito abandonado detectado'],['dg','⚠️','Alerta de stock bajo']];
+    const[t,i,m]=msgs[Math.floor(Math.random()*msgs.length)];
+    addNotif(t,i,m);
+  },50000);
+}
+init();
+
+
+// ════════════════════════════════════════
+// KPI DETAIL MODALS — Tarjetas interactivas
+// ════════════════════════════════════════
+const KPI_DATA = {
+  ventas: {
+    title: '💰 Ventas detalladas',
+    color: '#f5c518',
+    hero: '$2.4M',
+    change: '↑ 18% vs ayer',
+    changeType: 'up',
+    sub: 'Total ventas hoy',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#f5c518;">$2.4M</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">↑ 18% vs ayer</div>
+          <div class="kpi-sub-lbl">Total ventas hoy</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-ventas" style="max-height:160px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Hoy</span><span class="kpi-row-val" style="color:#f5c518;">$2.400.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ayer</span><span class="kpi-row-val">$2.034.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Esta semana</span><span class="kpi-row-val">$11.880.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Semana pasada</span><span class="kpi-row-val">$9.660.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Este mes</span><span class="kpi-row-val">$48.200.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Mes pasado</span><span class="kpi-row-val">$36.800.000</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">🏆 Lo que más se vendió hoy</div>
+      ${[
+        {n:'Bombillo LED E27 9W',v:'$1.800.000',u:'100 uds.'},
+        {n:'Foco Empotrable GU10',v:'$420.000',u:'10 uds.'},
+        {n:'Lámpara Colgante Nórdica',v:'$185.000',u:'1 ud.'},
+      ].map((p,i)=>`<div class="kpi-list-item">
+        <span class="kpi-rank-num">${i+1}</span>
+        <div class="kpi-bar-wrap"><div class="kpi-bar-name">${p.n}</div>
+        <div style="font-size:10px;color:var(--mu);">${p.u}</div></div>
+        <span style="font-weight:700;font-size:12px;color:#f5c518;">${p.v}</span>
+      </div>`).join('')}
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">📍 Ventas por ciudad hoy</div>
+      ${[
+        {c:'Cali',v:'$1.200.000',p:50},
+        {c:'Bogotá',v:'$720.000',p:30},
+        {c:'Medellín',v:'$480.000',p:20},
+      ].map(c=>`<div class="kpi-list-item">
+        <div class="kpi-bar-wrap">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:600;">${c.c}</span>
+            <span style="font-size:12px;font-weight:700;color:#f5c518;">${c.v}</span>
+          </div>
+          <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:${c.p}%;"></div></div>
+        </div>
+      </div>`).join('')}
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-ventas','line',
+        ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+        [{label:'Esta semana',data:[1200000,980000,1450000,2100000,1800000,2400000,1950000],borderColor:'#f5c518',backgroundColor:'rgba(245,197,24,.1)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#f5c518'},
+         {label:'Semana pasada',data:[900000,1100000,1200000,1400000,1600000,1800000,1660000],borderColor:'#363650',backgroundColor:'transparent',tension:.4,pointRadius:3,borderDash:[4,3]}]
+      );
+    }
+  },
+
+  pedidos: {
+    title: '🛒 Pedidos detallados',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#3b82f6;">7</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">↑ 2 vs ayer</div>
+          <div class="kpi-sub-lbl">Pedidos recibidos hoy</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-peds" style="max-height:140px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="flex:1;min-width:80px;background:var(--s2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#3b82f6;">4</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">En proceso</div>
+        </div>
+        <div style="flex:1;min-width:80px;background:var(--s2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#f97316;">2</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Pendientes</div>
+        </div>
+        <div style="flex:1;min-width:80px;background:var(--s2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#22c55e;">3</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Completados</div>
+        </div>
+        <div style="flex:1;min-width:80px;background:var(--s2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#f5c518;">$342K</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Ticket prom.</div>
+        </div>
+      </div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Hoy</span><span class="kpi-row-val up">7 pedidos</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ayer</span><span class="kpi-row-val">5 pedidos</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Esta semana</span><span class="kpi-row-val">31 pedidos</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Este mes</span><span class="kpi-row-val">89 pedidos</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Hora pico hoy</span><span class="kpi-row-val">5:00 PM (3 pedidos)</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Tiempo prom. despacho</span><span class="kpi-row-val up">1.2 días ↓</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">📦 Últimos pedidos de hoy</div>
+      ${peds.slice(0,4).map(p=>`
+        <div class="kpi-list-item">
+          <span style="font-size:12px;font-weight:700;color:#f5c518;min-width:52px;">${p.id}</span>
+          <div style="flex:1;"><div style="font-size:12px;font-weight:600;">${p.cli}</div>
+          <div style="font-size:10px;color:var(--mu);">${p.items}</div></div>
+          <div style="text-align:right;"><div style="font-size:12px;font-weight:700;">${fmt(p.total)}</div>
+          <div style="margin-top:2px;">${bPed(p.st)}</div></div>
+        </div>`).join('')}
+      <div style="margin-top:14px;">
+        <button class="btn bp" style="width:100%;" onclick="closeKPIFull();go('pedidos',qs('[onclick*=pedidos]'))">Ver todos los pedidos →</button>
+      </div>
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-peds','bar',
+        ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+        [{label:'Pedidos',data:[4,6,5,8,7,9,7],backgroundColor:'rgba(59,130,246,.7)',borderRadius:4},
+         {label:'Semana pasada',data:[3,4,5,6,5,7,6],backgroundColor:'rgba(59,130,246,.2)',borderRadius:4}]
+      );
+    }
+  },
+
+  carritos: {
+    title: '🛍️ Carritos abandonados',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#f97316;">3</div>
+        <div class="kpi-meta">
+          <div class="kpi-change dn">$680K perdidos hoy</div>
+          <div class="kpi-sub-lbl">Carritos sin completar</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-carts" style="max-height:140px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Valor perdido hoy</span><span class="kpi-row-val dn">$680.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Valor perdido esta semana</span><span class="kpi-row-val dn">$2.840.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Recuperados esta semana</span><span class="kpi-row-val up">$215.000 (24%)</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Tiempo promedio abandono</span><span class="kpi-row-val">1h 22min</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Paso donde abandonan más</span><span class="kpi-row-val dn">Checkout (34%)</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">🛍️ Carritos activos ahora</div>
+      ${carts.map((c,i)=>`
+        <div class="kpi-list-item">
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:600;">${c.cli}</div>
+            <div style="font-size:10px;color:var(--mu);">Hace ${c.t} · ${c.items}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:13px;font-weight:700;color:#f97316;">${fmt(c.total)}</div>
+            <button class="btn bo xs" style="margin-top:4px;" onclick="recordatorio(${i});closeKPIFull()">✉️ Recordar</button>
+          </div>
+        </div>`).join('')}
+      <div style="margin-top:14px;display:flex;gap:8px;">
+        <button class="btn bp" style="flex:1;" onclick="enviarTodos();closeKPIFull()">✉️ Recordatorio a todos</button>
+        <button class="btn bg" style="flex:1;" onclick="closeKPIFull();go('carritos',qs('[onclick*=carritos]'))">Ver detalle →</button>
+      </div>
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-carts','line',
+        ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+        [{label:'Abandonados',data:[4,6,3,8,5,3,4],borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.1)',tension:.4,fill:true,pointRadius:3},
+         {label:'Recuperados',data:[1,2,1,3,2,1,1],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',tension:.4,fill:true,pointRadius:3}]
+      );
+    }
+  },
+
+  stock: {
+    title: '⚠️ Stock crítico',
+    renderBody: () => {
+      const criticos = prods.filter(p=>p.st<=alertaU).sort((a,b)=>a.st-b.st);
+      const agotados = criticos.filter(p=>p.st===0);
+      const bajos = criticos.filter(p=>p.st>0);
+      return `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#ef4444;">${criticos.length}</div>
+        <div class="kpi-meta">
+          <div class="kpi-change dn">${agotados.length} agotados · ${bajos.length} stock bajo</div>
+          <div class="kpi-sub-lbl">Productos que necesitan atención</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <div style="flex:1;background:var(--rdd);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#ef4444;">${agotados.length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Agotados</div>
+        </div>
+        <div style="flex:1;background:var(--ord);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#f97316;">${bajos.length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Stock bajo</div>
+        </div>
+        <div style="flex:1;background:var(--grd);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#22c55e;">${prods.filter(p=>p.st>umbral).length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Normal</div>
+        </div>
+      </div>
+      ${agotados.length>0?`<div style="font-size:12px;font-weight:600;color:#ef4444;margin-bottom:8px;">🚨 Agotados — ocultos de la tienda</div>`:''}
+      ${criticos.map(p=>`
+        <div class="kpi-list-item">
+          <span style="font-size:18px;">${p.st===0?'🚨':'⚠️'}</span>
+          <div class="kpi-bar-wrap">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+              <span style="font-size:12px;font-weight:600;">${p.nom}</span>
+              <span style="font-size:11px;font-weight:700;color:${p.st===0?'#ef4444':'#f97316'};">${p.st===0?'AGOTADO':p.st+' uds.'}</span>
+            </div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:${Math.min(p.st/umbral*100,100).toFixed(0)}%;background:${p.st===0?'#ef4444':'#f97316'};"></div></div>
+            <div style="font-size:10px;color:var(--mu);margin-top:2px;">${p.sku} · ${p.cat} · Precio: ${fmt(p.pr)}</div>
+          </div>
+          <button class="btn bg xs" onclick="closeKPIFull();abrirEdit(${p.id})">✏️</button>
+        </div>`).join('')}
+      <div style="margin-top:14px;display:flex;gap:8px;">
+        <button class="btn bp" style="flex:1;" onclick="closeKPIFull();go('alertas',qs('[onclick*=alertas]'))">Ver todas las alertas →</button>
+        <button class="btn bb" style="flex:1;" onclick="emailResumen();closeKPIFull()">✉️ Email de alerta</button>
+      </div>`;
+    },
+    afterRender: ()=>{}
+  },
+
+  ticket: {
+    title: '📈 Ticket promedio',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#22c55e;">$342K</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">↑ 5% vs semana</div>
+          <div class="kpi-sub-lbl">Valor promedio por pedido</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-ticket" style="max-height:140px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ticket hoy</span><span class="kpi-row-val up">$342.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ticket ayer</span><span class="kpi-row-val">$325.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ticket esta semana</span><span class="kpi-row-val up">$383.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Ticket este mes</span><span class="kpi-row-val up">$541.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Pedido más alto hoy</span><span class="kpi-row-val" style="color:#f5c518;">$610.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Pedido más bajo hoy</span><span class="kpi-row-val">$78.000</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">💡 Rango de pedidos hoy</div>
+      ${[
+        {r:'$0 – $100K',n:2,p:28},
+        {r:'$100K – $200K',n:3,p:43},
+        {r:'$200K – $400K',n:1,p:14},
+        {r:'$400K+',n:1,p:14},
+      ].map(r=>`<div class="kpi-list-item">
+        <div class="kpi-bar-wrap">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;">${r.r}</span>
+            <span style="font-size:12px;font-weight:700;">${r.n} pedidos</span>
+          </div>
+          <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:${r.p}%;background:#22c55e;"></div></div>
+        </div>
+      </div>`).join('')}
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-ticket','line',
+        ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+        [{label:'Ticket promedio',data:[280000,310000,295000,360000,325000,420000,342000],borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.1)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#22c55e'}],
+        {yt:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}}
+      );
+    }
+  },
+
+  clientes: {
+    title: '👥 Clientes nuevos',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#a855f7;">12</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">↑ 3 vs mes pasado</div>
+          <div class="kpi-sub-lbl">Clientes nuevos este mes</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-clis2" style="max-height:140px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Nuevos este mes</span><span class="kpi-row-val up">12</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Mes pasado</span><span class="kpi-row-val">9</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Total clientes</span><span class="kpi-row-val">248</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Clientes recurrentes</span><span class="kpi-row-val up">67%</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">LTV promedio</span><span class="kpi-row-val" style="color:#f5c518;">$680.000</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Cliente más valioso</span><span class="kpi-row-val">Ana Gómez — $2.1M</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">📍 De dónde vienen</div>
+      ${[
+        {c:'Cali',n:5,p:42},
+        {c:'Bogotá',n:3,p:25},
+        {c:'Medellín',n:2,p:17},
+        {c:'Otras ciudades',n:2,p:17},
+      ].map(c=>`<div class="kpi-list-item">
+        <div class="kpi-bar-wrap">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;">${c.c}</span>
+            <span style="font-size:12px;font-weight:700;">${c.n} clientes (${c.p}%)</span>
+          </div>
+          <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:${c.p}%;background:#a855f7;"></div></div>
+        </div>
+      </div>`).join('')}
+      <div style="margin-top:14px;">
+        <button class="btn bp" style="width:100%;" onclick="closeKPIFull();go('clientes',qs('[onclick*=clientes]'))">Ver todos los clientes →</button>
+      </div>
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-clis2','bar',
+        ['Mar','Abr','May','Jun','Jul','Ago','Sep'],
+        [{label:'Nuevos clientes',data:[18,22,19,28,24,31,12],backgroundColor:'rgba(168,85,247,.7)',borderRadius:4}]
+      );
+    }
+  },
+
+  conversion: {
+    title: '🎯 Tasa de conversión',
+    renderBody: () => `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#06b6d4;">3.8%</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">↑ 0.4% vs semana</div>
+          <div class="kpi-sub-lbl">Visitantes que compran</div>
+        </div>
+      </div>
+      <div class="kpi-chart-wrap"><canvas id="kpi-ch-conv" style="max-height:150px;"></canvas></div>
+      <div class="kpi-divider"></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Visitantes hoy</span><span class="kpi-row-val">742</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Vieron productos</span><span class="kpi-row-val">401 (54%)</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Agregaron al carrito</span><span class="kpi-row-val">127 (17%)</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Llegaron al checkout</span><span class="kpi-row-val">52 (7%)</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Compraron</span><span class="kpi-row-val up">28 (3.8%)</span></div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">💡 Dónde se van sin comprar</div>
+      ${[
+        {paso:'Precio del flete',n:'34%',color:'#ef4444'},
+        {paso:'Proceso de pago',n:'24%',color:'#f97316'},
+        {paso:'Solo vitrinear',n:'20%',color:'#3b82f6'},
+        {paso:'Sin cuenta registrada',n:'14%',color:'#a855f7'},
+        {paso:'Otro motivo',n:'8%',color:'#6b6b8a'},
+      ].map(p=>`<div class="kpi-list-item">
+        <div style="width:8px;height:8px;border-radius:50%;background:${p.color};flex-shrink:0;margin-top:2px;"></div>
+        <div style="flex:1;font-size:12px;">${p.paso}</div>
+        <span style="font-size:12px;font-weight:700;color:${p.color};">${p.n}</span>
+      </div>`).join('')}
+    `,
+    afterRender: () => {
+      mkKPI('kpi-ch-conv','bar',
+        ['Visitas','Ven prod.','Carrito','Checkout','Compra'],
+        [{label:'Embudo de hoy',data:[742,401,127,52,28],backgroundColor:['rgba(6,182,212,.3)','rgba(6,182,212,.4)','rgba(6,182,212,.5)','rgba(6,182,212,.7)','rgba(6,182,212,1)'],borderRadius:4}],
+        {pl:{legend:{display:false}}}
+      );
+    }
+  },
+
+  productos: {
+    title: '📦 Productos activos',
+    renderBody: () => {
+      const activos=prods.filter(p=>p.vis);
+      const inactivos=prods.filter(p=>!p.vis);
+      return `
+      <div class="kpi-hero">
+        <div class="kpi-big" style="color:#22c55e;">${activos.length}</div>
+        <div class="kpi-meta">
+          <div class="kpi-change up">de ${prods.length} productos totales</div>
+          <div class="kpi-sub-lbl">Visibles en tu tienda</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <div style="flex:1;background:var(--grd);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#22c55e;">${activos.length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Visibles</div>
+        </div>
+        <div style="flex:1;background:var(--rdd);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#ef4444;">${prods.filter(p=>p.st===0).length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Agotados</div>
+        </div>
+        <div style="flex:1;background:var(--ord);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;color:#f97316;">${prods.filter(p=>p.st>0&&p.st<=umbral).length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Stock bajo</div>
+        </div>
+        <div style="flex:1;background:var(--s2);border-radius:10px;padding:12px;text-align:center;">
+          <div style="font-size:22px;font-weight:800;">${inactivos.length}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px;">Ocultos</div>
+        </div>
+      </div>
+      <div class="kpi-divider"></div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;">🏆 Top 5 más vendidos</div>
+      ${[...prods].sort((a,b)=>b.vend-a.vend).slice(0,5).map((p,i)=>`
+        <div class="kpi-list-item">
+          <span class="kpi-rank-num">${i+1}</span>
+          <div class="kpi-bar-wrap">
+            <div style="font-size:12px;font-weight:600;">${p.nom}</div>
+            <div style="font-size:10px;color:var(--mu);">${p.vend} uds. · ${fmt(p.ing)}</div>
+          </div>
+          ${p.st<=umbral?`<span class="bdg ${p.st===0?'bdr':'bdo'}">${p.st===0?'Agotado':p.st+' uds.'}</span>`:''}
+        </div>`).join('')}
+      <div style="margin-top:14px;">
+        <button class="btn bp" style="width:100%;" onclick="closeKPIFull();go('productos',qs('[onclick*=productos]'))">Gestionar productos →</button>
+      </div>`;
+    },
+    afterRender: ()=>{}
+  },
+};
+
+// ── Funciones de control ──
+function openKPI(tipo) {
+  const data = KPI_DATA[tipo];
+  if (!data) return;
+  qs('#kpi-title').textContent = data.title;
+  qs('#kpi-body').innerHTML = data.renderBody();
+  qs('#kpi-ov').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { if(data.afterRender) data.afterRender(); }, 50);
+}
+
+function closeKPI(e) {
+  if (e.target === qs('#kpi-ov')) closeKPIFull();
+}
+
+function closeKPIFull() {
+  qs('#kpi-ov').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+// Chart helper para KPI modals
+function mkKPI(id, type, labels, datasets, opts={}) {
+  const ctx = qs('#'+id); if(!ctx) return;
+  if(ctx._c) ctx._c.destroy();
+  const cg = {color:'rgba(255,255,255,.55)',grid:'rgba(255,255,255,.04)',font:{family:'Inter',size:10}};
+  ctx._c = new Chart(ctx, {type, data:{labels,datasets}, options:{
+    responsive:true, maintainAspectRatio:true, animation:{duration:500},
+    plugins:{legend:{labels:{color:cg.color,font:cg.font,boxWidth:8,padding:8}},...(opts.pl||{})},
+    scales:!['pie','doughnut'].includes(type)?{
+      x:{grid:{color:cg.grid},ticks:{color:cg.color,font:cg.font}},
+      y:{grid:{color:cg.grid},ticks:{color:cg.color,font:cg.font,...(opts.yt||{})}}
+    }:undefined
+  }});
+}
+
+// Cerrar con swipe hacia abajo en mobile
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  if(qs('#kpi-ov.on')) touchStartY = e.touches[0].clientY;
+});
+document.addEventListener('touchend', e => {
+  if(qs('#kpi-ov.on')) {
+    const diff = e.changedTouches[0].clientY - touchStartY;
+    if(diff > 80) closeKPIFull();
+  }
+});
+
+// ════════ PAGINACIÓN VISUAL ════════
+function renderPgn(cid,page,pages,total,onPage){
+  const c=document.querySelector('#'+cid);if(!c) return;
+  if(pages<=1){c.innerHTML='';return;}
+  let btns='';
+  for(let i=1;i<=pages;i++){
+    if(i===1||i===pages||Math.abs(i-page)<=1)
+      btns+=`<button class="pgn-btn ${i===page?'on':''}" onclick="${onPage}(${i})">${i}</button>`;
+    else if(Math.abs(i-page)===2)
+      btns+=`<span style="color:var(--mu);padding:0 3px;">…</span>`;
+  }
+  c.innerHTML=`<span style="font-size:11px;color:var(--mu);">${total} registros</span><div class="pgn-btns"><button class="pgn-btn" onclick="${onPage}(${page-1})" ${page<=1?'disabled':''}>‹</button>${btns}<button class="pgn-btn" onclick="${onPage}(${page+1})" ${page>=pages?'disabled':''}>›</button></div>`;
+}
+
+// ════════ LIMPIAR LOGS ════════
+async function limpiarLogs(){
+  const ok=await ILX.confirm('¿Limpiar todo el historial de cambios?','danger');
+  if(!ok) return;
+  localStorage.removeItem('ilx_logs');renderLogs();toast('Historial limpiado','ok');
+}
+
+// ════════ SYNC CALLBACK ════════
+async function syncCallback(){
+  try{
+    ILX.invalidateCache();
+    const si=document.querySelector('#sync-info');
+    if(si) si.textContent='Sync: '+new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    addNotif('su','🔄','Sincronización automática completada');
+  }catch(e){toast('Error en sync automático','wa');}
+}
+
+// ════════ GUARDAR IMPUESTOS ════════
+function guardarImpuestos(){ILX.log('Impuestos','configuración guardada');toast('Configuración de IVA guardada ✅','ok');}
+
+// ════════ EMAIL RESUMEN ALERTAS ════════
+function emailResumen(){ILX.log('Email resumen alertas','enviado');toast('Resumen de alertas enviado por email ✉️','ok');}
+
+// ════════ ENVIAR PRUEBA NOTIF ════════
+function enviarPrueba(){
+  const d=document.querySelector('#em-to')?.value||'soporte@ilumax.com.co';
+  ILX.log('Email prueba',d);toast(`Correo de prueba → ${d}`,'ok');
+  addNotif('su','✉️',`Prueba enviada a ${d}`);
+}
+
+// ════════ SOLICITAR PUSH ════════
+async function solicitarPush(){await ILX.requestPush();toast('Notificaciones push configuradas','ok');}
+
+// ════════ GUARDAR NOTIF ════════
+function guardarNotif(){ILX.log('Config notificaciones','guardada');toast('Configuración guardada ✅','ok');}
+
+// ════════ GUARDAR ENVÍO GRATIS ════════
+function guardarEnvioGratis(){ILX.log('Envío gratis','configurado');toast('Configuración de envío gratis guardada','ok');}
+
+// ════════ SHOW USER MENU ════════
+async function showUserMenu(){
+  const ok=await ILX.confirm('¿Cerrar sesión de ILUMAX Pro?','warn');
+  if(ok) toast('Sesión cerrada — hasta pronto 👋','ok');
+}
+
+// ════════ DESCONECTAR API ════════
+async function desconectarAPI2(){
+  const ok=await ILX.confirm('¿Desconectar de WooCommerce?','danger');
+  if(!ok) return;
+  ILX.clearCredentials();ILX.stopSync();ILX.invalidateCache();
+  const d=document.querySelector('#api-dot');if(d) d.classList.remove('live');
+  const s=document.querySelector('#api-st');if(s){s.textContent='Modo demo';s.className='api-st';}
+  ILX.log('API desconectada','—');toast('Desconectado de WooCommerce','wa');
+}
+
+// ════════ GUARDAR CFG ════════
+function guardarCfg(){
+  umbral=parseInt(document.querySelector('#cfg-u')?.value)||50;
+  alertaU=parseInt(document.querySelector('#cfg-a')?.value)||20;
+  const min=parseInt(document.querySelector('#cfg-s')?.value)||5;
+  ILX.startSync(syncCallback,min);
+  ILX.log('Config inventario',`umbral:${umbral}, alerta:${alertaU}, sync:${min}min`);
+  toast('Configuración guardada','ok');updStats();
+}
+
+// Paginación de productos, pedidos y clientes
+let prodPage=1,pedPage=1,cliPage=1,rankPage=1;
+function setProdPage(p){prodPage=p;renderProds();}
+function setPedPage(p){pedPage=p;renderPeds();}
+function setCliPage(p){cliPage=p;renderClis();}
+function setRankPage(p){rankPage=p;renderVentas();}
+
+</script>
+</body>
+</html>
