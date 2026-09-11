@@ -726,11 +726,11 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
           <input type="text" id="rrhh-q" placeholder="Buscar actividad..." oninput="renderRrhhLista()" style="background:none;border:none;outline:none;font-family:inherit;font-size:12px;color:var(--tx);width:100%;">
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
-          <div class="chip on" data-v="" onclick="setRrhhFiltroDesdeStats('')">Todas</div>
-          <div class="chip" data-v="Pendiente" onclick="setRrhhFiltroDesdeStats('Pendiente')">⚪ Pendientes</div>
-          <div class="chip" data-v="En proceso" onclick="setRrhhFiltroDesdeStats('En proceso')">🔵 En proceso</div>
-          <div class="chip" data-v="Realizado" onclick="setRrhhFiltroDesdeStats('Realizado')">🟢 Realizadas</div>
-          <div class="chip" data-v="vencidas" onclick="setRrhhFiltroDesdeStats('vencidas')">🔴 Vencidas</div>
+          <div class="chip on" data-v="" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="">Todas</div>
+          <div class="chip" data-v="Pendiente" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="Pendiente">⚪ Pendientes</div>
+          <div class="chip" data-v="En proceso" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="En proceso">🔵 En proceso</div>
+          <div class="chip" data-v="Realizado" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="Realizado">🟢 Realizadas</div>
+          <div class="chip" data-v="vencidas" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="vencidas">🔴 Vencidas</div>
         </div>
         <button class="btn btn-p btn-sm" onclick="openMo('mo-rrhh-nueva')">+ Nueva</button>
         <button class="btn btn-cy btn-sm" onclick="exportRrhhCSV()">📊 CSV</button>
@@ -2302,7 +2302,7 @@ function renderRrhhStats() {
   ].forEach(function(s) {
     var esActivo = fa===s.f;
     html += '<div class="sc sc-click'+(esActivo?' activo':'')+'" '
-      + 'onclick="setRrhhFiltroDesdeStats(''+s.f+'')" '
+      + 'onclick="setRrhhFiltroDesdeStats(this.dataset.f)" data-f="'+s.f+'" '
       + 'title="'+s.tip+'" '
       + 'style="'+(esActivo?'border-color:var(--bl);':'')+'">'
       + '<div class="sv" style="color:'+s.c+';">'+s.v+'</div>'
@@ -3168,7 +3168,7 @@ function renderRrhhProgressBar() {
         </div>
       </div>
       <div class="rrhh-bar-track">
-        <div class="rrhh-bar-fill ${colorCls}" id="rrhh-bar-fill" style="cursor:pointer;" onclick="setRrhhFiltroDesdeStats('Realizado')" title="Ver realizadas" style="width:0%"></div>
+        <div class="rrhh-bar-fill ${colorCls}" id="rrhh-bar-fill" style="cursor:pointer;" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="Realizado" title="Ver realizadas" style="width:0%"></div>
       </div>
       <div class="rrhh-bar-labels">
         <span>0%</span>
@@ -3310,6 +3310,10 @@ document.addEventListener('DOMContentLoaded',function(){setTimeout(chkAprobador,
 
 // Filtro desde stats clickeables
 function setRrhhFiltroDesdeStats(f) {
+  // Acepta string directo o elemento DOM con data-f / data-filtro
+  if(typeof f === 'object' && f !== null) {
+    f = f.dataset ? (f.dataset.f || f.dataset.filtro || '') : '';
+  }
   rrhhFiltro = f;
   // Activar vista Lista
   document.querySelectorAll('.rrhh-tab').forEach(t=>t.classList.remove('on'));
@@ -3329,7 +3333,7 @@ function setRrhhFiltroDesdeStats(f) {
     if(f){
       barEl.style.display='flex';
       barEl.innerHTML='<span>Mostrando: <strong>'+labels[f]+'</strong></span>'
-        +'<button class="btn btn-g btn-xs" onclick="setRrhhFiltroDesdeStats('')">✕ Ver todas</button>';
+        +'<button class="btn btn-g btn-xs" onclick="setRrhhFiltroDesdeStats(this.dataset.filtro)" data-filtro="">✕ Ver todas</button>';
     } else {
       barEl.style.display='none';
     }
