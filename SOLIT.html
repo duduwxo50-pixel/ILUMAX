@@ -234,6 +234,166 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
 .srch input{background:none;border:none;outline:none;font-family:inherit;font-size:12px;color:var(--tx);width:100%;}
 .srch input::placeholder{color:var(--mu2);}
 
+
+/* ── SUBTAREAS, HORAS Y NOTIF POR TAREA ── */
+.st-list{margin:7px 0 4px 0;padding:0;}
+.st-item{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;background:var(--s1);border:1px solid var(--b1);margin-bottom:4px;font-size:11px;}
+.st-item.done{opacity:.6;}
+.st-item.done .st-txt{text-decoration:line-through;color:var(--mu);}
+.st-chk{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--b2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.st-chk.done{background:var(--gr);border-color:var(--gr);color:#fff;font-size:9px;}
+.st-txt{flex:1;}
+.st-del{color:var(--mu2);cursor:pointer;font-size:10px;padding:2px 4px;border-radius:4px;}
+.st-del:hover{color:var(--rd);background:var(--rdd);}
+.horas-wrap{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu);}
+.horas-inp{background:var(--s1);border:1px solid var(--b1);border-radius:6px;color:var(--tx);font-family:inherit;font-size:11px;padding:3px 7px;width:55px;text-align:center;}
+.horas-inp:focus{outline:none;border-color:var(--bl);}
+.prog-bar{background:var(--b1);border-radius:4px;height:5px;overflow:hidden;flex:1;}
+.prog-fill{height:5px;border-radius:4px;background:var(--bl);transition:width .4s;}
+.notif-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;cursor:pointer;}
+.notif-badge.activa{background:var(--bld);color:var(--bl);border:1px solid rgba(37,99,235,.2);}
+.notif-badge.inactiva{background:var(--s1);color:var(--mu);border:1px solid var(--b1);}
+.tc-expand{margin-top:9px;padding-top:9px;border-top:1px solid var(--b1);display:none;}
+.tc-expand.on{display:block;}
+.tc-toggle{font-size:10px;color:var(--mu);cursor:pointer;padding:2px 6px;border-radius:5px;background:var(--s1);border:1px solid var(--b1);transition:all .12s;}
+.tc-toggle:hover{color:var(--bl);border-color:var(--bl);}
+
+
+/* ── NOTIF INTERACTIVA AVANZADA ── */
+.notif-detail-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:none;align-items:flex-end;justify-content:center;}
+.notif-detail-ov.on{display:flex;}
+.notif-sheet{background:var(--w);border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;padding:0;animation:slideUp .25s ease;box-shadow:0 -8px 40px rgba(0,0,0,.2);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ns-handle{width:40px;height:4px;background:var(--b2);border-radius:4px;margin:12px auto 0;}
+.ns-header{padding:16px 20px 12px;border-bottom:1px solid var(--b1);}
+.ns-tipo{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);margin-bottom:5px;}
+.ns-titulo{font-size:17px;font-weight:800;line-height:1.3;margin-bottom:4px;}
+.ns-meta{font-size:11px;color:var(--mu);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ns-body{padding:16px 20px;}
+.ns-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.ns-stat{background:var(--s1);border-radius:10px;padding:11px;text-align:center;border:1px solid var(--b1);}
+.ns-stat-v{font-size:20px;font-weight:800;margin-bottom:2px;}
+.ns-stat-l{font-size:9px;color:var(--mu);font-weight:500;}
+.ns-subs-list{margin-bottom:14px;}
+.ns-sub-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;background:var(--s1);border:1px solid var(--b1);margin-bottom:5px;}
+.ns-sub-chk{width:16px;height:16px;border-radius:4px;border:2px solid var(--b2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.ns-sub-chk.done{background:var(--gr);border-color:var(--gr);color:#fff;font-size:10px;}
+.ns-actions{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px;}
+.ns-btn-main{width:100%;padding:14px;border-radius:12px;border:none;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;}
+.ns-btn-sec{width:100%;padding:11px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;background:var(--s1);border:1.5px solid var(--b1);color:var(--tx);}
+.ns-btn-sec:hover{border-color:var(--b2);}
+.notif-urgente-bar{background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;padding:10px 20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.notif-proxima-bar{background:linear-gradient(135deg,#ca8a04,#92400e);color:#fff;padding:10px 20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.prog-ring{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.prog-ring svg{transform:rotate(-90deg);}
+.prog-ring-txt{position:absolute;font-size:11px;font-weight:800;color:var(--tx);}
+
+
+/* ── BARRA DE PROGRESO GENERAL RRHH ── */
+.rrhh-progress-wrap{background:var(--w);border:1px solid var(--b1);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px;box-shadow:var(--sh);}
+.rrhh-progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+.rrhh-progress-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.rrhh-progress-pct{font-size:28px;font-weight:800;color:var(--bl);line-height:1;}
+.rrhh-bar-track{background:var(--b1);border-radius:20px;height:12px;overflow:hidden;position:relative;}
+.rrhh-bar-fill{height:100%;border-radius:20px;transition:width .8s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--bl),#06b6d4);position:relative;overflow:hidden;}
+.rrhh-bar-fill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shimmer 1.8s infinite;}
+@keyframes shimmer{to{left:200%;}}
+.rrhh-bar-fill.verde{background:linear-gradient(90deg,var(--gr),#34d399);}
+.rrhh-bar-fill.amarillo{background:linear-gradient(90deg,#ca8a04,#fbbf24);}
+.rrhh-bar-fill.rojo{background:linear-gradient(90deg,var(--rd),#f87171);}
+.rrhh-bar-labels{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;color:var(--mu);}
+.rrhh-mini-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.rrhh-mini-stat{flex:1;min-width:70px;background:var(--s1);border-radius:8px;padding:7px 10px;text-align:center;border:1px solid var(--b1);}
+.rrhh-mini-stat-v{font-size:16px;font-weight:800;margin-bottom:1px;}
+.rrhh-mini-stat-l{font-size:9px;color:var(--mu);}
+
+/* ── CONFETI / FELICITACIÓN ── */
+.confetti-ov{position:fixed;inset:0;z-index:900;pointer-events:none;display:none;}
+.confetti-ov.on{display:block;}
+.confetti-piece{position:absolute;width:10px;height:10px;top:-10px;border-radius:2px;animation:confettiFall linear forwards;}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  80%{opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+.felicidades-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:950;background:var(--w);border-radius:20px;padding:28px 32px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.25);min-width:260px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.felicidades-toast.on{transform:translate(-50%,-50%) scale(1);}
+.felicidades-emoji{font-size:52px;margin-bottom:10px;animation:bounce 0.6s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.felicidades-titulo{font-size:20px;font-weight:800;margin-bottom:5px;}
+.felicidades-sub{font-size:13px;color:var(--mu);margin-bottom:16px;line-height:1.5;}
+.felicidades-btn{background:var(--acc);color:#000;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
+
+
+/* ══ DASHBOARD AVANZADO ══ */
+.dash-hero{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:var(--r2);padding:22px 20px 18px;margin-bottom:14px;color:#fff;position:relative;overflow:hidden;}
+.dash-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(245,197,24,.08);}
+.dash-hero::after{content:'';position:absolute;bottom:-20px;left:30px;width:80px;height:80px;border-radius:50%;background:rgba(37,99,235,.1);}
+.dash-hero-name{font-size:20px;font-weight:800;margin-bottom:3px;}
+.dash-hero-sub{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:16px;}
+.dash-hero-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.dash-kpi{background:rgba(255,255,255,.08);border-radius:10px;padding:12px 10px;text-align:center;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .15s;}
+.dash-kpi:hover{background:rgba(255,255,255,.14);transform:translateY(-1px);}
+.dash-kpi-v{font-size:22px;font-weight:800;margin-bottom:2px;}
+.dash-kpi-l{font-size:9px;color:rgba(255,255,255,.6);font-weight:500;}
+.dash-kpi-delta{font-size:10px;margin-top:3px;}
+
+/* EXCELENCIA */
+.excelencia-card{background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px;color:#fff;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;}
+.excelencia-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.35);}
+.excelencia-medal{font-size:36px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));}
+.excelencia-body{flex:1;}
+.excelencia-titulo{font-size:14px;font-weight:800;margin-bottom:3px;}
+.excelencia-sub{font-size:11px;color:rgba(255,255,255,.75);line-height:1.4;}
+.excelencia-stars{font-size:13px;margin-top:4px;letter-spacing:2px;}
+
+/* CHART BARS */
+.chart-wrap{background:var(--w);border:1px solid var(--b1);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px;box-shadow:var(--sh);}
+.chart-title{font-size:12px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:90px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar-fill{width:100%;border-radius:6px 6px 0 0;transition:height .7s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative;min-height:3px;}
+.bar-fill:hover{filter:brightness(1.15);}
+.bar-lbl{font-size:9px;color:var(--mu);text-align:center;white-space:nowrap;}
+.bar-val{font-size:10px;font-weight:700;color:var(--tx);}
+
+/* CUMPLIMIENTO RING */
+.cumpl-rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;}
+.cumpl-ring-card{background:var(--w);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh);cursor:pointer;transition:box-shadow .15s;}
+.cumpl-ring-card:hover{box-shadow:var(--sh2);}
+.cumpl-ring-svg{width:72px;height:72px;margin:0 auto 8px;}
+.cumpl-ring-lbl{font-size:10px;color:var(--mu);font-weight:600;}
+.cumpl-ring-val{font-size:13px;font-weight:800;margin-top:2px;}
+
+/* LOGROS */
+.logros-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px;}
+.logro-card{background:var(--w);border:1px solid var(--b1);border-radius:var(--r2);padding:12px 8px;text-align:center;box-shadow:var(--sh);transition:all .15s;cursor:pointer;position:relative;overflow:hidden;}
+.logro-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.logro-card.bloqueado{opacity:.45;filter:grayscale(.8);}
+.logro-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(245,197,24,.12));pointer-events:none;}
+.logro-ico{font-size:28px;margin-bottom:6px;}
+.logro-nom{font-size:9px;font-weight:700;color:var(--tx);line-height:1.3;}
+.logro-desc{font-size:8px;color:var(--mu);margin-top:2px;line-height:1.3;}
+.logro-nuevo{position:absolute;top:5px;right:5px;background:var(--rd);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:20px;}
+
+/* ACTIVIDAD RECIENTE */
+.actividad-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b1);}
+.actividad-item:last-child{border-bottom:none;}
+.actividad-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.actividad-txt{flex:1;font-size:12px;line-height:1.4;}
+.actividad-time{font-size:10px;color:var(--mu2);white-space:nowrap;}
+
+/* RACHA */
+.racha-card{background:linear-gradient(135deg,#f5c518,#e6b800);border-radius:var(--r2);padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.racha-ico{font-size:32px;}
+.racha-body{flex:1;}
+.racha-num{font-size:22px;font-weight:800;color:#000;}
+.racha-lbl{font-size:11px;color:rgba(0,0,0,.6);}
+
+/* TOOLTIP */
+.bar-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;}
+.bar-fill:hover .bar-tooltip{opacity:1;}
+
 </style>
 </head>
 <body>
@@ -264,8 +424,8 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
     <div class="fg"><label class="fl">Contraseña</label>
       <input class="inp" id="l-pw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <div class="fg" id="pin-w" style="display:none;">
-      <label class="fl">🔐 PIN de aprobador <small style="color:var(--mu);font-weight:400;">(4 dígitos)</small></label>
+    <div class="fg" id="pin-w">
+      <label class="fl" style="display:flex;justify-content:space-between;align-items:center;"><span>🔐 PIN de aprobador</span><span style="font-size:10px;color:var(--mu2);font-weight:400;">Empleados: dejar vacío</span></label>
       <div class="pin-row">
         <input class="inp pin-inp" id="p1" type="password" maxlength="1" inputmode="numeric" oninput="mvPin(this,'p2')">
         <input class="inp pin-inp" id="p2" type="password" maxlength="1" inputmode="numeric" oninput="mvPin(this,'p3')" onkeydown="bkPin(event,'p1')">
@@ -294,9 +454,13 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
   <div class="content">
 
     <div class="page on" id="pg-inicio">
-      <div id="bienvenida"></div>
-      <div class="sg" id="stats-i"></div>
-      <div id="recientes"></div>
+      <div id="dash-hero"></div>
+      <div id="dash-excelencia"></div>
+      <div id="dash-racha"></div>
+      <div id="dash-rings"></div>
+      <div id="dash-chart"></div>
+      <div id="dash-logros"></div>
+      <div id="dash-actividad"></div>
     </div>
 
     <div class="page" id="pg-adelanto">
@@ -535,6 +699,7 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
     <!-- ═══ MÓDULO RRHH — SEGUIMIENTO DE ACTIVIDADES ═══ -->
     <div class="page" id="pg-rrhh">
       <!-- Stats RRHH -->
+      <div id="rrhh-progress-bar"></div>
       <div class="sg" id="rrhh-stats" style="margin-bottom:14px;"></div>
 
       <!-- Tabs internos -->
@@ -688,6 +853,24 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
       <button class="btn btn-p btn-sm" onclick="guardarRrhhTarea()">💾 Guardar</button>
     </div>
   </div>
+</div>
+
+<!-- NOTIF DETAIL SHEET -->
+<div class="notif-detail-ov" id="notif-sheet-ov" onclick="if(event.target===this)closeNotifSheet()">
+  <div class="notif-sheet" id="notif-sheet">
+    <div class="ns-handle"></div>
+    <div id="ns-content"></div>
+  </div>
+</div>
+
+<!-- CONFETI Y FELICITACIÓN -->
+<div class="confetti-ov" id="confetti-ov"></div>
+<div class="felicidades-toast" id="felicidades-toast">
+  <div class="felicidades-emoji" id="felicidades-emoji">🎉</div>
+  <div class="felicidades-titulo" id="felicidades-titulo">¡Tarea completada!</div>
+  <div class="felicidades-sub" id="felicidades-sub">Excelente trabajo, Liz.</div>
+  <div id="felicidades-extra" style="margin-bottom:14px;"></div>
+  <button class="felicidades-btn" onclick="cerrarFelicitacion()">¡Gracias! Continuar →</button>
 </div>
 
 <div class="tb2" id="tb2"></div>
@@ -882,6 +1065,16 @@ function apiLocal(action, data) {
     if(idx>=0){u[idx].activo=data.activo;dbSet('users',u);}return{ok:true};
   }
   if (action === 'guardarLimites') { dbSet('config',{...dbGet('config')||{},limite_adelanto:data.adelanto,limite_gasto_sin_sop:data.gastoSinSop}); return{ok:true}; }
+
+  // RRHH — modo offline (datos ya están en localStorage gestionados por el módulo)
+  if (action === 'rrhhSync') return { ok: true, synced: (data.tareas||[]).length };
+  if (action === 'rrhhActualizar') return { ok: true, updated: true };
+  if (action === 'rrhhGet') return { ok: true, tareas: JSON.parse(localStorage.getItem('ilx_rrhh_t')||'[]') };
+
+  // RRHH offline
+  if(action==='rrhhSync')      return {ok:true, synced:(data.tareas||[]).length};
+  if(action==='rrhhActualizar') return {ok:true, updated:true};
+  if(action==='rrhhGet')        return {ok:true, tareas:JSON.parse(localStorage.getItem('ilx_rrhh_t')||'[]')};
   return { ok: false, error: 'Acción no implementada offline: ' + action };
 }
 
@@ -934,8 +1127,17 @@ function chkAprobador(){
   const em=(qs('#l-em')||{}).value.trim().toLowerCase();
   const users=dbGet('users')||getDefaultUsers();
   const u=users.find(x=>x.email===em);
-  const pw=qs('#pin-w');
-  if(pw) pw.style.display=(u&&(u.rol==='aprobador'||u.rol==='admin'))?'block':'none';
+  const pinW=qs('#pin-w');
+  if(!pinW) return;
+  if(u&&(u.rol==='aprobador'||u.rol==='admin')){
+    pinW.style.opacity='1';
+    const inputs=pinW.querySelectorAll('input');
+    inputs.forEach(i=>i.style.borderColor='var(--bl)');
+  } else if(u&&u.rol==='empleado'){
+    pinW.style.opacity='.4';
+  } else {
+    pinW.style.opacity='1';
+  }
 }
 function mvPin(el,nid){if(el.value&&nid)document.getElementById(nid)?.focus();}
 function bkPin(e,pid){if(e.key==='Backspace'&&!e.target.value&&pid){const p=document.getElementById(pid);if(p){p.focus();p.value='';}}}
@@ -974,6 +1176,9 @@ function logout(){
 }
 
 // ── APP INIT ──
+const RRHH_TAREAS_DEFAULT = [{"id":"T002","actividad":"Realizar legalizaciones de anticipos ejecutivos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T003","actividad":"Formato de HV  que faltan","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T004","actividad":"Organizar formato de dotacion","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T005","actividad":"Formatos de Carnet","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-07","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T006","actividad":"Practicantes Contabilidad","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Pasantias y Lectiva","prioridad":"Media"},{"id":"T007","actividad":"Praticante Calidad","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-02","fechaLimite":"2026-09-15","estado":"En proceso","fechaFin":"","obs":"ya estamo en entrvista","prioridad":"Media"},{"id":"T008","actividad":"Induccion ya quedaron programadas todas las de Luis y Michell","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-15","estado":"Pendiente","fechaFin":"","obs":"terminan la  semana que viene","prioridad":"Media"},{"id":"T009","actividad":"Periodos de prueba faltan / Ximena vargas, Katherine Sanchez, Rosa Padilla","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-18","estado":"Pendiente","fechaFin":"","obs":"ya se hablo con Cindy que los va realizarr","prioridad":"Media"},{"id":"T010","actividad":"Radicar incapacidades  agosto","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T011","actividad":"Responder casos de incapacidades- Diana acuña angie santana","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-08","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T012","actividad":"Radicar incapacidad de Arl Giovanny catano","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-08","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T013","actividad":"Nomina Electronica","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Realizado","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T014","actividad":"Contabilizar SGS y Consolidado","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Realizado","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T015","actividad":"CERTIFICADOS DE MONTACARGA","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-11","estado":"Pendiente","fechaFin":"","obs":"Seguimiento","prioridad":"Media"},{"id":"T016","actividad":"Enviar Codigo de Etica y Reglamento Interno","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T017","actividad":"Agendar en Buk lo de SST","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T018","actividad":"Citar a Daniela para coopass","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T019","actividad":"Seguimientos Otrosi Asesoras","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T020","actividad":"Formato entrega de Dotacion Sandra daza","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"pediente que lo firme","prioridad":"Media"},{"id":"T021","actividad":"Envio y seguimiento de formato de dotacion 02 semestre Asesoras","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-04","fechaLimite":"2026-09-15","estado":"Pendiente","fechaFin":"","obs":"ya se enviaron para firmas","prioridad":"Media"},{"id":"T022","actividad":"hacer Distribucion de Johanna cubillos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T023","actividad":"Crear cargo de Luis Cambindo en SBS","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T024","actividad":"Cambiar cargo Keinner en SBS Y BUK","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T025","actividad":"Formato de descuento Libranza Sandra Jimenez","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T026","actividad":"Revisar lo de los cursos en alturas","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T027","actividad":"Publicar vacante de Auxiliar de Bodega","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T028","actividad":"Agendar capacitacion de ADT a Johanna cubillos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T029","actividad":"Hacer nuevo contrato de Laura","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T030","actividad":"Perdir Botas Ximena Vargas","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T031","actividad":"Solicitar Carnet - Mary , Luis , Duvier","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T032","actividad":"Incapacidad Mary angel","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T033","actividad":"PEDIR ACTA DE CAPACITACION DE TRABAJO EN EQUIPO Y COMONUICACION","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-04","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T034","actividad":"Perfil de cargo de luis","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T035","actividad":"Ximena y Michell","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T036","actividad":"Semana de la Salud","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T037","actividad":"Curso de alturas","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T038","actividad":"Entrega de nomina el 28 hasta medio dia","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T039","actividad":"Actualizar fecha de vacaiciones","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T040","actividad":"afiliar ´padres de Duvier a la caja de compensacion","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T041","actividad":"Mirar factura de ARL bolivar a que corresponde","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T042","actividad":"Egreso de Vacaciones","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T043","actividad":"INCAPACIDADES PENDIENTES POR RADICAR","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T044","actividad":"RAMIREZ GALVEZ LUISA MARIA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"SALUD TOTAL","prioridad":"Media"},{"id":"T045","actividad":"VENTERO CERQUERA ZULY JHOANA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"SALUD TOTAL","prioridad":"Media"},{"id":"T046","actividad":"BARBOSA CANDAMIL CLAUDIA CRISTINA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Realizado","fechaFin":"","obs":"SANITAS","prioridad":"Media"}];
+
+
 async function startApp(){
   showLoader('Iniciando portal...');
   qs('#login-pg').style.display='none';
@@ -1002,6 +1207,19 @@ async function startApp(){
 
   const hoy=new Date().toISOString().split('T')[0];
   ['a-fecha','g-fec'].forEach(id=>{const e=qs('#'+id);if(e)e.value=hoy;});
+
+  // Cargar RRHH antes de renderizar
+  if(CU.area==='RRHH'||CU.email==='rrhh@ilumax.com.co'||CU.rol==='admin'){
+    const def=typeof RRHH_TAREAS_DEFAULT!=='undefined'?RRHH_TAREAS_DEFAULT:[];
+    if(!localStorage.getItem('ilx_rrhh_t')&&def.length>0)
+      localStorage.setItem('ilx_rrhh_t',JSON.stringify(def));
+    RRHH=JSON.parse(localStorage.getItem('ilx_rrhh_t')||'[]');
+    if(typeof generarNotifsRrhh==='function') generarNotifsRrhh();
+    updBadges();
+  }
+
+  // Renderizar dashboard con datos listos
+  renderInicio();
   hideLoader();
 }
 
@@ -1021,7 +1239,11 @@ function buildNav(){
       ${t.lbl}${t.badge?`<span class="nbdg" id="${t.badge}" style="display:none;">0</span>`:''}
     </div>`).join('');
 
-  goPage('inicio',qs('#tab-inicio'));
+  // Activar pestaña sin renderizar — datos aún no cargados
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
+  qs('#pg-inicio')?.classList.add('on');
+  qs('#tab-inicio')?.classList.add('on');
   updBadges();
 }
 
@@ -1096,26 +1318,407 @@ async function cargarSolicitudes(){
 }
 
 // ── INICIO ──
-function renderInicio(){
-  const mias=SOLIC.filter(s=>s.email===CU.email||s['Correo']===CU.email);
-  const pend=mias.filter(s=>s.estado==='pendiente'||s['Estado']==='pendiente').length;
-  const apro=mias.filter(s=>s.estado==='aprobado'||s['Estado']==='aprobado').length;
-  const tot=mias.reduce((a,s)=>a+parseFloat(s.monto||s['Monto']||0),0);
-  qs('#bienvenida').innerHTML=`
-    <div style="margin-bottom:15px;">
-      <h2 style="font-size:17px;font-weight:700;">Hola, ${CU.nombre.split(' ')[0]} 👋</h2>
-      <p style="font-size:11px;color:var(--mu);margin-top:3px;">${CU.area} · ${new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'})}</p>
-    </div>`;
-  qs('#stats-i').innerHTML=`
-    <div class="sc"><div class="sv" style="color:var(--or);">${pend}</div><div class="sl">Pendientes</div></div>
-    <div class="sc"><div class="sv" style="color:var(--gr);">${apro}</div><div class="sl">Aprobadas</div></div>
-    <div class="sc"><div class="sv" style="color:var(--bl);font-size:16px;">${fmt(tot)}</div><div class="sl">Total aprobado</div></div>
-    <div class="sc"><div class="sv">${mias.length}</div><div class="sl">Mis solicitudes</div></div>`;
-  const rec=mias.slice(0,3);
-  qs('#recientes').innerHTML=rec.length===0
-    ?`<div class="card"><div class="cb"><div class="empty"><div class="empty-i">📄</div><div class="empty-t">Sin solicitudes aún</div></div></div></div>`
-    :`<div class="card"><div class="ch"><div class="ct">📋 Recientes</div><button class="btn btn-g btn-sm" onclick="goPage('mis',qs('#tab-mis'))">Ver todas</button></div><div class="cnp">${rec.map(s=>renderCard(s,false)).join('')}</div></div>`;
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD AVANZADO — Cumplimientos y Excelencia
+// ══════════════════════════════════════════════════════════
+
+function renderInicio() {
+  renderDashHero();
+  renderDashExcelencia();
+  renderDashRacha();
+  renderDashRings();
+  renderDashChart();
+  renderDashLogros();
+  renderDashActividad();
 }
+
+// ── HERO ──
+function renderDashHero() {
+  const esApro = CU.rol === 'aprobador' || CU.rol === 'admin';
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+
+  // KPIs según rol
+  let kpis = [];
+  if (esApro) {
+    const pend = SOLIC.filter(s => (s.estado||s['Estado']) === 'pendiente' && puedoAprobar(s.tipo||s['Tipo'])).length;
+    const apro = SOLIC.filter(s => (s.estado||s['Estado']) === 'aprobado' && puedoAprobar(s.tipo||s['Tipo'])).length;
+    const tot  = SOLIC.filter(s => puedoAprobar(s.tipo||s['Tipo'])).reduce((a,s)=>a+parseFloat(s.monto||s['Monto']||0),0);
+    kpis = [
+      {v: pend,    l: '⏳ Pendientes',  c: '#f97316', delta: pend>5?'⚠️ Revisar':'✅ Controlado', page:'apro'},
+      {v: apro,    l: '✅ Aprobadas',   c: '#22c55e', delta: apro+' este mes', page:'apro'},
+      {v: fmt(tot),l: '💰 Monto total', c: '#f5c518', delta: SOLIC.filter(s=>puedoAprobar(s.tipo||s['Tipo'])).length+' solicitudes', page:'apro'},
+    ];
+  } else if (esRrhh) {
+    const h = new Date().toISOString().split('T')[0];
+    const total = RRHH.length;
+    const real  = RRHH.filter(t=>t.estado==='Realizado').length;
+    const pct   = total>0?Math.round(real/total*100):0;
+    const venc  = RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h).length;
+    kpis = [
+      {v: pct+'%', l: '📊 Cumplimiento', c: pct>=80?'#22c55e':pct>=50?'#60a5fa':'#f97316', delta: real+'/'+total+' tareas', page:'rrhh'},
+      {v: real,    l: '✅ Realizadas',   c: '#22c55e', delta: 'de '+total+' totales', page:'rrhh'},
+      {v: venc,    l: '🔴 Vencidas',     c: venc>0?'#ef4444':'#22c55e', delta: venc>0?'Requieren atención':'¡Sin vencidas!', page:'rrhh'},
+    ];
+  } else {
+    const mias = SOLIC.filter(s=>(s.email||s['Correo'])===CU.email);
+    const pend = mias.filter(s=>(s.estado||s['Estado'])==='pendiente').length;
+    const apro = mias.filter(s=>(s.estado||s['Estado'])==='aprobado').length;
+    const tot  = mias.reduce((a,s)=>a+parseFloat(s.monto||s['Monto']||0),0);
+    kpis = [
+      {v: pend,     l: '⏳ Pendientes',   c: '#f97316', delta: 'en revisión', page:'mis'},
+      {v: apro,     l: '✅ Aprobadas',    c: '#22c55e', delta: 'este período', page:'mis'},
+      {v: fmt(tot), l: '💰 Total recibido',c: '#f5c518', delta: mias.length+' solicitudes', page:'mis'},
+    ];
+  }
+
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 18 ? 'Buenas tardes' : 'Buenas noches';
+  const fecha  = new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  const el = document.getElementById('dash-hero');
+  if (!el) return;
+  var kpiHtml = '';
+  kpis.forEach(function(k) {
+    kpiHtml += '<div class="dash-kpi" onclick="goPage(&apos;'+k.page+'&apos;,document.getElementById(&apos;tab-'+k.page+'&apos;))">'
+      + '<div class="dash-kpi-v" style="color:'+k.c+';">'+k.v+'</div>'
+      + '<div class="dash-kpi-l">'+k.l+'</div>'
+      + '<div class="dash-kpi-delta" style="color:rgba(255,255,255,.5);">'+k.delta+'</div>'
+      + '</div>';
+  });
+  el.innerHTML = '<div class="dash-hero">'
+    + '<div class="dash-hero-name">'+saludo+', '+CU.nombre.split(' ')[0]+' 👋</div>'
+    + '<div class="dash-hero-sub">'+CU.area+' · '+fecha+'</div>'
+    + '<div class="dash-hero-kpis">'+kpiHtml+'</div>'
+    + '</div>';
+}
+
+// ── EXCELENCIA ──
+function renderDashExcelencia() {
+  const el = document.getElementById('dash-excelencia');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+  const esApro = CU.rol === 'aprobador' || CU.rol === 'admin';
+
+  let medal = '⭐', titulo = '', sub = '', stars = '★★★★★';
+  if (esRrhh) {
+    const total = RRHH.length;
+    const real  = RRHH.filter(t=>t.estado==='Realizado').length;
+    const pct   = total>0?Math.round(real/total*100):0;
+    const h     = new Date().toISOString().split('T')[0];
+    const venc  = RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h).length;
+    if (pct === 100)      { medal='🏆'; titulo='¡Excelencia absoluta!'; sub='Completaste el 100% de tus actividades. Rendimiento excepcional.'; stars='★★★★★'; }
+    else if (pct >= 80)   { medal='🥇'; titulo='Rendimiento sobresaliente'; sub=`${pct}% de cumplimiento. Estás entre las mejores. ¡Sigue así!`; stars='★★★★☆'; }
+    else if (pct >= 60)   { medal='🥈'; titulo='Buen desempeño'; sub=`${pct}% completado. Vas por buen camino, ${total-real} tareas más.`; stars='★★★☆☆'; }
+    else if (pct >= 40)   { medal='🥉'; titulo='En progreso'; sub=`${pct}% avanzado. Hay oportunidades de mejora. ¡Tú puedes!`; stars='★★☆☆☆'; }
+    else                  { medal='💪'; titulo='¡Comenzando el camino!'; sub=`Cada tarea completada es un paso adelante. ¡Ánimo!`; stars='★☆☆☆☆'; }
+    if (venc > 0 && pct < 80) sub += ` Atención: ${venc} tarea(s) vencida(s).`;
+  } else if (esApro) {
+    const pend = SOLIC.filter(s=>(s.estado||s['Estado'])==='pendiente'&&puedoAprobar(s.tipo||s['Tipo'])).length;
+    if (pend === 0)        { medal='🏆'; titulo='¡Al día!'; sub='No tienes solicitudes pendientes. Gestión ejemplar.'; stars='★★★★★'; }
+    else if (pend <= 3)    { medal='🥇'; titulo='Gestión eficiente'; sub=`Solo ${pend} solicitud(es) pendiente(s). Excelente control.`; stars='★★★★☆'; }
+    else if (pend <= 8)    { medal='🥈'; titulo='Gestión activa'; sub=`${pend} solicitudes por revisar. Recomendamos atenderlas pronto.`; stars='★★★☆☆'; }
+    else                   { medal='⚡'; titulo='Requiere atención'; sub=`${pend} solicitudes acumuladas. Prioriza las más urgentes.`; stars='★★☆☆☆'; }
+  } else {
+    const mias = SOLIC.filter(s=>(s.email||s['Correo'])===CU.email);
+    const apro = mias.filter(s=>(s.estado||s['Estado'])==='aprobado').length;
+    if (mias.length === 0) { medal='🚀'; titulo='¡Listo para empezar!'; sub='Crea tu primera solicitud desde el menú.'; stars=''; }
+    else if (apro === mias.length) { medal='🏆'; titulo='¡Todas aprobadas!'; sub='Todas tus solicitudes han sido aprobadas.'; stars='★★★★★'; }
+    else { medal='⭐'; titulo='Historial activo'; sub=`${apro} de ${mias.length} solicitudes aprobadas.`; stars='★★★☆☆'; }
+  }
+
+  el.innerHTML = `
+    <div class="excelencia-card" onclick="goPage('${esRrhh?'rrhh':'mis'}',document.getElementById('tab-${esRrhh?'rrhh':'mis'}'))">
+      <div class="excelencia-medal">${medal}</div>
+      <div class="excelencia-body">
+        <div class="excelencia-titulo">${titulo}</div>
+        <div class="excelencia-sub">${sub}</div>
+        ${stars?`<div class="excelencia-stars">${stars}</div>`:''}
+      </div>
+      <div style="color:rgba(255,255,255,.4);font-size:18px;">›</div>
+    </div>`;
+}
+
+// ── RACHA ──
+function renderDashRacha() {
+  const el = document.getElementById('dash-racha');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+  if (!esRrhh) { el.style.display='none'; return; }
+
+  // Calcular racha: días consecutivos con al menos 1 tarea completada
+  const fechas = RRHH
+    .filter(t=>t.estado==='Realizado'&&t.fechaFin)
+    .map(t=>t.fechaFin)
+    .sort().reverse();
+
+  let racha = 0;
+  if (fechas.length > 0) {
+    const unique = [...new Set(fechas)];
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    for (let i = 0; i < unique.length; i++) {
+      const d = new Date(unique[i]+'T12:00:00'); d.setHours(0,0,0,0);
+      const diff = Math.round((hoy - d) / 86400000);
+      if (diff === i) racha++;
+      else break;
+    }
+  }
+
+  if (racha < 2) { el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML = `
+    <div class="racha-card">
+      <div class="racha-ico">🔥</div>
+      <div class="racha-body">
+        <div class="racha-num">${racha} días</div>
+        <div class="racha-lbl">¡Racha activa! Completaste tareas ${racha} días consecutivos</div>
+      </div>
+    </div>`;
+}
+
+// ── RINGS DE CUMPLIMIENTO ──
+function renderDashRings() {
+  const el = document.getElementById('dash-rings');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+  const esApro = CU.rol === 'aprobador' || CU.rol === 'admin';
+
+  let rings = [];
+  const R = 28, C = 34, circum = 2*Math.PI*R;
+
+  if (esRrhh) {
+    const h = new Date().toISOString().split('T')[0];
+    const total  = RRHH.length || 1;
+    const real   = RRHH.filter(t=>t.estado==='Realizado').length;
+    const proc   = RRHH.filter(t=>t.estado==='En proceso').length;
+    const venc   = RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h).length;
+    const conFec = RRHH.filter(t=>t.fechaLimite).length || 1;
+    const aTimpo = RRHH.filter(t=>t.estado==='Realizado'&&t.fechaFin&&t.fechaLimite&&t.fechaFin<=t.fechaLimite).length;
+    const pHoras = Math.min(100, RRHH.reduce((a,t)=>a+(t.horasReales||0),0) /
+                   Math.max(1, RRHH.reduce((a,t)=>a+(t.horasEstimadas||0),0)) * 100);
+    rings = [
+      {pct:Math.round(real/total*100), lbl:'Completado', val:real+'/'+total, color:'#22c55e'},
+      {pct:Math.round(aTimpo/Math.max(real,1)*100), lbl:'A tiempo', val:aTimpo+'/'+real, color:'#2563eb'},
+      {pct:Math.round(proc/total*100), lbl:'En proceso', val:proc+'/'+total, color:'#0891b2'},
+      {pct:Math.min(100,Math.round((1-venc/total)*100)), lbl:'Sin vencer', val:(total-venc)+'/'+total, color:venc>0?'#f97316':'#22c55e'},
+    ];
+  } else if (esApro) {
+    const mios = SOLIC.filter(s=>puedoAprobar(s.tipo||s['Tipo']));
+    const tot  = mios.length || 1;
+    const apro = mios.filter(s=>(s.estado||s['Estado'])==='aprobado').length;
+    const rech = mios.filter(s=>(s.estado||s['Estado'])==='rechazado').length;
+    const pend = mios.filter(s=>(s.estado||s['Estado'])==='pendiente').length;
+    rings = [
+      {pct:Math.round(apro/tot*100), lbl:'Aprobadas', val:apro+'/'+tot, color:'#22c55e'},
+      {pct:Math.round(rech/tot*100), lbl:'Rechazadas', val:rech+'/'+tot, color:'#ef4444'},
+      {pct:Math.round(pend/tot*100), lbl:'Pendientes', val:pend+'/'+tot, color:'#f97316'},
+      {pct:Math.round((tot-pend)/tot*100), lbl:'Gestionadas', val:(tot-pend)+'/'+tot, color:'#7c3aed'},
+    ];
+  } else {
+    const mias = SOLIC.filter(s=>(s.email||s['Correo'])===CU.email);
+    const tot  = mias.length || 1;
+    const apro = mias.filter(s=>(s.estado||s['Estado'])==='aprobado').length;
+    const pend = mias.filter(s=>(s.estado||s['Estado'])==='pendiente').length;
+    const rech = mias.filter(s=>(s.estado||s['Estado'])==='rechazado').length;
+    rings = [
+      {pct:Math.round(apro/tot*100), lbl:'Aprobadas', val:apro+'/'+tot, color:'#22c55e'},
+      {pct:Math.round(pend/tot*100), lbl:'Pendientes', val:pend+'/'+tot, color:'#f97316'},
+      {pct:Math.round(rech/tot*100), lbl:'Rechazadas', val:rech+'/'+tot, color:'#ef4444'},
+      {pct:100-Math.round(rech/tot*100), lbl:'Exitosas', val:(tot-rech)+'/'+tot, color:'#2563eb'},
+    ];
+  }
+
+  if (!rings.length) { el.innerHTML=''; return; }
+
+  const mkRing = (r) => {
+    const dash = (r.pct/100)*circum;
+    return `
+      <div class="cumpl-ring-card">
+        <svg class="cumpl-ring-svg" viewBox="0 0 ${C*2} ${C*2}">
+          <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="var(--b1)" stroke-width="5"/>
+          <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${r.color}" stroke-width="5"
+            stroke-dasharray="${dash} ${circum}" stroke-linecap="round"
+            transform="rotate(-90 ${C} ${C})"
+            style="transition:stroke-dasharray .9s cubic-bezier(.4,0,.2,1);"/>
+          <text x="${C}" y="${C+4}" text-anchor="middle" font-size="11" font-weight="800" fill="${r.color}">${r.pct}%</text>
+        </svg>
+        <div class="cumpl-ring-lbl">${r.lbl}</div>
+        <div class="cumpl-ring-val">${r.val}</div>
+      </div>`;
+  };
+
+  var ringsHtml = '';
+  rings.forEach(function(r){ ringsHtml += mkRing(r); });
+  el.innerHTML = '<div style="font-size:12px;font-weight:700;margin-bottom:10px;padding:0 2px;">📊 Indicadores de cumplimiento</div>'
+    + '<div class="cumpl-rings">' + ringsHtml + '</div>';
+}
+
+// ── GRÁFICA DE BARRAS ──
+function renderDashChart() {
+  const el = document.getElementById('dash-chart');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+
+  let datos = [], titulo = '', colores = [];
+  if (esRrhh) {
+    // Barras por prioridad
+    const priors = ['Alta','Media','Baja'];
+    const colors = ['#ef4444','#f97316','#22c55e'];
+    datos = priors.map((p,i) => ({
+      lbl: p,
+      total: RRHH.filter(t=>t.prioridad===p).length,
+      done:  RRHH.filter(t=>t.prioridad===p&&t.estado==='Realizado').length,
+      color: colors[i],
+    }));
+    titulo = '📋 Tareas por prioridad';
+  } else {
+    // Barras por tipo de solicitud
+    const tipos = ['adelanto','gastos','descuento','rendicion'];
+    const labels = ['💰 Adelanto','🧾 Gastos','✂️ Descuento','📋 Rendición'];
+    const colors = ['#f5c518','#2563eb','#7c3aed','#22c55e'];
+    const mios = CU.rol==='empleado'
+      ? SOLIC.filter(s=>(s.email||s['Correo'])===CU.email)
+      : SOLIC.filter(s=>puedoAprobar(s.tipo||s['Tipo']));
+    datos = tipos.map((t,i) => ({
+      lbl: labels[i],
+      total: mios.filter(s=>(s.tipo||s['Tipo'])===t).length,
+      done:  mios.filter(s=>(s.tipo||s['Tipo'])===t&&(s.estado||s['Estado'])==='aprobado').length,
+      color: colors[i],
+    }));
+    titulo = '📈 Solicitudes por tipo';
+  }
+
+  const maxVal = Math.max(...datos.map(d=>d.total), 1);
+  const bars = datos.map(d => {
+    const h = Math.round((d.total/maxVal)*80);
+    const hd= Math.round((d.done/maxVal)*80);
+    return `
+      <div class="bar-col">
+        <div class="bar-val">${d.total}</div>
+        <div style="position:relative;width:100%;height:${Math.max(h,3)}px;background:var(--b1);border-radius:6px 6px 0 0;overflow:hidden;">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(d.done/Math.max(d.total,1)*100)}%;background:${d.color};border-radius:6px 6px 0 0;transition:height .8s;opacity:.9;">
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(d.done/Math.max(d.total,1)*100)}%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2px;">
+            ${d.done>0?`<span style="font-size:8px;color:#fff;font-weight:700;">${d.done}</span>`:''}
+          </div>
+        </div>
+        <div class="bar-lbl">${d.lbl.replace(/^[^\s]+\s/,'')}</div>
+      </div>`;
+  });
+
+  el.innerHTML = `
+    <div class="chart-wrap">
+      <div class="chart-title">${titulo}
+        <span style="font-size:10px;color:var(--mu);font-weight:400;">Color = completadas</span>
+      </div>
+      <div class="bar-chart">${bars.join('')}</div>
+    </div>`;
+}
+
+// ── LOGROS / BADGES ──
+function renderDashLogros() {
+  const el = document.getElementById('dash-logros');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+  const h = new Date().toISOString().split('T')[0];
+
+  let logros = [];
+  if (esRrhh) {
+    const real = RRHH.filter(t=>t.estado==='Realizado').length;
+    const venc = RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h).length;
+    const conSubs = RRHH.filter(t=>(t.subtareas||[]).length>0).length;
+    const conHoras= RRHH.filter(t=>t.horasEstimadas>0).length;
+    const aTimpo  = RRHH.filter(t=>t.estado==='Realizado'&&t.fechaFin&&t.fechaLimite&&t.fechaFin<=t.fechaLimite).length;
+    const pct = RRHH.length>0?Math.round(real/RRHH.length*100):0;
+    logros = [
+      {ico:'🚀', nom:'Primera tarea',   desc:'Completa 1 tarea',    ok:real>=1,    nuevo:real===1},
+      {ico:'⚡', nom:'En racha',        desc:'3 tareas en 1 día',   ok:real>=3,    nuevo:false},
+      {ico:'🎯', nom:'A tiempo',        desc:'5 tareas sin vencer',  ok:aTimpo>=5,  nuevo:aTimpo===5},
+      {ico:'🔥', nom:'Imparable',       desc:'10 tareas realizadas', ok:real>=10,   nuevo:real===10},
+      {ico:'📋', nom:'Organizadora',    desc:'Usas subtareas',       ok:conSubs>=3, nuevo:conSubs===3},
+      {ico:'⏱️', nom:'Puntual',         desc:'Registras horas',      ok:conHoras>=5,nuevo:conHoras===5},
+      {ico:'💎', nom:'Sin vencidas',    desc:'0 tareas vencidas',    ok:venc===0&&real>0, nuevo:false},
+      {ico:'🏆', nom:'Excelencia',      desc:'80%+ cumplimiento',    ok:pct>=80,    nuevo:pct===80},
+      {ico:'👑', nom:'Maestra RRHH',    desc:'100% completado',      ok:pct===100,  nuevo:pct===100},
+    ];
+  } else {
+    const mias = SOLIC.filter(s=>(s.email||s['Correo'])===CU.email);
+    const apro = mias.filter(s=>(s.estado||s['Estado'])==='aprobado').length;
+    logros = [
+      {ico:'📝', nom:'Primera solicitud', desc:'Crea tu 1ra solicitud', ok:mias.length>=1, nuevo:mias.length===1},
+      {ico:'✅', nom:'Aprobado',          desc:'Primera aprobación',     ok:apro>=1,        nuevo:apro===1},
+      {ico:'🎯', nom:'Consistente',       desc:'5 solicitudes enviadas', ok:mias.length>=5, nuevo:false},
+      {ico:'🏆', nom:'Veterano',          desc:'10 solicitudes',         ok:mias.length>=10,nuevo:false},
+    ];
+  }
+
+  const desbloqueados = logros.filter(l=>l.ok).length;
+  var logHtml = '';
+  logros.forEach(function(l) {
+    logHtml += '<div class="logro-card '+(l.ok?'':'bloqueado')+'" title="'+l.desc+'">'
+      + (l.nuevo&&l.ok?'<div class="logro-nuevo">¡NUEVO!</div>':'')
+      + '<div class="logro-ico">'+l.ico+'</div>'
+      + '<div class="logro-nom">'+l.nom+'</div>'
+      + '<div class="logro-desc">'+l.desc+'</div>'
+      + '</div>';
+  });
+  el.innerHTML = '<div class="chart-wrap" style="margin-bottom:14px;">'
+    + '<div class="chart-title">🏅 Logros <span style="font-size:10px;color:var(--mu);">'+desbloqueados+'/'+logros.length+' desbloqueados</span></div>'
+    + '<div class="logros-grid">'+logHtml+'</div>'
+    + '</div>';
+}
+
+// ── ACTIVIDAD RECIENTE ──
+function renderDashActividad() {
+  const el = document.getElementById('dash-actividad');
+  if (!el) return;
+  const esRrhh = CU.area === 'RRHH' || CU.email === 'rrhh@ilumax.com.co';
+
+  let items = [];
+  if (esRrhh) {
+    items = RRHH
+      .filter(t => t.estado === 'Realizado' && t.fechaFin)
+      .sort((a,b) => (b.fechaFin||'').localeCompare(a.fechaFin||''))
+      .slice(0,5)
+      .map(t => ({
+        dot: '#22c55e',
+        txt: `✅ <strong>${t.actividad.substring(0,45)}</strong>`,
+        time: t.fechaFin ? new Date(t.fechaFin+'T12:00:00').toLocaleDateString('es-CO',{day:'2-digit',month:'short'}) : '',
+      }));
+    // Agregar vencidas como alertas
+    const h = new Date().toISOString().split('T')[0];
+    RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h)
+      .slice(0,3)
+      .forEach(t => items.push({
+        dot: '#ef4444',
+        txt: `🔴 Pendiente: <strong>${t.actividad.substring(0,40)}</strong>`,
+        time: t.fechaLimite,
+      }));
+  } else {
+    const mias = SOLIC.filter(s=>(s.email||s['Correo'])===CU.email);
+    items = mias.slice(0,5).map(s => {
+      const est = s.estado||s['Estado'];
+      const colors = {aprobado:'#22c55e',rechazado:'#ef4444',pendiente:'#f97316',pagado:'#2563eb'};
+      return {
+        dot: colors[est]||'#94a3b8',
+        txt: `${TIPOS[s.tipo||s['Tipo']]?.ico||'📄'} ${s.id||s['ID']} — ${ESTS[est]?.lbl||est}`,
+        time: s.fechaLeg||s['Fecha Legible']||'',
+      };
+    });
+  }
+
+  if (!items.length) { el.innerHTML=''; return; }
+  var actHtml = '';
+  items.forEach(function(i) {
+    actHtml += '<div class="actividad-item">'
+      + '<div class="actividad-dot" style="background:'+i.dot+';"></div>'
+      + '<div class="actividad-txt">'+i.txt+'</div>'
+      + '<div class="actividad-time">'+i.time+'</div>'
+      + '</div>';
+  });
+  el.innerHTML = '<div class="chart-wrap"><div class="chart-title">⏱️ Actividad reciente</div>'+actHtml+'</div>';
+}
+
 
 // ── FORMULARIOS ──
 function calcCuota(p){
@@ -1367,19 +1970,25 @@ async function confirmarAcc(){
 
 // ── NOTIFICACIONES ──
 function renderNotif(){
-  const n=getNotifs();
+  // Regenerar notifs persistentes de RRHH cada vez que se abre el panel
+  if(typeof generarNotifsRrhh==='function') generarNotifsRrhh();
+  NOTIFS=getNotifs(); // Recargar tras generarNotifsRrhh
+  const n=NOTIFS;
   const tipos_apro=(CU.aprueba||[]).includes('todos')?['adelanto','gastos','descuento','rendicion']:(CU.aprueba||[]);
-  qs('#notif-cfg-box').innerHTML=`
-    <div class="card" style="margin-bottom:13px;"><div class="ch"><div class="ct">⚙️ Configuración — ${CU.area}</div></div>
-    <div class="cb">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;">
-        ${tipos_apro.map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s1);border-radius:8px;border:1px solid var(--b1);">
-          <span style="font-size:12px;font-weight:600;">${TIPOS[t]?.ico||''} ${TIPOS[t]?.lbl||t}</span>
-          <label class="sw"><input type="checkbox" checked><span class="sw-sl"></span></label>
-        </div>`).join('')}
-      </div>
-      <div style="font-size:11px;color:var(--mu);margin-top:10px;">📧 Notificaciones al correo: <strong>${CU.notifEmail||CU.email}</strong></div>
-    </div></div>`;
+  var cfgItems = '';
+  tipos_apro.forEach(function(t) {
+    var ico = TIPOS[t]?TIPOS[t].ico:'';
+    var lbl = TIPOS[t]?TIPOS[t].lbl:t;
+    cfgItems += '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--s1);border-radius:8px;border:1px solid var(--b1);">'
+      + '<span style="font-size:12px;font-weight:600;">'+ico+' '+lbl+'</span>'
+      + '<label class="sw"><input type="checkbox" checked><span class="sw-sl"></span></label>'
+      + '</div>';
+  });
+  qs('#notif-cfg-box').innerHTML = '<div class="card" style="margin-bottom:13px;">'
+    + '<div class="ch"><div class="ct">⚙️ Configuración — '+CU.area+'</div></div>'
+    + '<div class="cb"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;">'+cfgItems+'</div>'
+    + '<div style="font-size:11px;color:var(--mu);margin-top:10px;">📧 Notificaciones al correo: <strong>'+(CU.notifEmail||CU.email)+'</strong></div>'
+    + '</div></div>';
 
   const el=qs('#notif-list');if(!el)return;
   if(!n.length){el.innerHTML=`<div class="empty"><div class="empty-i">🔔</div><div class="empty-t">Sin notificaciones</div></div>`;return;}
@@ -1394,19 +2003,45 @@ function renderNotif(){
             ${!x.leida?'<span style="width:7px;height:7px;border-radius:50%;background:var(--bl);display:inline-block;"></span>':''}
           </div>
           <div style="font-size:12px;color:var(--mu);">${x.cuerpo}</div>
-          <div style="font-size:10px;color:var(--mu2);margin-top:3px;">${new Date(x.fecha).toLocaleString('es-CO')}</div>
+          <div style="font-size:10px;color:var(--mu2);margin-top:3px;">${new Date(x.fecha).toLocaleString('es-CO')}${x.persistente?' <span style=\"color:var(--rd);font-weight:700;\">· No se quita hasta completar la tarea</span>':''}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-          <button class="btn btn-gr btn-xs" onclick="event.stopPropagation();accDesdeNotif('${x.solId}','aprobar',${i})">✅</button>
-          <button class="btn btn-rd btn-xs" onclick="event.stopPropagation();accDesdeNotif('${x.solId}','rechazar',${i})">❌</button>
-        </div>
+            ${x.rrhhTareaId
+              ? '<button class=\"btn btn-gr btn-xs\" onclick=\"event.stopPropagation();abrirSheetTarea(\'' + x.rrhhTareaId + '\',' + i + ')\" title=\"Ver y completar tarea\">✅ Ver</button>'
+              : '<button class=\"btn btn-gr btn-xs\" onclick=\"event.stopPropagation();accDesdeNotif(\'' + x.solId + '\',\'aprobar\',' + i + ')\">✅</button><button class=\"btn btn-rd btn-xs\" onclick=\"event.stopPropagation();accDesdeNotif(\'' + x.solId + '\',\'rechazar\',' + i + ')\">❌</button>'
+            }
+          </div>
       </div>
     </div>`).join('');
   updBadges();
 }
 function abrirNotif(solId,i){const n=getNotifs();n[i].leida=true;saveNotifs(n);verDetalle(solId);updBadges();renderNotif();}
-function accDesdeNotif(solId,ac,i){const n=getNotifs();n[i].leida=true;saveNotifs(n);abrirAcc(solId,ac);updBadges();}
-function marcarLeidas(){const n=getNotifs();n.forEach(x=>x.leida=true);saveNotifs(n);renderNotif();updBadges();toast('Todas marcadas','ok');}
+function accDesdeNotif(solId,ac,i){
+  const notifs=getNotifs();
+  const n=notifs[i];
+  if(!n) return;
+  // Las notifs RRHH persistentes NO se marcan leídas al tocarlas
+  if(!n.persistente){
+    notifs[i].leida=true;
+    saveNotifs(notifs);
+    updBadges();
+  }
+  abrirAcc(solId,ac);
+}
+function marcarLeidas(){
+  const n=getNotifs();
+  let marcadas=0;
+  n.forEach(x=>{
+    // NUNCA marcar leídas las notifs persistentes de RRHH
+    if(!x.persistente&&!x.rrhhTareaId){
+      x.leida=true;
+      marcadas++;
+    }
+  });
+  saveNotifs(n);renderNotif();updBadges();
+  if(marcadas>0) toast(marcadas+' notificación(es) marcada(s) como leída(s)','ok');
+  else toast('Las notificaciones de tareas RRHH persisten hasta completarlas','inf');
+}
 
 // ── PANEL APROBACIÓN ──
 function renderApro(){
@@ -1578,8 +2213,6 @@ qs('#nu-r')?.addEventListener('change',function(){chkRolNuevo(this.value);});
 // Responsable: Liz Katherine Sánchez
 // ══════════════════════════════════════════════════════════
 
-const RRHH_TAREAS_DEFAULT = [{"id":"T002","actividad":"Realizar legalizaciones de anticipos ejecutivos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T003","actividad":"Formato de HV  que faltan","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T004","actividad":"Organizar formato de dotacion","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T005","actividad":"Formatos de Carnet","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-07","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"Área: OEA.","prioridad":"Media"},{"id":"T006","actividad":"Practicantes Contabilidad","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"Pasantias y Lectiva","prioridad":"Media"},{"id":"T007","actividad":"Praticante Calidad","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-02","fechaLimite":"2026-09-15","estado":"En proceso","fechaFin":"","obs":"ya estamo en entrvista","prioridad":"Media"},{"id":"T008","actividad":"Induccion ya quedaron programadas todas las de Luis y Michell","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-15","estado":"Pendiente","fechaFin":"","obs":"terminan la  semana que viene","prioridad":"Media"},{"id":"T009","actividad":"Periodos de prueba faltan / Ximena vargas, Katherine Sanchez, Rosa Padilla","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-18","estado":"Pendiente","fechaFin":"","obs":"ya se hablo con Cindy que los va realizarr","prioridad":"Media"},{"id":"T010","actividad":"Radicar incapacidades  agosto","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T011","actividad":"Responder casos de incapacidades- Diana acuña angie santana","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-08","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T012","actividad":"Radicar incapacidad de Arl Giovanny catano","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-08","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T013","actividad":"Nomina Electronica","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Realizado","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T014","actividad":"Contabilizar SGS y Consolidado","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Realizado","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T015","actividad":"CERTIFICADOS DE MONTACARGA","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-11","estado":"Pendiente","fechaFin":"","obs":"Seguimiento","prioridad":"Media"},{"id":"T016","actividad":"Enviar Codigo de Etica y Reglamento Interno","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"2026-09-04","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T017","actividad":"Agendar en Buk lo de SST","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T018","actividad":"Citar a Daniela para coopass","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T019","actividad":"Seguimientos Otrosi Asesoras","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T020","actividad":"Formato entrega de Dotacion Sandra daza","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"pediente que lo firme","prioridad":"Media"},{"id":"T021","actividad":"Envio y seguimiento de formato de dotacion 02 semestre Asesoras","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-04","fechaLimite":"2026-09-15","estado":"Pendiente","fechaFin":"","obs":"ya se enviaron para firmas","prioridad":"Media"},{"id":"T022","actividad":"hacer Distribucion de Johanna cubillos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T023","actividad":"Crear cargo de Luis Cambindo en SBS","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T024","actividad":"Cambiar cargo Keinner en SBS Y BUK","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T025","actividad":"Formato de descuento Libranza Sandra Jimenez","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T026","actividad":"Revisar lo de los cursos en alturas","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T027","actividad":"Publicar vacante de Auxiliar de Bodega","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T028","actividad":"Agendar capacitacion de ADT a Johanna cubillos","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T029","actividad":"Hacer nuevo contrato de Laura","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T030","actividad":"Perdir Botas Ximena Vargas","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"2026-09-07","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T031","actividad":"Solicitar Carnet - Mary , Luis , Duvier","responsable":"Liz Katherine Sánchez","fechaInicio":"sep","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T032","actividad":"Incapacidad Mary angel","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T033","actividad":"PEDIR ACTA DE CAPACITACION DE TRABAJO EN EQUIPO Y COMONUICACION","responsable":"Liz Katherine Sánchez","fechaInicio":"2026-09-04","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T034","actividad":"Perfil de cargo de luis","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T035","actividad":"Ximena y Michell","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T036","actividad":"Semana de la Salud","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T037","actividad":"Curso de alturas","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T038","actividad":"Entrega de nomina el 28 hasta medio dia","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T039","actividad":"Actualizar fecha de vacaiciones","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T040","actividad":"afiliar ´padres de Duvier a la caja de compensacion","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T041","actividad":"Mirar factura de ARL bolivar a que corresponde","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T042","actividad":"Egreso de Vacaciones","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T043","actividad":"INCAPACIDADES PENDIENTES POR RADICAR","responsable":"Liz Katherine Sánchez","fechaInicio":"","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"","prioridad":"Media"},{"id":"T044","actividad":"RAMIREZ GALVEZ LUISA MARIA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"SALUD TOTAL","prioridad":"Media"},{"id":"T045","actividad":"VENTERO CERQUERA ZULY JHOANA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Pendiente","fechaFin":"","obs":"SALUD TOTAL","prioridad":"Media"},{"id":"T046","actividad":"BARBOSA CANDAMIL CLAUDIA CRISTINA","responsable":"Liz Katherine Sánchez","fechaInicio":"AGOSTO","fechaLimite":"","estado":"Realizado","fechaFin":"","obs":"SANITAS","prioridad":"Media"}];
-
 let RRHH = JSON.parse(localStorage.getItem('ilx_rrhh_t') || 'null') || JSON.parse(JSON.stringify(RRHH_TAREAS_DEFAULT));
 let rrhhFiltro = '';
 let rrhhEditId = null;
@@ -1608,9 +2241,11 @@ function getPrio(p) {
 }
 
 function renderRrhh() {
+  renderRrhhProgressBar();
   renderRrhhStats();
   renderRrhhLista();
   generarNotifsRrhh();
+  revisarNotifsProgramadas();
 }
 
 function renderRrhhStats() {
@@ -1675,31 +2310,110 @@ function renderRrhhLista() {
 
   el.innerHTML = lista.map(t => {
     const ind = getInd(t);
+    const subs = t.subtareas || [];
+    const subsDone = subs.filter(s=>s.done).length;
+    const horasEst = t.horasEstimadas || 0;
+    const horasReal = t.horasReales || 0;
+    const progSubs = subs.length > 0 ? Math.round(subsDone/subs.length*100) : (t.estado==='Realizado'?100:0);
+    const notifOn = t.notifActiva !== false;
+
     const diasStr = t.fechaLimite ? (()=>{
       const d=Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000);
-      if(d<0) return `<span style="color:var(--rd);font-weight:700;">Venció hace ${Math.abs(d)}d</span>`;
-      if(d===0) return `<span style="color:var(--rd);font-weight:700;">Vence HOY</span>`;
-      if(d<=3) return `<span style="color:#ca8a04;font-weight:700;">Vence en ${d}d</span>`;
+      if(d<0) return `<span style="color:var(--rd);font-weight:700;">⏰ Venció hace ${Math.abs(d)}d</span>`;
+      if(d===0) return `<span style="color:var(--rd);font-weight:700;">⚠️ Vence HOY</span>`;
+      if(d<=3) return `<span style="color:#ca8a04;font-weight:700;">🟡 Vence en ${d}d</span>`;
       return `<span style="color:var(--mu);">📅 ${fmtF(t.fechaLimite)}</span>`;
     })() : '';
 
-    return `<div class="tc" style="--ind-color:${ind.color}">
+    return `<div class="tc" style="--ind-color:${ind.color}" id="tc-${t.id}">
       <div class="tc-head">
         <div class="tc-title">${t.actividad}</div>
-        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;flex-wrap:wrap;">
           <span class="bdg ${ind.cls}" style="font-size:9px;">${ind.lbl}</span>
           ${getPrio(t.prioridad)}
+          <span class="notif-badge ${notifOn?'activa':'inactiva'}" onclick="toggleNotifTarea('${t.id}')" title="${notifOn?'Notificaciones activas':'Sin notificaciones'}">
+            🔔${notifOn?' ON':' OFF'}
+          </span>
         </div>
       </div>
-      <div class="tc-meta">${diasStr} ${t.obs?'':''} </div>
+
+      <div class="tc-meta">
+        ${diasStr}
+        ${horasEst>0?`<span>⏱️ ${horasReal}h / ${horasEst}h est.</span>`:''}
+        ${subs.length>0?`<span>📋 ${subsDone}/${subs.length} subtareas</span>`:''}
+      </div>
+
+      ${subs.length>0?`<div class="prog-bar" style="margin-bottom:7px;"><div class="prog-fill" style="width:${progSubs}%;background:${progSubs===100?'var(--gr)':'var(--bl)'}"></div></div>`:''}
+
       ${t.obs?`<div class="tc-obs">💬 ${t.obs}</div>`:''}
+
       <div class="tc-foot">
-        <span style="font-size:10px;color:var(--mu2);">${t.id}</span>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span style="font-size:10px;color:var(--mu2);">${t.id}</span>
+          <span class="tc-toggle" onclick="toggleExpand('${t.id}')">▼ detalles</span>
+        </div>
         <div class="tc-acts">
-          ${t.estado!=='Realizado'?`<button class="btn btn-gr btn-xs" onclick="rrhhCompletar('${t.id}')">✓</button>`:''}
-          ${t.estado==='Pendiente'?`<button class="btn btn-bl btn-xs" onclick="rrhhIniciar('${t.id}')">▶</button>`:''}
+          ${t.estado!=='Realizado'?`<button class="btn btn-gr btn-xs" onclick="rrhhCompletar('${t.id}')">✓ Listo</button>`:''}
+          ${t.estado==='Pendiente'?`<button class="btn btn-bl btn-xs" onclick="rrhhIniciar('${t.id}')">▶ Iniciar</button>`:''}
           <button class="btn btn-g btn-xs" onclick="rrhhEditar('${t.id}')">✏️</button>
           <button class="btn btn-rd btn-xs" onclick="rrhhEliminar('${t.id}')">🗑</button>
+        </div>
+      </div>
+
+      <!-- PANEL EXPANDIBLE: Subtareas + Horas -->
+      <div class="tc-expand" id="exp-${t.id}">
+        <!-- Horas -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+          <div class="horas-wrap">
+            <span>⏱️ Horas estimadas:</span>
+            <input class="horas-inp" type="number" min="0" step="0.5"
+              value="${horasEst||''}" placeholder="0"
+              onchange="updHoras('${t.id}','est',this.value)">
+          </div>
+          <div class="horas-wrap">
+            <span>⏳ Horas reales:</span>
+            <input class="horas-inp" type="number" min="0" step="0.5"
+              value="${horasReal||''}" placeholder="0"
+              onchange="updHoras('${t.id}','real',this.value)">
+          </div>
+          ${horasEst>0?`<div class="horas-wrap" style="flex:1;">
+            <span style="font-size:10px;">${horasReal>horasEst?'⚠️ Excedido':'✅ '+Math.round(horasReal/horasEst*100)+'%'}</span>
+            <div class="prog-bar" style="flex:1;"><div class="prog-fill" style="width:${Math.min(horasReal/horasEst*100,100).toFixed(0)}%;background:${horasReal>horasEst?'var(--rd)':'var(--gr)'}"></div></div>
+          </div>`:''}
+        </div>
+
+        <!-- Subtareas -->
+        <div style="font-size:11px;font-weight:700;color:var(--mu);margin-bottom:6px;">📋 Subtareas (${subsDone}/${subs.length})</div>
+        <div class="st-list" id="stl-${t.id}">
+          ${subs.map((s,i)=>`
+            <div class="st-item ${s.done?'done':''}">
+              <div class="st-chk ${s.done?'done':''}" onclick="toggleSub('${t.id}',${i})">${s.done?'✓':''}</div>
+              <span class="st-txt">${s.txt}</span>
+              ${s.hora?`<span style="font-size:9px;color:var(--mu);background:var(--s1);padding:1px 5px;border-radius:4px;">⏰ ${s.hora}</span>`:''}
+              <span class="st-del" onclick="delSub('${t.id}',${i})">✕</span>
+            </div>`).join('')}
+        </div>
+        <!-- Agregar subtarea -->
+        <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;">
+          <input class="inp" id="ns-txt-${t.id}" placeholder="Nueva subtarea..." style="flex:1;font-size:11px;padding:6px 9px;" onkeydown="if(event.key==='Enter')addSub('${t.id}')">
+          <input class="inp" id="ns-hora-${t.id}" type="time" style="width:90px;font-size:11px;padding:6px 9px;" title="Hora recordatorio">
+          <button class="btn btn-bl btn-xs" onclick="addSub('${t.id}')">+ Sub</button>
+        </div>
+
+        <!-- Notificación personalizada -->
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--b1);">
+          <div style="font-size:11px;font-weight:700;color:var(--mu);margin-bottom:6px;">🔔 Notificación de esta tarea</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
+            <select class="inp" id="notif-tipo-${t.id}" style="font-size:11px;padding:5px 8px;width:auto;">
+              <option value="vencimiento">Al vencer</option>
+              <option value="1dia">1 día antes</option>
+              <option value="3dias">3 días antes</option>
+              <option value="hora">A hora específica</option>
+            </select>
+            <input class="inp" id="notif-hora-${t.id}" type="time" style="width:90px;font-size:11px;padding:5px 8px;" placeholder="09:00">
+            <button class="btn btn-bl btn-xs" onclick="guardarNotifTarea('${t.id}')">💾 Guardar alerta</button>
+          </div>
+          ${t.notifConfig?`<div style="font-size:10px;color:var(--gr);margin-top:4px;">✅ Alerta configurada: ${t.notifConfig}</div>`:''}
         </div>
       </div>
     </div>`;
@@ -1776,10 +2490,22 @@ function rrhhCompletar(id){
   const t=RRHH.find(x=>x.id===id);if(!t)return;
   t.estado='Realizado';t.fechaFin=new Date().toISOString().split('T')[0];
   saveRrhh();
-  crearNotifRrhh('✅ Tarea completada','verde',t.actividad);
-  toast(`"${t.actividad.substring(0,40)}" → Realizada`,'ok');
+  limpiarNotifsRrhh(id); // Eliminar notifs persistentes de esta tarea
+  crearNotifRrhh('✅ Completada: '+t.actividad.substring(0,50),'verde',t.actividad);
+  toast(`"${t.actividad.substring(0,40)}" → Realizada ✅`,'ok');
   renderRrhh();
+  if(typeof updBadges==='function') updBadges();
+  if(typeof renderNotif==='function') renderNotif();
   syncRrhhSheetsAuto(t,'actualizar');
+}
+
+function limpiarNotifsRrhh(tareaId){
+  const email=CU?.email||'rrhh@ilumax.com.co';
+  const key='ilx_notifs_'+email;
+  let notifs=JSON.parse(localStorage.getItem(key)||'[]');
+  notifs=notifs.filter(n=>n.rrhhTareaId!==tareaId);
+  localStorage.setItem(key,JSON.stringify(notifs));
+  NOTIFS=notifs;
 }
 
 function rrhhIniciar(id){
@@ -1826,7 +2552,10 @@ function guardarRrhhTarea(){
       t.obs=document.getElementById('rr-obs').value;
       if(t.estado==='Realizado') t.fechaFin=document.getElementById('rr-ff').value||new Date().toISOString().split('T')[0];
       if(t.estado!=='Realizado') t.fechaFin='';
-      if(viejoEst!=='Realizado'&&t.estado==='Realizado') crearNotifRrhh('✅ Tarea completada','verde',act);
+      if(viejoEst!=='Realizado'&&t.estado==='Realizado'){
+        limpiarNotifsRrhh(t.id);
+        crearNotifRrhh('✅ Completada: '+act.substring(0,50),'verde',act);
+      }
       syncRrhhSheetsAuto(t,'actualizar');
     }
     toast('Actividad actualizada ✅','ok');
@@ -1868,38 +2597,73 @@ function crearNotifRrhh(titulo,tipo,cuerpo){
 
 function generarNotifsRrhh(){
   const h=new Date().toISOString().split('T')[0];
-  const key='ilx_rrhh_notif_'+h;
-  if(localStorage.getItem(key))return;
-  localStorage.setItem(key,'1');
+  const email=CU?.email||'rrhh@ilumax.com.co';
+  const key='ilx_notifs_'+email;
+  let notifs=JSON.parse(localStorage.getItem(key)||'[]');
+
+  // 1. Quitar notifs persistentes de tareas ya completadas
+  const realizadasIds=new Set(RRHH.filter(t=>t.estado==='Realizado').map(t=>t.id));
+  notifs=notifs.filter(n=>!n.rrhhTareaId||!realizadasIds.has(n.rrhhTareaId));
+
   const vencidas=RRHH.filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&t.fechaLimite<h);
   const proximas=RRHH.filter(t=>{
     if(t.estado==='Realizado'||!t.fechaLimite)return false;
     const d=Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000);
     return d>=0&&d<=3;
   });
-  if(vencidas.length) crearNotifRrhh(`🔴 ${vencidas.length} actividad(es) vencida(s)`,'rojo',
-    vencidas.map(t=>t.actividad.substring(0,35)).join(' · '));
-  if(proximas.length) crearNotifRrhh(`🟡 ${proximas.length} actividad(es) próxima(s) a vencer`,'amarillo',
-    proximas.map(t=>t.actividad.substring(0,35)).join(' · '));
+
+  // 2. Agregar notif persistente por cada tarea vencida (si no existe ya)
+  vencidas.forEach(t=>{
+    const existe=notifs.find(n=>n.rrhhTareaId===t.id&&n.tipo==='rojo');
+    if(!existe){
+      notifs.unshift({
+        id:'RNV'+t.id, rrhhTareaId:t.id, tipo:'rojo',
+        titulo:'🔴 Tarea vencida', cuerpo:t.actividad.substring(0,80),
+        fecha:new Date().toISOString(), leida:false, urgente:true, persistente:true
+      });
+    }
+  });
+
+  // 3. Agregar notif persistente por cada tarea próxima (si no existe ya)
+  proximas.forEach(t=>{
+    const d=Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000);
+    const existe=notifs.find(n=>n.rrhhTareaId===t.id&&n.tipo==='amarillo');
+    if(!existe){
+      notifs.unshift({
+        id:'RNP'+t.id, rrhhTareaId:t.id, tipo:'amarillo',
+        titulo:`🟡 Vence en ${d} día(s)`, cuerpo:t.actividad.substring(0,80),
+        fecha:new Date().toISOString(), leida:false, urgente:false, persistente:true
+      });
+    }
+  });
+
+  localStorage.setItem(key, JSON.stringify(notifs));
+  if(typeof updBadges==='function') updBadges();
 }
 
 // Sync con Google Sheets
 async function syncRrhhSheetsAuto(tarea,accion){
-  if(!GS_URL)return;
+  // Siempre guarda local primero (ya hecho por quien llama)
+  // Sync a Sheets en background si hay URL
+  if(!GS_URL) return;
   try{
-    await api('rrhhActualizar',{tarea,accion});
-  }catch(e){console.log('Sync RRHH:',e.message);}
+    const dataStr = encodeURIComponent(JSON.stringify({action:'rrhhActualizar', tarea, accion}));
+    const url = GS_URL + '?action=rrhhActualizar&data=' + dataStr;
+    fetch(url, {mode:'no-cors'}).catch(()=>{});
+  }catch(e){ /* silencioso */ }
 }
 
 async function syncRrhhSheets(){
-  if(!GS_URL){toast('Conecta la API primero en Admin','wa');return;}
   showLoader('Sincronizando actividades RRHH...');
   try{
-    // Subir todas las tareas al Sheets
-    const r=await api('rrhhSync',{tareas:RRHH});
-    if(r.ok!==false) toast('Actividades sincronizadas con Google Sheets ✅','ok');
-    else toast('Error al sincronizar: '+(r.error||''),'er');
-  }catch(e){toast('Error de conexión','er');}
+    if(GS_URL){
+      const d=encodeURIComponent(JSON.stringify({action:'rrhhSync',tareas:RRHH}));
+      await fetch(GS_URL+'?action=rrhhSync&data='+d,{mode:'no-cors'});
+      toast('Sincronizado con Google Sheets ✅','ok');
+    } else {
+      toast('Guardado localmente ✅','inf');
+    }
+  }catch(e){ toast('Guardado local ✅','ok'); }
   hideLoader();
 }
 
@@ -1919,6 +2683,582 @@ function exportRrhhCSV(){
 
 // Agregar RRHH al mapa de páginas
 if(typeof pgMap!=='undefined') pgMap['rrhh']=renderRrhh;
+
+
+// ── SUBTAREAS, HORAS Y NOTIFICACIONES POR TAREA ──────────────
+
+function toggleExpand(id) {
+  const exp = document.getElementById('exp-'+id);
+  const tog = exp?.previousElementSibling?.querySelector('.tc-toggle');
+  if (!exp) return;
+  const on = exp.classList.toggle('on');
+  if (tog) tog.textContent = on ? '▲ ocultar' : '▼ detalles';
+}
+
+function addSub(id) {
+  const txtEl = document.getElementById('ns-txt-'+id);
+  const horaEl = document.getElementById('ns-hora-'+id);
+  const txt = (txtEl?.value || '').trim();
+  if (!txt) { toast('Escribe el texto de la subtarea', 'wa'); return; }
+  const t = RRHH.find(x => x.id === id);
+  if (!t) return;
+  if (!t.subtareas) t.subtareas = [];
+  t.subtareas.push({ txt, hora: horaEl?.value || '', done: false });
+  txtEl.value = '';
+  if (horaEl) horaEl.value = '';
+  saveRrhh();
+  renderRrhhLista();
+  // Reabrir el panel expandido
+  setTimeout(() => {
+    const exp = document.getElementById('exp-'+id);
+    if (exp && !exp.classList.contains('on')) toggleExpand(id);
+  }, 50);
+  toast('Subtarea agregada', 'ok');
+}
+
+function delSub(id, idx) {
+  const t = RRHH.find(x => x.id === id);
+  if (!t || !t.subtareas) return;
+  t.subtareas.splice(idx, 1);
+  saveRrhh();
+  renderRrhhLista();
+  setTimeout(() => {
+    const exp = document.getElementById('exp-'+id);
+    if (exp && !exp.classList.contains('on')) toggleExpand(id);
+  }, 50);
+}
+
+function toggleSub(id, idx) {
+  const t = RRHH.find(x => x.id === id);
+  if (!t || !t.subtareas || !t.subtareas[idx]) return;
+  t.subtareas[idx].done = !t.subtareas[idx].done;
+  // Si todas las subtareas están listas, sugerir completar la tarea
+  const todasListas = t.subtareas.length > 0 && t.subtareas.every(s => s.done);
+  saveRrhh();
+  renderRrhhLista();
+  setTimeout(() => {
+    const exp = document.getElementById('exp-'+id);
+    if (exp && !exp.classList.contains('on')) toggleExpand(id);
+  }, 50);
+  if (todasListas && t.estado !== 'Realizado') {
+    toast('✅ Todas las subtareas completadas. ¿Marcar tarea como Realizada?', 'inf');
+  }
+}
+
+function updHoras(id, tipo, val) {
+  const t = RRHH.find(x => x.id === id);
+  if (!t) return;
+  const v = parseFloat(val) || 0;
+  if (tipo === 'est') t.horasEstimadas = v;
+  else t.horasReales = v;
+  saveRrhh();
+  // Actualizar barra de progreso sin re-render completo
+  renderRrhhStats();
+}
+
+function toggleNotifTarea(id) {
+  const t = RRHH.find(x => x.id === id);
+  if (!t) return;
+  t.notifActiva = t.notifActiva === false ? true : false;
+  saveRrhh();
+  const badge = document.querySelector(`#tc-${id} .notif-badge`);
+  if (badge) {
+    badge.className = 'notif-badge ' + (t.notifActiva ? 'activa' : 'inactiva');
+    badge.textContent = '🔔' + (t.notifActiva ? ' ON' : ' OFF');
+  }
+  toast('Notificaciones ' + (t.notifActiva ? 'activadas' : 'desactivadas') + ' para esta tarea', 'inf');
+}
+
+function guardarNotifTarea(id) {
+  const t = RRHH.find(x => x.id === id);
+  if (!t) return;
+  const tipo = document.getElementById('notif-tipo-'+id)?.value || 'vencimiento';
+  const hora = document.getElementById('notif-hora-'+id)?.value || '';
+  const labels = {
+    vencimiento: 'Al vencer',
+    '1dia': '1 día antes' + (hora ? ' a las ' + hora : ''),
+    '3dias': '3 días antes' + (hora ? ' a las ' + hora : ''),
+    hora: 'A las ' + (hora || '09:00'),
+  };
+  t.notifActiva = true;
+  t.notifTipo = tipo;
+  t.notifHora = hora;
+  t.notifConfig = labels[tipo] || tipo;
+  saveRrhh();
+  // Programar notificación si el navegador lo soporta
+  programarNotifTarea(t);
+  renderRrhhLista();
+  setTimeout(() => {
+    const exp = document.getElementById('exp-'+id);
+    if (exp && !exp.classList.contains('on')) toggleExpand(id);
+  }, 50);
+  toast('Alerta configurada: ' + t.notifConfig, 'ok');
+}
+
+function programarNotifTarea(t) {
+  if (!t.fechaLimite || Notification.permission !== 'granted') return;
+  const fl = new Date(t.fechaLimite + 'T' + (t.notifHora || '09:00') + ':00');
+  let disparo = new Date(fl);
+  if (t.notifTipo === '1dia') disparo.setDate(disparo.getDate() - 1);
+  else if (t.notifTipo === '3dias') disparo.setDate(disparo.getDate() - 3);
+  const msHasta = disparo - new Date();
+  if (msHasta > 0 && msHasta < 86400000 * 7) { // Solo si es dentro de 7 días
+    setTimeout(() => {
+      new Notification('ILUMAX RRHH — ' + t.actividad, {
+        body: t.notifConfig + (t.subtareas?.length ? ' · ' + t.subtareas.filter(s=>!s.done).length + ' subtareas pendientes' : ''),
+      });
+      crearNotifRrhh('🔔 ' + t.actividad, 'azul', t.notifConfig);
+    }, msHasta);
+  }
+}
+
+// Verificar notificaciones programadas al iniciar
+function revisarNotifsProgramadas() {
+  RRHH.forEach(t => {
+    if (t.notifActiva && t.notifTipo && t.estado !== 'Realizado') {
+      programarNotifTarea(t);
+    }
+  });
+}
+
+
+function leerNotif(i) {
+  const n = NOTIFS[i];
+  if (!n) return;
+  if (n.rrhhTareaId) {
+    // Notif RRHH: abrir el bottom sheet interactivo
+    // NO marcar como leída — persiste hasta completar la tarea
+    abrirSheetTarea(n.rrhhTareaId, i);
+  } else {
+    // Notif regular de solicitudes: marcar leída
+    const notifs = getNotifs();
+    notifs[i].leida = true;
+    saveNotifs(notifs);
+    updBadges();
+    renderNotif();
+  }
+}
+
+
+// ══════════════════════════════════════════════════════════
+// NOTIFICACIONES INTERACTIVAS — Bottom Sheet
+// ══════════════════════════════════════════════════════════
+
+function openNotifSheet(notifIdx) {
+  const notifs = getNotifs();
+  const n = notifs[notifIdx];
+  if (!n) return;
+
+  // Si tiene tarea RRHH asociada, mostrar detalle completo
+  if (n.rrhhTareaId) {
+    abrirSheetTarea(n.rrhhTareaId, notifIdx);
+  } else {
+    // Notif regular — marcar leída y cerrar
+    if (!n.persistente) {
+      notifs[notifIdx].leida = true;
+      saveNotifs(notifs);
+      updBadges();
+      renderNotif();
+    }
+  }
+}
+
+function abrirSheetTarea(tareaId, notifIdx) {
+  const t = RRHH.find(x => x.id === tareaId);
+  if (!t) return;
+
+  const ind = getInd(t);
+  const subs = t.subtareas || [];
+  const subsDone = subs.filter(s => s.done).length;
+  const horasEst = t.horasEstimadas || 0;
+  const horasReal = t.horasReales || 0;
+  const progSubs = subs.length > 0 ? Math.round(subsDone / subs.length * 100) : (t.estado === 'Realizado' ? 100 : 0);
+  const progHoras = horasEst > 0 ? Math.min(Math.round(horasReal / horasEst * 100), 100) : 0;
+
+  const h = new Date().toISOString().split('T')[0];
+  const diasStr = t.fechaLimite ? (() => {
+    const d = Math.ceil((new Date(t.fechaLimite + 'T12:00:00') - new Date()) / 86400000);
+    if (d < 0) return `Venció hace ${Math.abs(d)} día(s)`;
+    if (d === 0) return 'Vence HOY';
+    if (d <= 3) return `Vence en ${d} día(s)`;
+    return `Vence el ${new Date(t.fechaLimite+'T12:00:00').toLocaleDateString('es-CO',{day:'2-digit',month:'long'})}`;
+  })() : 'Sin fecha límite';
+
+  const colorBarra = ind.color;
+  const esVencida = t.estado !== 'Realizado' && t.fechaLimite && t.fechaLimite < h;
+  const esProxima = !esVencida && t.fechaLimite && (() => {
+    const d = Math.ceil((new Date(t.fechaLimite+'T12:00:00') - new Date()) / 86400000);
+    return d >= 0 && d <= 3;
+  })();
+
+  // Anillo de progreso SVG
+  const ringR = 22, ringC = 28, circum = 2 * Math.PI * ringR;
+  const dash = (progSubs / 100) * circum;
+
+  const html = `
+    ${esVencida ? `<div class="notif-urgente-bar">🔴 URGENTE · ${diasStr.toUpperCase()}</div>` :
+      esProxima ? `<div class="notif-proxima-bar">🟡 ${diasStr.toUpperCase()}</div>` : ''}
+
+    <div class="ns-header">
+      <div class="ns-tipo">${ind.lbl} · ${t.prioridad || 'Media'} prioridad</div>
+      <div class="ns-titulo">${t.actividad}</div>
+      <div class="ns-meta">
+        <span>👤 ${t.responsable || 'Liz K. Sánchez'}</span>
+        ${t.fechaLimite ? `<span>📅 ${diasStr}</span>` : ''}
+        ${horasEst > 0 ? `<span>⏱️ ${horasReal}h / ${horasEst}h</span>` : ''}
+      </div>
+    </div>
+
+    <div class="ns-body">
+      <!-- Estadísticas rápidas -->
+      <div class="ns-stat-row">
+        <div class="ns-stat">
+          <div class="prog-ring">
+            <svg width="${ringC*2}" height="${ringC*2}">
+              <circle cx="${ringC}" cy="${ringC}" r="${ringR}" fill="none" stroke="var(--b1)" stroke-width="4"/>
+              <circle cx="${ringC}" cy="${ringC}" r="${ringR}" fill="none"
+                stroke="${progSubs===100?'var(--gr)':'var(--bl)'}" stroke-width="4"
+                stroke-dasharray="${dash} ${circum}" stroke-linecap="round"/>
+            </svg>
+            <span class="prog-ring-txt">${progSubs}%</span>
+          </div>
+          <div class="ns-stat-l">Avance</div>
+        </div>
+        <div class="ns-stat">
+          <div class="ns-stat-v" style="color:${subsDone===subs.length&&subs.length>0?'var(--gr)':'var(--bl)'}">${subsDone}<span style="font-size:13px;color:var(--mu);">/${subs.length}</span></div>
+          <div class="ns-stat-l">Subtareas</div>
+        </div>
+        <div class="ns-stat">
+          <div class="ns-stat-v" style="color:${horasReal>horasEst&&horasEst>0?'var(--rd)':'var(--tx)'}">
+            ${horasEst > 0 ? horasReal+'h' : t.estado==='Realizado'?'✅':'—'}
+          </div>
+          <div class="ns-stat-l">Horas reales</div>
+        </div>
+      </div>
+
+      ${t.obs ? `<div style="background:var(--s1);border-radius:10px;padding:11px 14px;margin-bottom:14px;border-left:3px solid ${colorBarra};font-size:12px;color:var(--mu);">💬 ${t.obs}</div>` : ''}
+
+      <!-- Subtareas interactivas -->
+      ${subs.length > 0 ? `
+        <div style="font-size:11px;font-weight:700;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">
+          📋 Subtareas ${subsDone < subs.length ? `· <span style="color:var(--rd);">${subs.length-subsDone} pendiente(s)</span>` : '· <span style="color:var(--gr);">¡Todas listas!</span>'}
+        </div>
+        <div class="ns-subs-list">
+          ${subs.map((s, i) => `
+            <div class="ns-sub-item ${s.done ? 'done' : ''}" style="opacity:${s.done?'.65':'1'}">
+              <div class="ns-sub-chk ${s.done ? 'done' : ''}"
+                onclick="toggleSubDesdeSheet('${t.id}',${i})">
+                ${s.done ? '✓' : ''}
+              </div>
+              <span style="flex:1;font-size:12px;${s.done?'text-decoration:line-through;color:var(--mu)':''}">${s.txt}</span>
+              ${s.hora ? `<span style="font-size:10px;background:var(--bld);color:var(--bl);padding:2px 7px;border-radius:20px;">⏰ ${s.hora}</span>` : ''}
+            </div>`).join('')}
+        </div>` : `
+        <div style="text-align:center;padding:14px;background:var(--s1);border-radius:10px;margin-bottom:14px;font-size:12px;color:var(--mu);">
+          Sin subtareas · <span style="color:var(--bl);cursor:pointer;" onclick="closeNotifSheet();goPage('rrhh',document.getElementById('tab-rrhh'));setTimeout(()=>rrhhEditar('${t.id}'),400)">Agregar desde la tarea →</span>
+        </div>`}
+
+      <!-- Horas rápidas -->
+      <div style="background:var(--s1);border-radius:10px;padding:12px 14px;margin-bottom:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:11px;color:var(--mu);">⏱️ Horas reales:</span>
+        <input type="number" min="0" step="0.5" value="${horasReal||''}" placeholder="0"
+          style="background:var(--w);border:1.5px solid var(--b1);border-radius:7px;padding:4px 9px;width:65px;font-size:12px;font-weight:700;text-align:center;"
+          onchange="updHorasDesdeSheet('${t.id}','real',this.value)">
+        <span style="font-size:11px;color:var(--mu);">/ ${horasEst||'?'}h est.</span>
+        ${horasEst > 0 ? `<div style="flex:1;background:var(--b1);border-radius:4px;height:6px;min-width:60px;">
+          <div style="height:6px;border-radius:4px;background:${horasReal>horasEst?'var(--rd)':'var(--gr)'};width:${Math.min(progHoras,100)}%;transition:width .4s;"></div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <!-- ACCIONES PRINCIPALES -->
+    <div class="ns-actions">
+      ${t.estado !== 'Realizado' ? `
+        <button class="ns-btn-main" style="background:var(--gr);color:#fff;"
+          onclick="rrhhCompletarDesdeSheet('${t.id}')">
+          ✅ Marcar como Realizada
+        </button>
+        ${t.estado === 'Pendiente' ? `
+          <button class="ns-btn-sec" onclick="rrhhIniciarDesdeSheet('${t.id}')">
+            ▶ Cambiar a "En proceso"
+          </button>` : ''}
+      ` : `
+        <div style="background:var(--grd);border-radius:12px;padding:14px;text-align:center;font-weight:700;color:var(--gr);">
+          ✅ Tarea completada el ${t.fechaFin ? new Date(t.fechaFin+'T12:00:00').toLocaleDateString('es-CO') : '—'}
+        </div>
+      `}
+      <button class="ns-btn-sec" onclick="closeNotifSheet();setTimeout(()=>{goPage('rrhh',document.getElementById('tab-rrhh'));setTimeout(()=>rrhhEditar('${t.id}'),400)},200)">
+        ✏️ Ver y editar tarea completa
+      </button>
+      <button class="ns-btn-sec" style="color:var(--mu);" onclick="closeNotifSheet()">
+        Cerrar
+      </button>
+    </div>
+  `;
+
+  document.getElementById('ns-content').innerHTML = html;
+  document.getElementById('notif-sheet-ov').classList.add('on');
+}
+
+function closeNotifSheet() {
+  document.getElementById('notif-sheet-ov').classList.remove('on');
+}
+
+// Acciones desde el sheet
+function rrhhCompletarDesdeSheet(id) {
+  rrhhCompletar(id);
+  closeNotifSheet();
+  // Actualizar el panel de notif
+  setTimeout(() => { renderNotif(); updBadges(); }, 200);
+}
+
+function rrhhIniciarDesdeSheet(id) {
+  rrhhIniciar(id);
+  // Actualizar el sheet con el nuevo estado
+  setTimeout(() => abrirSheetTarea(id, null), 200);
+}
+
+function toggleSubDesdeSheet(tareaId, idx) {
+  const t = RRHH.find(x => x.id === tareaId);
+  if (!t || !t.subtareas) return;
+  t.subtareas[idx].done = !t.subtareas[idx].done;
+  saveRrhh();
+  // Re-renderizar el sheet
+  abrirSheetTarea(tareaId, null);
+  // Sugerir completar si todas están listas
+  const todasListas = t.subtareas.every(s => s.done);
+  if (todasListas && t.estado !== 'Realizado') {
+    setTimeout(() => toast('¡Todas las subtareas listas! Toca ✅ Marcar como Realizada', 'inf'), 300);
+  }
+}
+
+function updHorasDesdeSheet(id, tipo, val) {
+  updHoras(id, tipo, val);
+  // No re-renderizar el sheet completo para no perder el foco del input
+  renderRrhhStats();
+}
+
+// Actualizar leerNotif para usar el sheet
+function leerNotif(i) {
+  const notifs = getNotifs();
+  const n = notifs[i];
+  if (!n) return;
+  if (n.rrhhTareaId) {
+    // Abrir sheet interactivo
+    abrirSheetTarea(n.rrhhTareaId, i);
+  } else {
+    // Notif regular — marcar leída
+    if (!n.persistente) {
+      notifs[i].leida = true;
+      saveNotifs(notifs);
+      updBadges();
+      renderNotif();
+    }
+  }
+}
+
+// Swipe down para cerrar el sheet
+(function() {
+  let startY = 0;
+  document.addEventListener('touchstart', e => {
+    const sheet = document.getElementById('notif-sheet');
+    if (sheet && sheet.contains(e.target)) startY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchmove', e => {
+    const sheet = document.getElementById('notif-sheet');
+    if (!sheet) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 60) closeNotifSheet();
+  });
+})();
+
+
+// ══════════════════════════════════════════════════════════
+// BARRA DE PROGRESO GENERAL + FELICITACIÓN
+// ══════════════════════════════════════════════════════════
+
+function renderRrhhProgressBar() {
+  // Calcular progreso general
+  const total = RRHH.length;
+  if (total === 0) return;
+  const realizadas = RRHH.filter(t => t.estado === 'Realizado').length;
+  const enProceso  = RRHH.filter(t => t.estado === 'En proceso').length;
+  const h = new Date().toISOString().split('T')[0];
+  const vencidas   = RRHH.filter(t => t.estado !== 'Realizado' && t.fechaLimite && t.fechaLimite < h).length;
+  const pct = Math.round(realizadas / total * 100);
+
+  // Color según avance
+  const colorCls = pct >= 80 ? 'verde' : pct >= 40 ? '' : vencidas > 0 ? 'rojo' : 'amarillo';
+
+  // Mensaje motivacional
+  const mensajes = [
+    [0,  20,  '💪 ¡Empezando! Cada tarea completada cuenta.'],
+    [20, 40,  '🚀 ¡Buen inicio! Vas tomando ritmo.'],
+    [40, 60,  '⚡ ¡A mitad del camino! Sigue así.'],
+    [60, 80,  '🔥 ¡Más de la mitad! Ya casi llegas.'],
+    [80, 99,  '🌟 ¡Casi todo listo! El final está cerca.'],
+    [100,101, '🏆 ¡Todo completado! Increíble trabajo, Liz.'],
+  ];
+  const msg = mensajes.find(m => pct >= m[0] && pct < m[1]);
+  const motivacion = msg ? msg[2] : '💪 Sigue adelante';
+
+  // Total horas
+  const horasTotEst  = RRHH.reduce((a,t) => a+(t.horasEstimadas||0), 0);
+  const horasTotReal = RRHH.reduce((a,t) => a+(t.horasReales||0), 0);
+
+  const el = document.getElementById('rrhh-progress-bar');
+  if (!el) return;
+
+  el.innerHTML = `
+    <div class="rrhh-progress-wrap">
+      <div class="rrhh-progress-top">
+        <div class="rrhh-progress-title">📊 Progreso general</div>
+        <div style="text-align:right;">
+          <div class="rrhh-progress-pct" style="color:${pct>=80?'var(--gr)':pct>=40?'var(--bl)':'var(--or)'}">
+            ${pct}%
+          </div>
+          <div style="font-size:10px;color:var(--mu);">${realizadas} de ${total} tareas</div>
+        </div>
+      </div>
+      <div class="rrhh-bar-track">
+        <div class="rrhh-bar-fill ${colorCls}" id="rrhh-bar-fill" style="width:0%"></div>
+      </div>
+      <div class="rrhh-bar-labels">
+        <span>0%</span>
+        <span style="font-size:10px;color:var(--mu);font-style:italic;">${motivacion}</span>
+        <span>100%</span>
+      </div>
+      <div class="rrhh-mini-stats">
+        <div class="rrhh-mini-stat">
+          <div class="rrhh-mini-stat-v" style="color:var(--gr);">${realizadas}</div>
+          <div class="rrhh-mini-stat-l">🟢 Realizadas</div>
+        </div>
+        <div class="rrhh-mini-stat">
+          <div class="rrhh-mini-stat-v" style="color:var(--bl);">${enProceso}</div>
+          <div class="rrhh-mini-stat-l">🔵 En proceso</div>
+        </div>
+        <div class="rrhh-mini-stat">
+          <div class="rrhh-mini-stat-v" style="color:var(--rd);">${vencidas}</div>
+          <div class="rrhh-mini-stat-l">🔴 Vencidas</div>
+        </div>
+        ${horasTotEst > 0 ? `
+        <div class="rrhh-mini-stat">
+          <div class="rrhh-mini-stat-v" style="color:var(--pu);">${horasTotReal}h</div>
+          <div class="rrhh-mini-stat-l">⏱️ Horas reales</div>
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  // Animar la barra con un pequeño delay
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const fill = document.getElementById('rrhh-bar-fill');
+      if (fill) fill.style.width = pct + '%';
+    }, 100);
+  });
+}
+
+// ── CONFETI ──
+const CONFETTI_COLORS = ['#f5c518','#2563eb','#16a34a','#dc2626','#7c3aed','#ea580c','#06b6d4','#ec4899'];
+
+function lanzarConfeti(duracion = 3000) {
+  const ov = document.getElementById('confetti-ov');
+  if (!ov) return;
+  ov.classList.add('on');
+  ov.innerHTML = '';
+  const N = 80;
+  for (let i = 0; i < N; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    const size = 6 + Math.random() * 8;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 1.2;
+    const dur = 2 + Math.random() * 2;
+    const shape = Math.random() > 0.5 ? '50%' : '2px';
+    el.style.cssText = `
+      left:${left}vw; width:${size}px; height:${size}px;
+      background:${color}; border-radius:${shape};
+      animation-delay:${delay}s; animation-duration:${dur}s;`;
+    ov.appendChild(el);
+  }
+  setTimeout(() => {
+    ov.classList.remove('on');
+    ov.innerHTML = '';
+  }, duracion);
+}
+
+// ── FELICITACIÓN ──
+function mostrarFelicitacion(tarea) {
+  const total     = RRHH.length;
+  const realizadas = RRHH.filter(t => t.estado === 'Realizado').length;
+  const pct       = Math.round(realizadas / total * 100);
+
+  // Elegir emoji y mensaje según contexto
+  let emoji = '🎉', titulo = '¡Tarea completada!';
+  let sub = `"${tarea.actividad.substring(0, 55)}"`;
+
+  if (pct === 100) {
+    emoji = '🏆'; titulo = '¡TODO COMPLETADO!';
+    sub = '¡Increíble, Liz! Completaste el 100% de tus actividades.';
+  } else if (pct >= 75) {
+    emoji = '🌟'; titulo = '¡Excelente trabajo!';
+  } else if (pct >= 50) {
+    emoji = '🔥'; titulo = '¡A mitad del camino!';
+  } else if (realizadas === 1) {
+    emoji = '🚀'; titulo = '¡Primera tarea lista!';
+    sub = 'Cada gran logro empieza con el primer paso.';
+  }
+
+  document.getElementById('felicidades-emoji').textContent  = emoji;
+  document.getElementById('felicidades-titulo').textContent = titulo;
+  document.getElementById('felicidades-sub').textContent    = sub;
+  document.getElementById('felicidades-extra').innerHTML    = `
+    <div style="background:var(--s1);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:12px;color:var(--mu);">Progreso general</span>
+      <span style="font-size:18px;font-weight:800;color:${pct>=75?'var(--gr)':'var(--bl)'};">${pct}%</span>
+    </div>
+    <div style="background:var(--b1);border-radius:20px;height:8px;margin-top:8px;overflow:hidden;">
+      <div style="height:8px;border-radius:20px;background:${pct===100?'linear-gradient(90deg,var(--gr),#34d399)':'linear-gradient(90deg,var(--bl),#06b6d4)'};width:${pct}%;transition:width 1s;"></div>
+    </div>
+    <div style="font-size:10px;color:var(--mu);margin-top:5px;text-align:center;">${realizadas} de ${total} tareas realizadas</div>`;
+
+  // Mostrar
+  setTimeout(() => document.getElementById('felicidades-toast').classList.add('on'), 100);
+  lanzarConfeti(pct === 100 ? 5000 : 3000);
+}
+
+function cerrarFelicitacion() {
+  document.getElementById('felicidades-toast').classList.remove('on');
+}
+
+// ── ACTUALIZAR rrhhCompletar para mostrar felicitación ──
+const _rrhhCompletarOrig = rrhhCompletar;
+rrhhCompletar = function(id) {
+  const tarea = RRHH.find(x => x.id === id);
+  _rrhhCompletarOrig(id);
+  if (tarea) setTimeout(() => mostrarFelicitacion(tarea), 400);
+};
+
+// ── ACTUALIZAR rrhhCompletarDesdeSheet ──
+function rrhhCompletarDesdeSheet(id) {
+  const tarea = RRHH.find(x => x.id === id);
+  const origCompletar = window._rrhhCompletarOrig || rrhhCompletar;
+  // Llamar la versión base (sin felicitación duplicada)
+  const t = RRHH.find(x => x.id === id); if(!t) return;
+  t.estado = 'Realizado'; t.fechaFin = new Date().toISOString().split('T')[0];
+  saveRrhh();
+  limpiarNotifsRrhh(id);
+  crearNotifRrhh('✅ Completada: '+t.actividad.substring(0,50),'verde',t.actividad);
+  renderRrhh();
+  if(typeof updBadges==='function') updBadges();
+  if(typeof renderNotif==='function') renderNotif();
+  syncRrhhSheetsAuto(t,'actualizar');
+  closeNotifSheet();
+  setTimeout(() => mostrarFelicitacion(t), 400);
+}
+
+document.addEventListener('DOMContentLoaded',function(){setTimeout(chkAprobador,800);});
 
 // Auto-login
 const sc=sessionStorage.getItem('ilx_cu');
