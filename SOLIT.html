@@ -394,6 +394,14 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
 .bar-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;font-size:10px;font-weight:600;padding:4px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;}
 .bar-fill:hover .bar-tooltip{opacity:1;}
 
+
+/* ── STATS INTERACTIVOS RRHH ── */
+.sc-click{cursor:pointer;transition:all .15s;user-select:none;}
+.sc-click:hover{transform:translateY(-2px);box-shadow:var(--sh2);border-color:var(--bl);}
+.sc-click.activo{border-color:var(--bl);box-shadow:0 0 0 3px rgba(37,99,235,.15);transform:translateY(-2px);}
+.sc-click.activo .sl{color:var(--bl);font-weight:700;}
+.filtro-activo-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bld);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--bl);font-weight:600;border:1px solid rgba(37,99,235,.2);}
+
 </style>
 </head>
 <body>
@@ -709,6 +717,8 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
         <div class="rrhh-tab" onclick="setRrhhTab('calendario',this)">📅 Calendario</div>
       </div>
 
+      <!-- Barra filtro activo -->
+      <div id="rrhh-filtro-bar" class="filtro-activo-bar" style="display:none;"></div>
       <!-- Toolbar -->
       <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
         <div class="srch" style="flex:1;min-width:160px;max-width:260px;">
@@ -716,11 +726,11 @@ input:checked+.sw-sl:before{transform:translateX(16px);}
           <input type="text" id="rrhh-q" placeholder="Buscar actividad..." oninput="renderRrhhLista()" style="background:none;border:none;outline:none;font-family:inherit;font-size:12px;color:var(--tx);width:100%;">
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
-          <div class="chip on" data-v="" onclick="setRrhhFiltro('',this)">Todas</div>
-          <div class="chip" data-v="Pendiente" onclick="setRrhhFiltro('Pendiente',this)">⚪</div>
-          <div class="chip" data-v="En proceso" onclick="setRrhhFiltro('En proceso',this)">🔵</div>
-          <div class="chip" data-v="Realizado" onclick="setRrhhFiltro('Realizado',this)">🟢</div>
-          <div class="chip" data-v="vencidas" onclick="setRrhhFiltro('vencidas',this)">🔴 Vencidas</div>
+          <div class="chip on" data-v="" onclick="setRrhhFiltroDesdeStats('')">Todas</div>
+          <div class="chip" data-v="Pendiente" onclick="setRrhhFiltroDesdeStats('Pendiente')">⚪ Pendientes</div>
+          <div class="chip" data-v="En proceso" onclick="setRrhhFiltroDesdeStats('En proceso')">🔵 En proceso</div>
+          <div class="chip" data-v="Realizado" onclick="setRrhhFiltroDesdeStats('Realizado')">🟢 Realizadas</div>
+          <div class="chip" data-v="vencidas" onclick="setRrhhFiltroDesdeStats('vencidas')">🔴 Vencidas</div>
         </div>
         <button class="btn btn-p btn-sm" onclick="openMo('mo-rrhh-nueva')">+ Nueva</button>
         <button class="btn btn-cy btn-sm" onclick="exportRrhhCSV()">📊 CSV</button>
@@ -1261,11 +1271,22 @@ function updSyncSt(){
 }
 
 function updBadges(){
-  const pend=SOLIC.filter(s=>s.estado==='pendiente'&&puedoAprobar(s.tipo)).length;
-  const noL=getNotifs().filter(n=>!n.leida).length;
-  const ba=qs('#nb-apro'),bn=qs('#nb-notif');
+  // Badge de aprobación: solicitudes pendientes
+  const pend=SOLIC.filter(s=>s.estado==='pendiente'&&puedoAprobar(s.tipo||s['Tipo'])).length;
+  const ba=qs('#nb-apro');
   if(ba){ba.textContent=pend;ba.style.display=pend>0?'inline':'none';}
-  if(bn){bn.textContent=noL;bn.style.display=noL>0?'inline':'none';}
+
+  // Badge de notificaciones: tareas RRHH pendientes/vencidas + notifs regulares no leídas
+  // El número refleja TAREAS SIN COMPLETAR, no notifs "leídas"
+  const h=new Date().toISOString().split('T')[0];
+  const tareasActivas=(typeof RRHH!=='undefined'?RRHH:[])
+    .filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&
+      (t.fechaLimite<h||Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000)<=3)
+    ).length;
+  const notifsReg=getNotifs().filter(n=>!n.leida&&!n.rrhhTareaId).length;
+  const totalBadge=tareasActivas+notifsReg;
+  const bn=qs('#nb-notif');
+  if(bn){bn.textContent=totalBadge;bn.style.display=totalBadge>0?'inline':'none';}
 }
 
 function puedoAprobar(tipo){
@@ -1974,6 +1995,14 @@ function renderNotif(){
   if(typeof generarNotifsRrhh==='function') generarNotifsRrhh();
   NOTIFS=getNotifs(); // Recargar tras generarNotifsRrhh
   const n=NOTIFS;
+  // Contar tareas RRHH activas (no completadas) — este es el número real
+  const hRN=new Date().toISOString().split('T')[0];
+  const tareasRrhh=(typeof RRHH!=='undefined'?RRHH:[])
+    .filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&
+      (t.fechaLimite<hRN||Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000)<=3)
+    ).length;
+  const noLeidas=n.filter(x=>!x.leida&&!x.rrhhTareaId).length;
+  const totalPend=tareasRrhh+noLeidas;
   const tipos_apro=(CU.aprueba||[]).includes('todos')?['adelanto','gastos','descuento','rendicion']:(CU.aprueba||[]);
   var cfgItems = '';
   tipos_apro.forEach(function(t) {
@@ -2032,15 +2061,20 @@ function marcarLeidas(){
   const n=getNotifs();
   let marcadas=0;
   n.forEach(x=>{
-    // NUNCA marcar leídas las notifs persistentes de RRHH
+    // NUNCA tocar notifs de tareas RRHH — solo bajan cuando la tarea se completa
     if(!x.persistente&&!x.rrhhTareaId){
       x.leida=true;
       marcadas++;
     }
   });
   saveNotifs(n);renderNotif();updBadges();
+  const h=new Date().toISOString().split('T')[0];
+  const pendRrhh=(typeof RRHH!=='undefined'?RRHH:[])
+    .filter(t=>t.estado!=='Realizado'&&t.fechaLimite&&
+      (t.fechaLimite<h||Math.ceil((new Date(t.fechaLimite+'T12:00:00')-new Date())/86400000)<=3)
+    ).length;
   if(marcadas>0) toast(marcadas+' notificación(es) marcada(s) como leída(s)','ok');
-  else toast('Las notificaciones de tareas RRHH persisten hasta completarlas','inf');
+  if(pendRrhh>0) toast(pendRrhh+' tarea(s) RRHH permanecen hasta completarse','inf');
 }
 
 // ── PANEL APROBACIÓN ──
@@ -2250,19 +2284,32 @@ function renderRrhh() {
 
 function renderRrhhStats() {
   const h = new Date().toISOString().split('T')[0];
-  const total = RRHH.length;
+  const total    = RRHH.length;
   const realizadas = RRHH.filter(x=>x.estado==='Realizado').length;
-  const enProceso = RRHH.filter(x=>x.estado==='En proceso').length;
+  const enProceso  = RRHH.filter(x=>x.estado==='En proceso').length;
   const pendientes = RRHH.filter(x=>x.estado==='Pendiente').length;
-  const vencidas = RRHH.filter(x=>x.estado!=='Realizado'&&x.fechaLimite&&x.fechaLimite<h).length;
+  const vencidas   = RRHH.filter(x=>x.estado!=='Realizado'&&x.fechaLimite&&x.fechaLimite<h).length;
   const el = document.getElementById('rrhh-stats');
   if (!el) return;
-  el.innerHTML=`
-    <div class="sc"><div class="sv">${total}</div><div class="sl">Total</div></div>
-    <div class="sc" style="--c:var(--gr)"><div class="sv" style="color:var(--gr)">${realizadas}</div><div class="sl">🟢 Realizadas</div></div>
-    <div class="sc" style="--c:var(--bl)"><div class="sv" style="color:var(--bl)">${enProceso}</div><div class="sl">🔵 En proceso</div></div>
-    <div class="sc" style="--c:var(--mu2)"><div class="sv" style="color:var(--mu)">${pendientes}</div><div class="sl">⚪ Pendientes</div></div>
-    <div class="sc" style="--c:var(--rd)"><div class="sv" style="color:var(--rd)">${vencidas}</div><div class="sl">🔴 Vencidas</div></div>`;
+  const fa = rrhhFiltro; // filtro activo
+  var html = '';
+  [
+    {f:'',       v:total,     l:'Total',         c:'var(--tx)',  tip:'Ver todas'},
+    {f:'Realizado',  v:realizadas,l:'🟢 Realizadas', c:'var(--gr)',  tip:'Solo realizadas'},
+    {f:'En proceso', v:enProceso, l:'🔵 En proceso', c:'var(--bl)',  tip:'Solo en proceso'},
+    {f:'Pendiente',  v:pendientes,l:'⚪ Pendientes', c:'var(--mu)',  tip:'Solo pendientes'},
+    {f:'vencidas',   v:vencidas,  l:'🔴 Vencidas',   c:'var(--rd)',  tip:'Solo vencidas'},
+  ].forEach(function(s) {
+    var esActivo = fa===s.f;
+    html += '<div class="sc sc-click'+(esActivo?' activo':'')+'" '
+      + 'onclick="setRrhhFiltroDesdeStats(''+s.f+'')" '
+      + 'title="'+s.tip+'" '
+      + 'style="'+(esActivo?'border-color:var(--bl);':'')+'">'
+      + '<div class="sv" style="color:'+s.c+';">'+s.v+'</div>'
+      + '<div class="sl">'+s.l+'</div>'
+      + '</div>';
+  });
+  el.innerHTML = html;
 }
 
 function setRrhhFiltro(f, el) {
@@ -2826,11 +2873,11 @@ function leerNotif(i) {
   const n = NOTIFS[i];
   if (!n) return;
   if (n.rrhhTareaId) {
-    // Notif RRHH: abrir el bottom sheet interactivo
-    // NO marcar como leída — persiste hasta completar la tarea
+    // RRHH: solo abre el sheet, NO toca el badge ni la notif
+    // El badge baja ÚNICAMENTE cuando se completa la tarea
     abrirSheetTarea(n.rrhhTareaId, i);
   } else {
-    // Notif regular de solicitudes: marcar leída
+    // Solicitud regular: marcar leída y bajar badge
     const notifs = getNotifs();
     notifs[i].leida = true;
     saveNotifs(notifs);
@@ -3121,7 +3168,7 @@ function renderRrhhProgressBar() {
         </div>
       </div>
       <div class="rrhh-bar-track">
-        <div class="rrhh-bar-fill ${colorCls}" id="rrhh-bar-fill" style="width:0%"></div>
+        <div class="rrhh-bar-fill ${colorCls}" id="rrhh-bar-fill" style="cursor:pointer;" onclick="setRrhhFiltroDesdeStats('Realizado')" title="Ver realizadas" style="width:0%"></div>
       </div>
       <div class="rrhh-bar-labels">
         <span>0%</span>
@@ -3259,6 +3306,37 @@ function rrhhCompletarDesdeSheet(id) {
 }
 
 document.addEventListener('DOMContentLoaded',function(){setTimeout(chkAprobador,800);});
+
+
+// Filtro desde stats clickeables
+function setRrhhFiltroDesdeStats(f) {
+  rrhhFiltro = f;
+  // Activar vista Lista
+  document.querySelectorAll('.rrhh-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.rrhh-view').forEach(v=>v.classList.remove('on'));
+  const tabLista = document.querySelector('.rrhh-tab');
+  if(tabLista) tabLista.classList.add('on');
+  const viewLista = document.getElementById('rv-lista');
+  if(viewLista) viewLista.classList.add('on');
+  // Actualizar chips de filtro
+  document.querySelectorAll('#pg-rrhh .chip').forEach(c=>{
+    c.classList.toggle('on', c.dataset.v===f);
+  });
+  // Mostrar barra de filtro activo
+  const barEl = document.getElementById('rrhh-filtro-bar');
+  if(barEl){
+    const labels={'':'Todas las tareas','Realizado':'🟢 Realizadas','En proceso':'🔵 En proceso','Pendiente':'⚪ Pendientes','vencidas':'🔴 Vencidas'};
+    if(f){
+      barEl.style.display='flex';
+      barEl.innerHTML='<span>Mostrando: <strong>'+labels[f]+'</strong></span>'
+        +'<button class="btn btn-g btn-xs" onclick="setRrhhFiltroDesdeStats('')">✕ Ver todas</button>';
+    } else {
+      barEl.style.display='none';
+    }
+  }
+  renderRrhhStats();
+  renderRrhhLista();
+}
 
 // Auto-login
 const sc=sessionStorage.getItem('ilx_cu');
